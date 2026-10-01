@@ -4,6 +4,7 @@
  */
 import { hasPlaceholder, site } from "@/content/site";
 import { fetchWithTimeout } from "./env";
+import { log } from "./log";
 
 interface Mail {
   to: string[];
@@ -17,7 +18,10 @@ async function send(mail: Mail) {
   const key = process.env.RESEND_API_KEY;
   const from = process.env.LEAD_NOTIFY_FROM;
   if (!key || !from || !mail.to.length) {
-    console.info("[notify] email not sent (Resend not configured)\n", JSON.stringify({ to: mail.to, subject: mail.subject, text: mail.text }, null, 2));
+    // Development: show the email so the flow can be checked. Production: never log customer details.
+    if (process.env.NODE_ENV !== "production")
+      console.info("[notify] email not sent (Resend not configured)\n", JSON.stringify({ to: mail.to, subject: mail.subject, text: mail.text }, null, 2));
+    else log.warn("notify.not_configured", { subject: mail.subject });
     return;
   }
   const res = await fetchWithTimeout("https://api.resend.com/emails", {

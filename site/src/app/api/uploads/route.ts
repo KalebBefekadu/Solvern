@@ -1,3 +1,4 @@
+import { log } from "@/lib/server/log";
 import { NextResponse } from "next/server";
 import { uploadRequestSchema } from "@/lib/leads/schema";
 import { BackendUnavailable, createUploadTargets } from "@/lib/server/backend";
@@ -26,7 +27,7 @@ export async function POST(req: Request) {
     return NextResponse.json(result, { headers: { "Cache-Control": "no-store" } });
   } catch (e) {
     if (e instanceof HttpError) return errorResponse(e);
-    console.error("[uploads]", e);
+    log.error("uploads.failed", {}, e);
     return errorResponse(new HttpError(e instanceof BackendUnavailable ? 503 : 500, "Photo upload is unavailable right now. Please call us instead."));
   }
 }

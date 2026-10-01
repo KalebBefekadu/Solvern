@@ -2,6 +2,7 @@
  * Lead intake: turns a validated form payload into stored rows and notifications.
  * HTTP concerns (body limits, origin, rate limits) live in the route; this module is plain logic.
  */
+import { log } from "./log";
 import type { CallbackLead, PreviewLead } from "@/lib/leads/schema";
 import { previewTarget } from "@/lib/content";
 import { DuplicateRequest, findLeadByRequestId, insertLead, signedViewUrl, uploadExists, type LeadRow, type PhotoRow } from "./backend";
@@ -115,7 +116,10 @@ export async function preparePreview(d: PreviewLead): Promise<Prepared> {
 export async function createLead(data: CallbackLead | PreviewLead): Promise<string> {
   if (data.requestId) {
     const existing = await findLeadByRequestId(data.requestId);
-    if (existing) return existing;
+    if (existing) {
+      log.info("lead.duplicate_request", { id: existing });
+      return existing;
+    }
   }
   const p = data.type === "callback" ? prepareCallback(data) : await preparePreview(data);
   let leadId: string;
@@ -136,7 +140,7 @@ export async function createLead(data: CallbackLead | PreviewLead): Promise<stri
       notes: (ph.notes as { n: number; text: string }[]).map((n) => `Note ${n.n}: ${n.text || "(no text)"}`),
     })),
   ).catch((e) => {
-    console.error("[leads] signed links failed", e);
+    log.warn("lead.signed_links_failed", { photos: p.photos.length }, e);
     return p.photos.map((ph) => ({ original: ph.original_path, annotated: ph.annotated_path, notes: [] as string[] }));
   });
 
@@ -144,6 +148,8 @@ export async function createLead(data: CallbackLead | PreviewLead): Promise<stri
     notifyTeam({ leadId, type: p.lead.type, trade: p.tradeName, fields: p.fields, photos: photoLinks, replyTo: p.lead.email }),
     confirmCustomer(p.lead.type, p.lead.email, p.firstName),
   ]);
-  for (const r of results) if (r.status === "rejected") console.error("[leads] notification failed", leadId, r.reason);
+  results.forEach((r, i) => {
+    if (r.status === "rejected") log.error("lead.notification_failed", { leadId, email: i === 0 ? "team" : "customer" }, r.reason);
+  });
   return leadId;
 }

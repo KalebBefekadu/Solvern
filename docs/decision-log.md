@@ -45,3 +45,6 @@ No approved design, copy or color was changed.
 - 2026-10-01: Print styles leave out navigation, sticky bars and forms.
 - 2026-10-01: The mobile menu's links render only while it is open (about 3.5 KB less HTML per page).
 - 2026-10-01: Dependencies: Next 15.5.27 (newest 15.x) pins PostCSS 8.4.31, which has published advisories. An npm override moves it to 8.5.28; `npm audit --omit=dev` now reports 0. The one remaining advisory is in Vitest 3 (dev only, affects running untrusted test code). Vitest 4 crashes npm 10's resolver, so the upgrade waits for npm 11 in CI. Next 16 is a major upgrade and is not taken in this pass.
+- 2026-10-01: Server logs are one JSON line per event (`lead.stored`, `lead.failed`, `lead.notification_failed`, `turnstile.unreachable` and so on) with ids and counts only, never customer details. In production, an unsent email is logged by subject only.
+- 2026-10-01: The brand check now also fails on emoji anywhere and on exclamation marks in component copy, not just in JSON.
+- 2026-10-01: CI runs on every branch push; the first run on GitHub passed (verify and browser tests).

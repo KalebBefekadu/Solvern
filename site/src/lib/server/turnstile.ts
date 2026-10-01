@@ -1,3 +1,4 @@
+import { log } from "./log";
 import { fetchWithTimeout } from "./env";
 
 /**
@@ -16,7 +17,7 @@ export async function verifyTurnstile(token: string, ip?: string | null): Promis
     const data = (await res.json()) as { success?: boolean };
     return data.success === true;
   } catch (e) {
-    console.error("[turnstile] verification failed", e);
+    log.warn("turnstile.unreachable", {}, e);
     return false;
   }
 }

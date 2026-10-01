@@ -67,6 +67,9 @@ for (const f of files) {
     const code = ln.replace(/\/\/.*$|\/\*.*?\*\/|^\s*\*.*$/g, "");
     for (const [re, label] of BANNED) if (re.test(code)) report(f, n, `banned word: ${label}`);
     if (f.endsWith(".json") && /"[^"]*\w![^=][^"]*"/.test(code)) report(f, n, "exclamation mark in copy");
+    // JSX text and quoted copy in components: "Great!" but not "!==" or "!x".
+    if (/\.tsx$/.test(f) && (/>[^<>{}]*[a-z]![^<>{}=]*</i.test(code) || /"[^"]*[a-z]!(\s|")[^"]*"/i.test(code))) report(f, n, "exclamation mark in copy");
+    if (/\p{Extended_Pictographic}/u.test(code)) report(f, n, "emoji");
   });
 }
 

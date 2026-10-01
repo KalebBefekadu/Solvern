@@ -20,7 +20,7 @@ Without Supabase or Resend keys, development still works end to end: leads are w
 | `npm run build` / `npm start` | Production build and server |
 | `npm run typecheck` | TypeScript |
 | `npm run lint` | ESLint (Next.js rules) |
-| `npm run check:brand` | Fails on gray hex values, em dashes, banned words (AI, smart, licensing...), exclamation marks in copy |
+| `npm run check:brand` | Fails on gray hex values, em dashes, emoji, banned words (AI, smart, licensing...), exclamation marks in copy |
 | `npm run check:colors` | WCAG AA contrast for all 23 trade themes and a gray check on every trade color and tint |
 | `npm test` | Unit and API tests (Vitest): validation, content integrity, markup serialization, the lead and upload routes end to end against the local store |
 | `npm run verify` | All of the above, then a production build. Run before every deploy |
@@ -28,7 +28,11 @@ Without Supabase or Resend keys, development still works end to end: leads are w
 | `npm run verify:full` | `verify` plus the browser tests |
 | `npm run check:launch` | Go-live gate: lists every placeholder still in `site.ts` and the content files, draft trade pages, missing financing link and unset production env vars. Fails until all are done. Not part of `verify` |
 
-CI (`.github/workflows/ci.yml`) runs `verify` and `test:e2e` on every push to main and every pull request.
+CI (`.github/workflows/ci.yml`) runs `verify` and `test:e2e` on every push and pull request.
+
+## Logs
+
+Server code logs through `src/lib/server/log.ts`: one JSON line per event with `level` and `event` (for example `lead.stored`, `lead.failed`, `lead.notification_failed`), ids and counts only. Search Vercel logs for `"level":"error"` or set an alert on it.
 
 ## Pages
 

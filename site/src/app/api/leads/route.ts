@@ -1,3 +1,4 @@
+import { log } from "@/lib/server/log";
 import { NextResponse } from "next/server";
 import { callbackLeadSchema, flattenErrors, previewLeadSchema } from "@/lib/leads/schema";
 import { BackendUnavailable } from "@/lib/server/backend";
@@ -38,10 +39,11 @@ export async function POST(req: Request) {
     }
 
     const id = await createLead(data);
+    log.info("lead.stored", { id, type: data.type });
     return NextResponse.json({ ok: true, id }, { headers: { "Cache-Control": "no-store" } });
   } catch (e) {
     if (e instanceof HttpError) return errorResponse(e);
-    console.error("[leads]", e);
+    log.error("lead.failed", {}, e);
     return errorResponse(new HttpError(e instanceof BackendUnavailable ? 503 : 500, "Something went wrong on our side. Please call us and we will take it from here."));
   }
 }

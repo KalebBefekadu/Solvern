@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { assertSameOrigin, clientIp, HttpError, readJson } from "@/lib/server/http";
 import { rateLimit, resetRateLimits } from "@/lib/server/rate-limit";
 import { esc } from "@/lib/server/notify";
@@ -82,5 +82,16 @@ describe("robots", () => {
     process.env.VERCEL_ENV = "production";
     expect(robots().sitemap).toMatch(/sitemap\.xml$/);
     delete process.env.VERCEL_ENV;
+  });
+});
+
+describe("log", () => {
+  it("writes one JSON line with the event, level and error summary", async () => {
+    const { log } = await import("@/lib/server/log");
+    const lines: string[] = [];
+    const spy = vi.spyOn(console, "error").mockImplementation((l: string) => void lines.push(l));
+    log.error("lead.failed", { id: "x" }, new Error("boom"));
+    spy.mockRestore();
+    expect(JSON.parse(lines[0])).toMatchObject({ level: "error", event: "lead.failed", id: "x", error: "Error", message: "boom" });
   });
 });
