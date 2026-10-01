@@ -44,3 +44,4 @@ No approved design, copy or color was changed.
 - 2026-10-01: Windows high contrast mode keeps the pen colors, trade swatches, note markers and drawings, which carry meaning in their color. The selected pen gets an outline.
 - 2026-10-01: Print styles leave out navigation, sticky bars and forms.
 - 2026-10-01: The mobile menu's links render only while it is open (about 3.5 KB less HTML per page).
+- 2026-10-01: Dependencies: Next 15.5.27 (newest 15.x) pins PostCSS 8.4.31, which has published advisories. An npm override moves it to 8.5.28; `npm audit --omit=dev` now reports 0. The one remaining advisory is in Vitest 3 (dev only, affects running untrusted test code). Vitest 4 crashes npm 10's resolver, so the upgrade waits for npm 11 in CI. Next 16 is a major upgrade and is not taken in this pass.
