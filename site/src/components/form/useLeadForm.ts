@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import { uid } from "@/lib/markup";
 import { track } from "@/lib/analytics";
 import { SubmitError } from "@/lib/leads/client";
@@ -22,7 +22,7 @@ export function useLeadForm(form: string, trackProps: () => Record<string, unkno
   const [resetKey, setResetKey] = useState(0);
   const onToken = useCallback((t: string) => setToken(t), []);
   /** Same id for every retry of this attempt; the server stores the lead once. */
-  const requestId = useRef(uid());
+  const [requestId] = useState(uid);
 
   const onStart = () => {
     if (started) return;
@@ -61,5 +61,5 @@ export function useLeadForm(form: string, trackProps: () => Record<string, unkno
     }
   };
 
-  return { ...fields, status, formError, started, token, resetKey, onToken, onStart, submit, requestId: requestId.current };
+  return { ...fields, status, formError, started, token, resetKey, onToken, onStart, submit, requestId };
 }

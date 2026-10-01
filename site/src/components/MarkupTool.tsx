@@ -46,13 +46,11 @@ export function MarkupTool({ photos, setPhotos, photoSubject, exampleNotes, diag
 
   const active = photos.find((p) => p.id === activeId) ?? photos[0] ?? null;
 
-  useEffect(() => {
-    if (!activeId && photos[0]) setActiveId(photos[0].id);
-  }, [photos, activeId]);
-
   // Release object URLs on unmount.
   const photosRef = useRef(photos);
-  photosRef.current = photos;
+  useEffect(() => {
+    photosRef.current = photos;
+  }, [photos]);
   useEffect(() => () => photosRef.current.forEach((p) => URL.revokeObjectURL(p.url)), []);
 
   const updateActive = useCallback(

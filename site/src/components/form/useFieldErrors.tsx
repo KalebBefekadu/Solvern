@@ -6,6 +6,8 @@ import type { FieldErrors } from "@/lib/leads/constants";
 /**
  * Field error state and the ids and ARIA wiring that go with it.
  * `field(name)` returns the props for an input: id, name, aria-invalid and aria-describedby.
+ * Callers take `formRef` out of the result (`const { formRef, ...f } = ...`): an object holding a ref
+ * counts as a ref to the React Compiler, which would then flag every other property read during render.
  */
 export function useFieldErrors() {
   const [errors, setErrors] = useState<FieldErrors>({});

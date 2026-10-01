@@ -99,3 +99,15 @@ describe("metadata and structured data", () => {
     expect(faqJsonLd([{ q: "Q", a: "Yes." }])?.mainEntity).toHaveLength(1);
   });
 });
+
+describe("logo symbol", () => {
+  it("is served from public/ under the id the Lockup component uses", async () => {
+    const fs = await import("node:fs");
+    const logo = fs.readFileSync("src/components/Logo.tsx", "utf8");
+    const href = logo.match(/<use href="\/([^"#]+)#([^"]+)"/);
+    expect(href).not.toBeNull();
+    const svg = fs.readFileSync(`public/${href![1]}`, "utf8");
+    expect(svg).toContain(`<symbol id="${href![2]}" viewBox="0 0 671.6 96">`);
+    expect(svg).not.toMatch(/fill="#/); // color must come from currentColor
+  });
+});

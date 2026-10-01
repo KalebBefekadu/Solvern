@@ -48,3 +48,12 @@ No approved design, copy or color was changed.
 - 2026-10-01: Server logs are one JSON line per event (`lead.stored`, `lead.failed`, `lead.notification_failed`, `turnstile.unreachable` and so on) with ids and counts only, never customer details. In production, an unsent email is logged by subject only.
 - 2026-10-01: The brand check now also fails on emoji anywhere and on exclamation marks in component copy, not just in JSON.
 - 2026-10-01: CI runs on every branch push; the first run on GitHub passed (verify and browser tests).
+
+## 2026-10-01: engineering upkeep (Claude)
+No approved design, copy or color was changed. Screenshots of 12 pages on desktop and phone were taken first and every later step matched them pixel for pixel.
+- 2026-10-01: Screenshot comparison tests (`tests/e2e/visual.spec.ts`) now run in CI. A design change fails the build until its new baselines are committed, so nothing changes the look unnoticed.
+- 2026-10-01: Fixed: on phones the mobile menu links sat flush against the screen edge (the menu's padding cancelled the page gutters). The first screenshot showed it.
+- 2026-10-01: Static inline styles moved into the stylesheet. Inline styles remain only for data-driven values, share images and the last-resort error page.
+- 2026-10-01: Upgraded to Next.js 16.3.8 (Turbopack builds, React Compiler lint rules, native ESLint flat config). The forms no longer read refs during render, which the new rules flag. PostCSS override removed: Next 16 ships a version with no advisories.
+- 2026-10-01: Next 16 adds about 35 KB of framework script per page, which pushed the hub's mobile LCP to 2.5 s in Lighthouse (median of five). Each page's HTML is now 13 to 17 KB smaller instead: the logo wordmark is one cached SVG symbol rather than a copy in every header, footer and hydration payload, and the five rating stars are one SVG. Medians are back level with Next 15 (hub 2.05 s).
+- 2026-10-01: `site/AGENTS.md` holds the rules block that `next dev` writes for coding agents, so it never adds files on its own. It points to the root CLAUDE.md first.

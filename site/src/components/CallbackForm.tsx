@@ -29,7 +29,7 @@ export function CallbackForm({ prefill = {} }: { prefill?: CallbackPrefill }) {
   const [existing, setExisting] = useState<Existing | null>(prefill.job ? "yes" : null);
   const [topic, setTopic] = useState("");
   const doneRef = useRef<HTMLDivElement>(null);
-  const f = useLeadForm("callback", () => ({ existing_job: existing === "yes", topic }));
+  const { formRef, ...f } = useLeadForm("callback", () => ({ existing_job: existing === "yes", topic }));
 
   const chooseExisting = (v: Existing) => {
     setExisting(v);
@@ -92,7 +92,7 @@ export function CallbackForm({ prefill = {} }: { prefill?: CallbackPrefill }) {
   const topics = existing === "yes" ? CALLBACK_TOPICS_EXISTING : CALLBACK_TOPICS_NEW;
 
   return (
-    <form ref={f.formRef} className="cs-form" id="callback" noValidate onSubmit={onSubmit} onFocus={f.onStart} aria-label="Request a callback" aria-busy={status === "sending"}>
+    <form ref={formRef} className="cs-form" id="callback" noValidate onSubmit={onSubmit} onFocus={f.onStart} aria-label="Request a callback" aria-busy={status === "sending"}>
       <div className="cs-step">
         <span className="cs-step__n" aria-hidden="true">
           1

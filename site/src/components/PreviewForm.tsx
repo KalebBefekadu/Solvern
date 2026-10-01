@@ -36,7 +36,7 @@ export function PreviewForm({ trade, tradeOptions, initial }: Props) {
   const [photos, setPhotos] = useState<MarkupPhoto[]>([]);
   const [progress, setProgress] = useState("");
   const doneRef = useRef<HTMLDivElement>(null);
-  const f = useLeadForm(formName, () => ({ trade: current?.slug, photos: photos.length }));
+  const { formRef, ...f } = useLeadForm(formName, () => ({ trade: current?.slug, photos: photos.length }));
 
   // Marked-up photos live only in this tab: warn before they are lost.
   const unsent = photos.length > 0 && f.status !== "done";
@@ -110,7 +110,7 @@ export function PreviewForm({ trade, tradeOptions, initial }: Props) {
             <p className="small">A confirmation is on its way to your email.</p>
           </div>
         ) : (
-          <form ref={f.formRef} className="form" noValidate onSubmit={onSubmit} onFocus={f.onStart} aria-labelledby={fid("title")} aria-busy={status === "sending"}>
+          <form ref={formRef} className="form" noValidate onSubmit={onSubmit} onFocus={f.onStart} aria-labelledby={fid("title")} aria-busy={status === "sending"}>
             <h3 className="h3" id={fid("title")}>
               {title}
             </h3>

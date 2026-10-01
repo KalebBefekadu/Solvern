@@ -48,6 +48,11 @@ const nextConfig: NextConfig = {
           { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), browsing-topics=()" },
         ],
       },
+      // Logo symbol and brand art: cached for a day, refreshed in the background after that.
+      {
+        source: "/brand/(.*)",
+        headers: [{ key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" }],
+      },
       {
         source: "/api/(.*)",
         headers: [{ key: "X-Robots-Tag", value: "noindex" }],

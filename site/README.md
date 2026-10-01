@@ -1,6 +1,6 @@
 # Solvern Home website
 
-Next.js 15 (App Router) + TypeScript, deployed on Vercel, Supabase for leads and photo storage, Resend for email. Built from the handoff docs in `../docs` (read `../CLAUDE.md` first).
+Next.js 16 (App Router, Turbopack) + TypeScript, deployed on Vercel, Supabase for leads and photo storage, Resend for email. Built from the handoff docs in `../docs` (read `../CLAUDE.md` first).
 
 ## Run it
 
@@ -25,6 +25,8 @@ Without Supabase or Resend keys, development still works end to end: leads are w
 | `npm test` | Unit and API tests (Vitest): validation, content integrity, markup serialization, the lead and upload routes end to end against the local store |
 | `npm run verify` | All of the above, then a production build. Run before every deploy |
 | `npm run test:e2e` | Browser tests (Playwright) against the production build, desktop and phone: every page with an axe WCAG 2.1 AA scan and a 320px overflow check, the callback form, photo upload and drawing, Concept Preview and visit submissions, SEO and security headers. Run `npm run build` first |
+| `npm run test:visual` | Screenshot comparison only (part of `test:e2e`): 12 pages on desktop and phone plus the open mobile menu, against the baselines in `tests/e2e/__screenshots__`. Linux only, since the baselines come from Linux Chromium (the CI runner); on a Mac they skip. Run `npm run build` first |
+| `npm run test:visual:update` | After an approved design change: rewrite the baselines, then review every changed image in the diff before committing |
 | `npm run verify:full` | `verify` plus the browser tests |
 | `npm run check:launch` | Go-live gate: lists every placeholder still in `site.ts` and the content files, draft trade pages, missing financing link and unset production env vars. Fails until all are done. Not part of `verify` |
 
@@ -116,8 +118,19 @@ src/
   styles/              tokens.css and globals.css
 tests/
   unit/, api/          Vitest
-  e2e/                 Playwright
+  e2e/                 Playwright: pages, forms, focus rings, and visual.spec.ts (screenshots)
+    __screenshots__/   Approved baselines, one folder per browser project
 ```
+
+### Styles
+
+All fixed styling lives in `src/styles/globals.css`, next to the component it belongs to. Modifiers use compound
+selectors (`.btn.btn--tall`) so they hold at every width. Inline `style` is kept for three cases only: values that
+come from data (trade and pen colors, note positions, photo aspect ratio), the share images (satori reads inline
+styles only), and `app/global-error.tsx` (it replaces the root layout, so the stylesheet may not be loaded).
+
+The logo wordmark is one SVG symbol (`public/brand/lockup-symbol.svg`) referenced with `<use>`, so its 3 KB path is
+cached instead of repeated in every page. Color still comes from `currentColor`.
 
 ## Security
 
@@ -142,6 +155,8 @@ Both lead forms run on `src/components/form/useLeadForm.ts` (start, validation, 
 Plus Jakarta Sans is self-hosted from `src/fonts` (variable, latin subset, SIL Open Font License, `OFL.txt`). No request to Google at runtime.
 
 ## Verified on this build
+
+- 2026-10-01 (Next 16): `npm run verify` passes (57 unit and API tests) and `npm run test:e2e` passes (80 browser tests, including 25 screenshot comparisons that matched the Next 15 build pixel for pixel). Lighthouse mobile, median of five runs against the Next 15 build on the same machine: / LCP 2.05 s (Next 15: 2.17 s), /hvac 2.17 s (2.03 s), /carpentry 2.04 s (2.05 s); performance 97 to 99, accessibility, best practices and SEO 100.
 
 - 2026-10-01 (pass 3): `npm run verify` passes (55 unit and API tests) and `npm run test:e2e` passes (55 browser tests on desktop and phone: axe clean on every page, focus rings at 3:1 or better on all 27 pages, no horizontal scroll at 320px or 1440px).
 - Type check, lint, brand check and color check pass; production build succeeds.

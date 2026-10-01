@@ -1,19 +1,25 @@
 type P = { size?: number; className?: string };
 
+const STAR = "M12 2l3 6.5 7 .8-5.2 4.8 1.4 7L12 17.8 5.8 21.1l1.4-7L2 9.3l7-.8z";
+
 export function Star({ size = 18, filled = true }: P & { filled?: boolean }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill={filled ? "var(--trade)" : "none"} stroke="var(--trade)" strokeWidth={filled ? 0 : 1.6} aria-hidden="true">
-      <path d="M12 2l3 6.5 7 .8-5.2 4.8 1.4 7L12 17.8 5.8 21.1l1.4-7L2 9.3l7-.8z" />
+      <path d={STAR} />
     </svg>
   );
 }
 
+/** Five filled stars in one SVG, 2px apart (one element instead of five keeps review-heavy pages light). */
 export function Stars({ size = 20, label }: P & { label?: string }) {
+  const unit = 24 + (2 * 24) / size; // star plus a 2px gap, in viewBox units
   return (
     <span className="stars" role={label ? "img" : undefined} aria-label={label} aria-hidden={label ? undefined : true}>
-      {[0, 1, 2, 3, 4].map((i) => (
-        <Star key={i} size={size} />
-      ))}
+      <svg width={size * 5 + 8} height={size} viewBox={`0 0 ${unit * 4 + 24} 24`} fill="var(--trade)" aria-hidden="true">
+        {[0, 1, 2, 3, 4].map((i) => (
+          <path key={i} d={STAR} transform={i ? `translate(${unit * i})` : undefined} />
+        ))}
+      </svg>
     </span>
   );
 }
