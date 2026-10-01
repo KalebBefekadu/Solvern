@@ -121,15 +121,13 @@ export function serializeMarkup(photo: MarkupPhoto) {
   };
 }
 export function serializeNotes(photo: MarkupPhoto) {
-  return photo.notes
-    .slice(0, MAX_NOTES)
-    .map((n) => ({
-      n: n.n,
-      pen: n.pen,
-      color: penById(n.pen).color,
-      text: n.text.trim().slice(0, MAX_NOTE_LENGTH),
-      anchor: { x: Math.round(n.anchor.x), y: Math.round(n.anchor.y) },
-    }));
+  return photo.notes.slice(0, MAX_NOTES).map((n) => ({
+    n: n.n,
+    pen: n.pen,
+    color: penById(n.pen).color,
+    text: n.text.trim().slice(0, MAX_NOTE_LENGTH),
+    anchor: { x: Math.round(n.anchor.x), y: Math.round(n.anchor.y) },
+  }));
 }
 
 /** Draws the photo, strokes and numbered note markers into a PNG (long edge capped). */
