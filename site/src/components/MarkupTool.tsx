@@ -10,6 +10,7 @@ import {
   type Stroke,
   bbox,
   loadImage,
+  normalizePhoto,
   outlineToPath,
   penById,
   strokeOutline,
@@ -17,10 +18,11 @@ import {
   uid,
 } from "@/lib/markup";
 import { track } from "@/lib/analytics";
-import { MAX_NOTE_LENGTH, MAX_NOTES, MAX_PHOTO_BYTES, MAX_PHOTOS, MAX_STROKES } from "@/lib/leads/constants";
+import { MAX_NOTE_LENGTH, MAX_NOTES, MAX_PHOTOS, MAX_STROKES } from "@/lib/leads/constants";
 import { CloseIcon, PlusIcon, TrashIcon, UndoIcon, UploadIcon } from "./Icons";
 
-const ACCEPT = "image/jpeg,image/png,image/webp,image/heic,image/heif";
+// Any image the browser can open; unsupported types are converted to JPEG on add.
+const ACCEPT = "image/*";
 
 interface Props {
   photos: MarkupPhoto[];
@@ -71,21 +73,24 @@ export function MarkupTool({ photos, setPhotos, photoSubject, exampleNotes, diag
     }
     const added: MarkupPhoto[] = [];
     for (const file of files.slice(0, room)) {
-      if (!file.type.startsWith("image/")) {
+      if (file.type && !file.type.startsWith("image/")) {
         setError("Please choose a photo file, such as a JPG or PNG.");
-        continue;
-      }
-      if (file.size > MAX_PHOTO_BYTES) {
-        setError("Each photo can be up to 15 MB.");
         continue;
       }
       const url = URL.createObjectURL(file);
       try {
         const img = await loadImage(url);
-        added.push({ id: uid(), file, url, width: img.naturalWidth, height: img.naturalHeight, strokes: [], notes: [] });
-      } catch {
+        const normalized = await normalizePhoto(file, img);
+        if (normalized.file === file) {
+          added.push({ id: uid(), file, url, width: normalized.width, height: normalized.height, strokes: [], notes: [] });
+        } else {
+          URL.revokeObjectURL(url);
+          const nurl = URL.createObjectURL(normalized.file);
+          added.push({ id: uid(), file: normalized.file, url: nurl, width: normalized.width, height: normalized.height, strokes: [], notes: [] });
+        }
+      } catch (e) {
         URL.revokeObjectURL(url);
-        setError("That photo format could not be opened here. Try a JPG or PNG.");
+        setError(e instanceof Error && e.message.startsWith("This photo is too large") ? e.message : "That photo format could not be opened here. Try a JPG or PNG.");
       }
     }
     if (files.length > room) setError(`You can add up to ${MAX_PHOTOS} photos. The first ${room} were added.`);
@@ -492,7 +497,7 @@ function ExampleStage({
         {notes[1] && <ExampleNote n={2} pen="orange" text={notes[1]} style={{ left: "61%", top: "56%" }} />}
       </div>
       <div className="dropzone dropzone--row" data-dragging={dragging} {...dnd}>
-        <span className="small">Drag photos here, or choose them. JPG or PNG, up to 15 MB each.</span>
+        <span className="small">Drag photos here, or choose them from your phone or computer.</span>
         <button type="button" className="btn btn--trade btn--sm" onClick={onPick}>
           <UploadIcon size={18} /> {label}
         </button>

@@ -26,6 +26,7 @@ Without Supabase or Resend keys, development still works end to end: leads are w
 | `npm run verify` | All of the above, then a production build. Run before every deploy |
 | `npm run test:e2e` | Browser tests (Playwright) against the production build, desktop and phone: every page with an axe WCAG 2.1 AA scan and a 320px overflow check, the callback form, photo upload and drawing, Concept Preview and visit submissions, SEO and security headers. Run `npm run build` first |
 | `npm run verify:full` | `verify` plus the browser tests |
+| `npm run check:launch` | Go-live gate: lists every placeholder still in `site.ts` and the content files, draft trade pages, missing financing link and unset production env vars. Fails until all are done. Not part of `verify` |
 
 CI (`.github/workflows/ci.yml`) runs `verify` and `test:e2e` on every push to main and every pull request.
 
@@ -40,6 +41,8 @@ CI (`.github/workflows/ci.yml`) runs `verify` and `test:e2e` on every push to ma
 | `/reviews`, `/financing`, `/about`, `/privacy`, `/terms` | `src/app/*` | Placeholder-driven; privacy and terms are templates for an attorney to review |
 | `/sitemap.xml`, `/robots.txt` | `src/app/sitemap.ts`, `robots.ts` | Sitemap lists approved trade pages only |
 | `/api/health` | `src/app/api/health/route.ts` | Deploy check, see Production setup |
+| `/opengraph-image`, `/<trade>/opengraph-image/card` | `src/lib/og.tsx` | Share cards for links in messages and social posts: the Solvern mark, the page headline and the trade color. Rendered at build time |
+| `/apple-icon`, `/manifest.webmanifest` | `src/app/apple-icon.tsx`, `manifest.ts` | Home screen icon and web manifest |
 
 Trade pages never link out to other trades (owner rule). The full directory lives only on the hub, its menu and footer.
 
@@ -79,7 +82,7 @@ Callback requests use the same `/api/leads` route with `type: "callback"`, flagg
 
 ## Production setup
 
-1. **Supabase:** create a project, run `supabase/migrations/0001_leads.sql` (tables, indexes, RLS on with no public policies, private `lead-uploads` bucket). Copy the URL and service role key.
+1. **Supabase:** create a project, run `supabase/migrations/0001_leads.sql` (tables, indexes, RLS on with no public policies, private `lead-uploads` bucket), then `0002_lead_hardening.sql` (`updated_at`, length limits, open-leads index). Copy the URL and service role key.
 2. **Resend:** verify the sending domain, create an API key.
 3. **Turnstile:** create a widget for the domain, copy the site key and secret.
 4. **Vercel:** import the `site` folder, set every variable from `.env.example`, deploy. Set them before the build: the Content Security Policy reads `SUPABASE_URL` at build time to allow direct photo uploads, so redeploy after changing it. Point the domain (open item: solvern.com or solvernhome.com) and set `NEXT_PUBLIC_SITE_URL`.
@@ -95,11 +98,15 @@ src/
     api/uploads        POST: signed upload targets (Supabase, or ./.data in development)
     api/health         GET: which services are configured (booleans only)
   components/          UI. Client components are marked "use client"
+    form/              useLeadForm and useFieldErrors, shared by both lead forms
   content/             Data the owner edits: site.ts, trades, copy, SEO, projects
   lib/
     content.ts         Typed access to the content files
     markup.ts          Drawing geometry, stroke thinning, PNG flattening
-    leads/             Shared by browser and server: constants (limits, topics), schema (Zod), client (upload and submit)
+    leads/             Shared by browser and server: constants (limits, topics), schema (Zod), validate (client checks),
+                       client (upload and submit)
+    metadata.ts        One metadata shape per page: canonical, Open Graph, Twitter
+    og.tsx             Share card renderer
     server/            Server only: backend (Supabase or local store), leads (intake logic), notify (Resend),
                        turnstile, http (body limits, origin check), rate-limit, env
   styles/              tokens.css and globals.css
@@ -114,10 +121,17 @@ tests/
 - The lead and upload routes refuse cross-site posts, JSON bodies over 1 MB and bursts from one address, then validate every field with Zod. Upload paths must match the pattern the server issued, and every referenced photo must exist before a lead can point at it.
 - Content Security Policy, HSTS, `X-Frame-Options: DENY`, `nosniff` and a strict referrer policy are set in `next.config.ts`.
 - Customer text is HTML-escaped in emails. Structured data is serialized with `<` escaped.
+- Every form attempt carries a request id; a retry after a lost response returns the stored lead instead of saving it twice (`leads.request_id`, unique).
+- Customer confirmation emails drop any sentence that still holds a bracketed placeholder, so a customer never receives "[HOURS]".
+- Preview deployments (`VERCEL_ENV` other than `production`) serve a disallow-all robots.txt and `X-Robots-Tag: noindex`.
+
+## Forms
+
+Both lead forms run on `src/components/form/useLeadForm.ts` (start, validation, submit, Turnstile reset, server field errors, focus on the first error, analytics) and `useFieldErrors.tsx` (ids and ARIA wiring). Client checks in `src/lib/leads/validate.ts` mirror the Zod schema; a test keeps them in step. Photos the bucket refuses (GIF, AVIF, BMP) or over 15 MB are converted to JPEG in the browser before upload. Leaving a page with unsent marked-up photos asks for confirmation.
 
 ## Analytics
 
-`src/lib/analytics.ts` pushes `phone_click`, `cta_click`, `form_start`, `form_submit`, `markup_use` and `financing_click` to `window.dataLayer` (ready for Google Tag Manager or GA4) and dispatches a `solvern:track` DOM event. UTM parameters and click IDs are kept for the session and saved with every lead. Add the GTM snippet or a call tracking number once chosen (open item).
+`src/lib/analytics.ts` pushes `phone_click`, `cta_click`, `form_start`, `form_submit`, `form_error` (which fields failed), `markup_use` and `financing_click` to `window.dataLayer` (ready for Google Tag Manager or GA4) and dispatches a `solvern:track` DOM event. UTM parameters and click IDs are kept for the session and saved with every lead. Add the GTM snippet or a call tracking number once chosen (open item).
 
 ## Font
 
@@ -125,9 +139,9 @@ Plus Jakarta Sans is self-hosted from `src/fonts` (variable, latin subset, SIL O
 
 ## Verified on this build
 
-- 2026-10-01 (pass 2): `npm run verify` passes (44 unit and API tests) and `npm run test:e2e` passes (48 browser tests on desktop and phone, axe clean on every page, no horizontal scroll at 320px or 1440px on any page).
+- 2026-10-01 (pass 3): `npm run verify` passes (55 unit and API tests) and `npm run test:e2e` passes (53 browser tests on desktop and phone, axe clean on every page, no horizontal scroll at 320px or 1440px on any page).
 - Type check, lint, brand check and color check pass; production build succeeds.
 - axe WCAG 2.1 AA: no violations on every page at 1440px and 375px.
-- Lighthouse mobile (pass 2, warm server in a shared container): performance 98, accessibility 100, best practices 100, SEO 100. LCP 2.1 to 2.3 s, CLS 0. Pass 1 measured LCP 1.6 to 2.0 s.
+- Lighthouse mobile (pass 3, warm server in a shared container): performance 99, accessibility 100, best practices 100, SEO 100 on /, /carpentry and /customer-service. LCP 1.8 to 2.1 s, CLS 0.
 - No horizontal scroll at 320px.
 - End to end in a browser: photo upload, drawing with two pens, notes, submit, lead and both images stored, emails generated; callback form branching, prefill, validation, keyboard use and submit; honeypot, path injection and topic tampering rejected server side.

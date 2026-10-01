@@ -82,3 +82,29 @@ test.describe("at 320px", () => {
     }
   });
 });
+
+test("share images, icons and manifest are served", async ({ request, page }) => {
+  for (const url of ["/opengraph-image", "/carpentry/opengraph-image/card", "/apple-icon"]) {
+    const res = await request.get(url);
+    expect(res.status(), url).toBe(200);
+    expect(res.headers()["content-type"], url).toBe("image/png");
+  }
+  const manifest = await (await request.get("/manifest.webmanifest")).json();
+  expect(manifest.name).toBe("Solvern Home");
+
+  await page.goto("/about");
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute("content", /\/opengraph-image$/);
+  await page.goto("/hvac");
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute("content", /\/hvac\/opengraph-image\/card$/);
+});
+
+test("mobile menu closes on Escape and returns focus to its button", async ({ page, isMobile }) => {
+  test.skip(!isMobile, "The menu button only shows below 1024px");
+  await page.goto("/");
+  const button = page.getByRole("button", { name: "Open menu" });
+  await button.click();
+  await expect(page.getByRole("navigation", { name: "Mobile" })).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("navigation", { name: "Mobile" })).toBeHidden();
+  await expect(page.getByRole("button", { name: "Open menu" })).toBeFocused();
+});

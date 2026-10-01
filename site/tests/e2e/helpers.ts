@@ -29,3 +29,21 @@ export function solidPng(width: number, height: number, rgb: [number, number, nu
   const raw = Buffer.concat(Array.from({ length: height }, () => row));
   return Buffer.concat([Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), chunk("IHDR", ihdr), chunk("IDAT", zlib.deflateSync(raw)), chunk("IEND", Buffer.alloc(0))]);
 }
+
+/** A 24-bit BMP: a format the storage bucket refuses, so the browser must convert it to JPEG. */
+export function solidBmp(width: number, height: number): Buffer {
+  const rowSize = Math.ceil((width * 3) / 4) * 4;
+  const size = 54 + rowSize * height;
+  const b = Buffer.alloc(size);
+  b.write("BM", 0);
+  b.writeUInt32LE(size, 2);
+  b.writeUInt32LE(54, 10);
+  b.writeUInt32LE(40, 14);
+  b.writeInt32LE(width, 18);
+  b.writeInt32LE(height, 22);
+  b.writeUInt16LE(1, 26);
+  b.writeUInt16LE(24, 28);
+  b.writeUInt32LE(rowSize * height, 34);
+  for (let y = 0; y < height; y++) for (let x = 0; x < width; x++) b.set([244, 225, 214], 54 + y * rowSize + x * 3);
+  return b;
+}

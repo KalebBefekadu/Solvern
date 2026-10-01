@@ -1,5 +1,5 @@
 import { getStroke } from "perfect-freehand";
-import { MAX_NOTE_LENGTH, MAX_NOTES, MAX_POINTS_PER_STROKE, MAX_STROKES } from "@/lib/leads/constants";
+import { MAX_NOTE_LENGTH, MAX_NOTES, MAX_PHOTO_BYTES, MAX_POINTS_PER_STROKE, MAX_STROKES, PHOTO_TYPES } from "@/lib/leads/constants";
 
 export const PENS = [
   { id: "blue", label: "Blue pen", color: "#2F63D6", text: "#2F63D6" },
@@ -36,8 +36,15 @@ export interface MarkupPhoto {
   notes: Note[];
 }
 
-export const uid = () =>
-  typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : Math.random().toString(36).slice(2);
+/** RFC 4122 v4 id. randomUUID needs a secure context, so older or plain-http browsers fall back to getRandomValues. */
+export function uid(): string {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") return crypto.randomUUID();
+  const b = crypto.getRandomValues(new Uint8Array(16));
+  b[6] = (b[6] & 0x0f) | 0x40;
+  b[8] = (b[8] & 0x3f) | 0x80;
+  const h = Array.from(b, (x) => x.toString(16).padStart(2, "0")).join("");
+  return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20)}`;
+}
 
 export function strokeSize(w: number, h: number) {
   return Math.max(4, Math.round(Math.max(w, h) * 0.008));
@@ -159,4 +166,33 @@ export function loadImage(src: string): Promise<HTMLImageElement> {
     img.onerror = () => reject(new Error("This photo could not be opened"));
     img.src = src;
   });
+}
+
+/**
+ * Makes a decoded photo acceptable to storage: a type the bucket allows and at most 15 MB.
+ * Anything else the browser can open (GIF, AVIF, BMP, a very large JPEG) is re-encoded as JPEG,
+ * with the long edge capped so the result fits. Accepted files pass through untouched.
+ */
+export async function normalizePhoto(file: File, img: HTMLImageElement, maxEdge = 4096): Promise<{ file: File; width: number; height: number }> {
+  const w0 = img.naturalWidth;
+  const h0 = img.naturalHeight;
+  if ((PHOTO_TYPES as readonly string[]).includes(file.type) && file.size <= MAX_PHOTO_BYTES) return { file, width: w0, height: h0 };
+  const scale = Math.min(1, maxEdge / Math.max(w0, h0));
+  const width = Math.round(w0 * scale);
+  const height = Math.round(h0 * scale);
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext("2d")!;
+  ctx.fillStyle = "#FFFFFF"; // transparent areas (PNG, GIF) become white, not black
+  ctx.fillRect(0, 0, width, height);
+  ctx.drawImage(img, 0, 0, width, height);
+  for (const quality of [0.9, 0.8, 0.7]) {
+    const blob = await new Promise<Blob | null>((res) => canvas.toBlob(res, "image/jpeg", quality));
+    if (blob && blob.size <= MAX_PHOTO_BYTES) {
+      const name = file.name.replace(/\.[^.]+$/, "") + ".jpg";
+      return { file: new File([blob], name, { type: "image/jpeg" }), width, height };
+    }
+  }
+  throw new Error("This photo is too large to send. Try a smaller one.");
 }

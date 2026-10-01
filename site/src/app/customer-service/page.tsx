@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/metadata";
 import Link from "next/link";
 import { Suspense } from "react";
 import { site } from "@/content/site";
@@ -10,11 +11,11 @@ import { CallbackFormWithPrefill } from "@/components/CallbackFormWithPrefill";
 import { JsonLd } from "@/components/sections";
 import { localBusinessJsonLd } from "@/lib/structured-data";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Customer service: request a callback | Solvern Home",
   description: "Questions about new work or a job you have booked with Solvern Home? Request a callback and the right person on our team will call you back.",
-  alternates: { canonical: "/customer-service" },
-};
+  path: "/customer-service",
+});
 
 export default function CustomerServicePage() {
   return (

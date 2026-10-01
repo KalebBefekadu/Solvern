@@ -1,13 +1,14 @@
 "use client";
 
-import { useCallback, useId, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { MarkupPhoto } from "@/lib/markup";
-import { track } from "@/lib/analytics";
-import { submitLead, SubmitError, uploadPhotos } from "@/lib/leads/client";
+import { submitLead, uploadPhotos } from "@/lib/leads/client";
+import { contactErrors } from "@/lib/leads/validate";
 import type { FieldErrors } from "@/lib/leads/constants";
 import { MarkupTool } from "./MarkupTool";
 import { Turnstile } from "./Turnstile";
 import { CheckIcon } from "./Icons";
+import { useLeadForm } from "./form/useLeadForm";
 
 export interface TradeOption {
   slug: string;
@@ -30,50 +31,37 @@ export function PreviewForm({ trade, tradeOptions, initial }: Props) {
   const [selected, setSelected] = useState<TradeOption | undefined>(trade ?? initial);
   const current = trade ?? selected;
   const diagnosis = current?.diagnosis ?? false;
+  const formName = diagnosis ? "visit" : "concept_preview";
 
   const [photos, setPhotos] = useState<MarkupPhoto[]>([]);
-  const [errors, setErrors] = useState<FieldErrors>({});
-  const [formError, setFormError] = useState<string | null>(null);
-  const [status, setStatus] = useState<"idle" | "sending" | "done">("idle");
   const [progress, setProgress] = useState("");
-  const [started, setStarted] = useState(false);
-  const [token, setToken] = useState("");
-  const [resetKey, setResetKey] = useState(0);
-  const formRef = useRef<HTMLFormElement>(null);
   const doneRef = useRef<HTMLDivElement>(null);
-  const id = useId();
+  const f = useLeadForm(formName, () => ({ trade: current?.slug, photos: photos.length }));
 
-  const onStart = () => {
-    if (started) return;
-    setStarted(true);
-    track("form_start", { form: diagnosis ? "visit" : "concept_preview", trade: current?.slug });
-  };
-  const onToken = useCallback((t: string) => setToken(t), []);
+  // Marked-up photos live only in this tab: warn before they are lost.
+  const unsent = photos.length > 0 && f.status !== "done";
+  useEffect(() => {
+    if (!unsent) return;
+    const warn = (e: BeforeUnloadEvent) => e.preventDefault();
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, [unsent]);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (status === "sending") return;
     const fd = new FormData(e.currentTarget);
     const get = (k: string) => String(fd.get(k) ?? "").trim();
     const local: FieldErrors = {};
     if (!current) local.tradeSlug = "Choose a trade.";
     if (get("message").length < 3) local.message = diagnosis ? "Tell us what is happening." : "Tell us a little about what you want.";
     if (get("name").length < 2) local.name = "Enter your name.";
-    if (!/^\d{5}(-\d{4})?$/.test(get("zip"))) local.zip = "Enter a 5-digit zip code.";
-    if (get("phone").replace(/\D/g, "").length < 10) local.phone = "Enter a phone number with area code.";
-    if (!/^\S+@\S+\.\S+$/.test(get("email"))) local.email = "Enter a valid email address.";
-    setErrors(local);
-    setFormError(null);
-    if (Object.keys(local).length) {
-      focusFirstError(local);
-      return;
-    }
-    setStatus("sending");
-    try {
+    Object.assign(local, contactErrors(get));
+
+    const ok = await f.submit(local, async () => {
       const records = await uploadPhotos(photos, setProgress);
       setProgress("Sending your request");
       await submitLead({
-        type: diagnosis ? "visit" : "concept_preview",
+        type: formName,
         tradeSlug: current!.slug,
         message: get("message"),
         name: get("name"),
@@ -81,37 +69,17 @@ export function PreviewForm({ trade, tradeOptions, initial }: Props) {
         phone: get("phone"),
         email: get("email"),
         company: get("company"),
-        turnstileToken: token,
+        turnstileToken: f.token,
+        requestId: f.requestId,
         photos: records,
       });
-      track("form_submit", { form: diagnosis ? "visit" : "concept_preview", trade: current!.slug, photos: photos.length });
-      setStatus("done");
-      requestAnimationFrame(() => doneRef.current?.focus());
-    } catch (err) {
-      const se = err instanceof SubmitError ? err : new SubmitError("Something went wrong. Please try again or call us.");
-      setErrors(se.fields);
-      setFormError(se.message);
-      setStatus("idle");
-      setResetKey((k) => k + 1);
-      focusFirstError(se.fields);
-    }
+    });
+    setProgress("");
+    if (ok) requestAnimationFrame(() => doneRef.current?.focus());
   }
 
-  function focusFirstError(errs: FieldErrors) {
-    const first = Object.keys(errs)[0];
-    if (!first) return;
-    const el = formRef.current?.querySelector<HTMLElement>(`[name="${first}"]`);
-    el?.focus();
-  }
-
-  const fid = (k: string) => `${id}-${k}`;
-  const err = (k: string) =>
-    errors[k] ? (
-      <span className="field-error" id={`${fid(k)}-err`}>
-        {errors[k]}
-      </span>
-    ) : null;
-  const aria = (k: string) => ({ id: fid(k), name: k, "aria-invalid": errors[k] ? true : undefined, "aria-describedby": errors[k] ? `${fid(k)}-err` : undefined });
+  const { field, error: err, id: fid } = f;
+  const status = f.status;
 
   const title = diagnosis ? "Request a visit" : "Get my Concept Preview";
 
@@ -121,7 +89,7 @@ export function PreviewForm({ trade, tradeOptions, initial }: Props) {
         <MarkupTool
           photos={photos}
           setPhotos={(v) => {
-            onStart();
+            f.onStart();
             setPhotos(v);
           }}
           photoSubject={current?.photoSubject ?? "space"}
@@ -146,7 +114,7 @@ export function PreviewForm({ trade, tradeOptions, initial }: Props) {
             <p className="small">A confirmation is on its way to your email.</p>
           </div>
         ) : (
-          <form ref={formRef} className="form" noValidate onSubmit={onSubmit} onFocus={onStart} aria-labelledby={fid("title")}>
+          <form ref={f.formRef} className="form" noValidate onSubmit={onSubmit} onFocus={f.onStart} aria-labelledby={fid("title")} aria-busy={status === "sending"}>
             <h3 className="h3" id={fid("title")}>
               {title}
             </h3>
@@ -156,7 +124,7 @@ export function PreviewForm({ trade, tradeOptions, initial }: Props) {
                 <label htmlFor={fid("tradeSlug")}>Trade or project</label>
                 <select
                   className="select"
-                  {...aria("tradeSlug")}
+                  {...field("tradeSlug")}
                   value={selected?.slug ?? ""}
                   onChange={(e) => setSelected(tradeOptions.find((t) => t.slug === e.target.value))}
                 >
@@ -173,28 +141,28 @@ export function PreviewForm({ trade, tradeOptions, initial }: Props) {
 
             <div className="field">
               <label htmlFor={fid("message")}>{diagnosis ? "What's happening?" : "What would you like?"}</label>
-              <textarea className="textarea" rows={3} maxLength={2000} placeholder={current?.formPlaceholder} {...aria("message")} />
+              <textarea className="textarea" rows={3} maxLength={2000} placeholder={current?.formPlaceholder} {...field("message")} />
               {err("message")}
             </div>
             <div className="grid-2">
               <div className="field">
                 <label htmlFor={fid("name")}>Name</label>
-                <input className="input" type="text" autoComplete="name" maxLength={120} {...aria("name")} />
+                <input className="input" type="text" autoComplete="name" maxLength={120} {...field("name")} />
                 {err("name")}
               </div>
               <div className="field">
                 <label htmlFor={fid("zip")}>Zip code</label>
-                <input className="input" type="text" inputMode="numeric" autoComplete="postal-code" maxLength={10} {...aria("zip")} />
+                <input className="input" type="text" inputMode="numeric" autoComplete="postal-code" maxLength={10} {...field("zip")} />
                 {err("zip")}
               </div>
               <div className="field">
                 <label htmlFor={fid("phone")}>Phone</label>
-                <input className="input" type="tel" autoComplete="tel" maxLength={30} {...aria("phone")} />
+                <input className="input" type="tel" autoComplete="tel" maxLength={30} {...field("phone")} />
                 {err("phone")}
               </div>
               <div className="field">
                 <label htmlFor={fid("email")}>Email</label>
-                <input className="input" type="email" autoComplete="email" maxLength={200} {...aria("email")} />
+                <input className="input" type="email" autoComplete="email" maxLength={200} {...field("email")} />
                 {err("email")}
               </div>
             </div>
@@ -204,11 +172,11 @@ export function PreviewForm({ trade, tradeOptions, initial }: Props) {
               <input id={fid("company")} name="company" type="text" tabIndex={-1} autoComplete="off" />
             </div>
 
-            <Turnstile active={started} onToken={onToken} resetKey={resetKey} />
+            <Turnstile active={f.started} onToken={f.onToken} resetKey={f.resetKey} />
 
-            {formError && (
+            {f.formError && (
               <p className="form-status form-status--error" role="alert">
-                {formError}
+                {f.formError}
               </p>
             )}
 

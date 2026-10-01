@@ -8,6 +8,7 @@ import {
   MAX_PHOTOS,
   MAX_POINTS_PER_STROKE,
   MAX_STROKES,
+  PHOTO_TYPES,
   type FieldErrors,
 } from "./constants";
 
@@ -51,6 +52,8 @@ const base = {
   sourceUrl: trimmed(500).optional().default(""),
   utm: z.record(z.string().max(60), z.string().max(200)).optional().default({}),
   turnstileToken: z.string().max(4096).optional().default(""),
+  /** One id per form attempt, so a retry after a lost response never stores the lead twice. */
+  requestId: z.string().uuid().optional(),
   /** Honeypot. Real people never see or fill this field. */
   company: z.string().max(200).optional().default(""),
 };
@@ -97,7 +100,7 @@ export const uploadRequestSchema = z.object({
     .array(
       z.object({
         kind: z.enum(["original", "annotated"]),
-        contentType: z.enum(["image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"]),
+        contentType: z.enum(PHOTO_TYPES),
         size: z.number().int().positive().max(MAX_PHOTO_BYTES),
       }),
     )

@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/metadata";
 import { site } from "@/content/site";
 import { SimplePage } from "@/components/SimplePage";
 import { ClosingBand, NumberedList, TeamSection } from "@/components/sections";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "About Solvern Home: one team for 23 trades in metro Atlanta",
   description: "Solvern Home is one accountable team for 23 trades across metro Atlanta. See your project in a Concept Preview first, then we build it right.",
-  alternates: { canonical: "/about" },
-};
+  path: "/about",
+});
 
 const VALUES = [
   { title: "Precise", description: "We measure twice, quote clearly and finish what we promise." },

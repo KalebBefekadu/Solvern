@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/metadata";
 import { site } from "@/content/site";
 import { SimplePage } from "@/components/SimplePage";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Terms of use | Solvern Home",
   description: "The terms that apply when you use the Solvern Home website, request a Concept Preview or estimate, or ask our team in metro Atlanta for a callback.",
-  alternates: { canonical: "/terms" },
-};
+  path: "/terms",
+});
 
 // Template for the owner's attorney to review before launch. Bracketed values are open items.
 export default function TermsPage() {

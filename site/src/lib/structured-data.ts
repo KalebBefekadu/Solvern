@@ -13,7 +13,10 @@ export function localBusinessJsonLd() {
     url: site.url,
     slogan: site.tagline,
     description: site.boilerplate,
-    areaServed: { "@type": "City", name: "Atlanta", containedInPlace: { "@type": "State", name: "Georgia" } },
+    areaServed: [
+      { "@type": "City", name: "Atlanta", containedInPlace: { "@type": "State", name: "Georgia" } },
+      ...site.areas.map((name) => ({ "@type": "Place", name: `${name}, GA` })),
+    ],
     logo: abs("/brand/solvern-lockup.svg"),
   };
   if (site.phone.e164) data.telephone = site.phone.e164;
@@ -47,5 +50,14 @@ export function faqJsonLd(items: Faq[]) {
     "@context": "https://schema.org",
     "@type": "FAQPage",
     mainEntity: real.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+  };
+}
+
+/** Home > Trade, so search results show where the page sits on the site. */
+export function breadcrumbJsonLd(items: { name: string; path: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((it, i) => ({ "@type": "ListItem", position: i + 1, name: it.name, item: abs(it.path) })),
   };
 }

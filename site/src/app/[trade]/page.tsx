@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { pageMetadata } from "@/lib/metadata";
 import { site } from "@/content/site";
 import { seo, tradeBySlug, tradePage, trades, tradeTheme } from "@/lib/content";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -9,7 +10,7 @@ import { BottomBar } from "@/components/BottomBar";
 import { TradeIllustration } from "@/components/TradeIllustration";
 import { PreviewForm } from "@/components/PreviewForm";
 import { ClosingBand, FaqSection, FinancingBand, HowItWorks, JsonLd, NumberedList, ProofRow, ReviewsSection, SectionHead, TeamSection } from "@/components/sections";
-import { faqJsonLd, localBusinessJsonLd, serviceJsonLd } from "@/lib/structured-data";
+import { breadcrumbJsonLd, faqJsonLd, localBusinessJsonLd, serviceJsonLd } from "@/lib/structured-data";
 
 // Unknown slugs fall through to notFound() below. (dynamicParams = false logs a NoFallbackError for every probe in Next 15.5.)
 export const dynamicParams = true;
@@ -24,15 +25,13 @@ export async function generateMetadata({ params }: { params: Promise<{ trade: st
   const page = tradePage(slug);
   const meta = seo.trades[slug];
   if (!t || !page || !meta) return {};
-  const draft = page.copyStatus !== "approved";
-  return {
+  return pageMetadata({
     title: meta.title,
     description: meta.description,
-    alternates: { canonical: `/${slug}` },
-    openGraph: { title: meta.title, description: meta.description, url: `/${slug}` },
-    // Draft copy stays out of search until the owner approves it.
-    robots: draft ? { index: false, follow: true } : undefined,
-  };
+    path: `/${slug}`,
+    noindex: page.copyStatus !== "approved",
+    image: { url: `/${slug}/opengraph-image/card`, alt: `Solvern ${page.shortName}: ${page.heroHeadline}` },
+  });
 }
 
 export default async function TradePage({ params }: { params: Promise<{ trade: string }> }) {
@@ -123,7 +122,17 @@ export default async function TradePage({ params }: { params: Promise<{ trade: s
       <SiteFooter />
       <BottomBar primary={{ label: diagnosis ? "Request a visit" : "Concept Preview", href: anchor }} />
 
-      <JsonLd data={[localBusinessJsonLd(), serviceJsonLd(t, page), faqJsonLd(page.faq)]} />
+      <JsonLd
+        data={[
+          localBusinessJsonLd(),
+          serviceJsonLd(t, page),
+          faqJsonLd(page.faq),
+          breadcrumbJsonLd([
+            { name: site.name, path: "/" },
+            { name: `Solvern ${page.shortName}`, path: `/${t.slug}` },
+          ]),
+        ]}
+      />
     </div>
   );
 }

@@ -1,20 +1,20 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/metadata";
 import Link from "next/link";
 import { site } from "@/content/site";
 import { FAMILY_BLURB, navName, HUB_THEME, projects, seo, tradeBySlug, tradesByFamily } from "@/lib/content";
-import { SiteHeader } from "@/components/SiteHeader";
+import { HubHeader } from "@/components/HubHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { BottomBar } from "@/components/BottomBar";
 import { ArrowRight } from "@/components/Icons";
 import { ClosingBand, FaqSection, FinancingBand, HowItWorks, JsonLd, PhotoPlaceholder, ProofRow, ReviewsSection, TeamSection } from "@/components/sections";
 import { faqJsonLd, localBusinessJsonLd } from "@/lib/structured-data";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: seo.home.title,
   description: seo.home.description,
-  alternates: { canonical: "/" },
-  openGraph: { title: seo.home.title, description: seo.home.description, url: "/" },
-};
+  path: "/",
+});
 
 const HOW = [
   { title: "Send a photo", description: "Show us the room or the whole project, and draw on it to point out what you want." },
@@ -43,17 +43,7 @@ export default function HomePage() {
   const primary = { label: "Get my Concept Preview", href: "/concept-preview" };
   return (
     <div style={HUB_THEME}>
-      <SiteHeader
-        variant="hub"
-        links={[
-          { label: "Projects", href: "/#projects" },
-          { label: "How it works", href: "/#how" },
-          { label: "Reviews", href: "/reviews" },
-          { label: "Financing", href: "/financing" },
-        ]}
-        primary={primary}
-        tradeGroups={groups.map((g) => ({ family: g.family, trades: g.trades.map((t) => ({ slug: t.slug, shortName: t.shortName, color: t.color })) }))}
-      />
+      <HubHeader />
 
       <main id="main">
         <section className="wrap hub-hero" aria-labelledby="hero-title">

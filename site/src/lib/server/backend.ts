@@ -107,6 +107,7 @@ export interface LeadRow {
   source_url: string;
   utm: Record<string, string>;
   status: "new";
+  request_id: string | null;
 }
 
 export interface PhotoRow {
@@ -116,10 +117,30 @@ export interface PhotoRow {
   notes: unknown;
 }
 
+/** The lead already stored for this form attempt, if any. */
+export async function findLeadByRequestId(requestId: string): Promise<string | null> {
+  const sb = supabase();
+  if (sb) {
+    const { data, error } = await sb.from("leads").select("id").eq("request_id", requestId).maybeSingle();
+    if (error) throw new Error(`Lead lookup failed: ${error.message}`);
+    return (data?.id as string | undefined) ?? null;
+  }
+  if (!devFallbackAllowed()) throw new BackendUnavailable("Database is not configured");
+  try {
+    return (await fs.readFile(path.join(DATA_DIR, "requests", requestId), "utf8")).trim() || null;
+  } catch {
+    return null;
+  }
+}
+
+export class DuplicateRequest extends Error {}
+
 export async function insertLead(lead: LeadRow, photos: PhotoRow[]): Promise<string> {
   const sb = supabase();
   if (sb) {
     const { data, error } = await sb.from("leads").insert(lead).select("id").single();
+    // Unique request_id: a concurrent retry of the same form attempt got there first.
+    if (error?.code === "23505" && lead.request_id) throw new DuplicateRequest(lead.request_id);
     if (error || !data) throw new Error(`Lead insert failed: ${error?.message}`);
     if (photos.length) {
       const { error: pErr } = await sb.from("lead_photos").insert(photos.map((p) => ({ ...p, lead_id: data.id })));
@@ -138,5 +159,9 @@ export async function insertLead(lead: LeadRow, photos: PhotoRow[]): Promise<str
     path.join(DATA_DIR, "leads", `${new Date().toISOString().replace(/[:.]/g, "-")}-${id}.json`),
     JSON.stringify({ id, created_at: new Date().toISOString(), ...lead, photos }, null, 2),
   );
+  if (lead.request_id) {
+    await fs.mkdir(path.join(DATA_DIR, "requests"), { recursive: true });
+    await fs.writeFile(path.join(DATA_DIR, "requests", lead.request_id), id);
+  }
   return id;
 }

@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { site } from "@/content/site";
 import { CALLBACK_TOPICS_EXISTING, CALLBACK_TOPICS_NEW, type FieldErrors } from "@/lib/leads/constants";
-import { submitLead, SubmitError } from "@/lib/leads/client";
-import { track } from "@/lib/analytics";
+import { submitLead } from "@/lib/leads/client";
+import { contactErrors } from "@/lib/leads/validate";
 import { Turnstile } from "./Turnstile";
 import { CheckIcon } from "./Icons";
+import { useLeadForm } from "./form/useLeadForm";
 
 type Existing = "yes" | "no" | "not_sure";
 
@@ -27,45 +28,28 @@ export interface CallbackPrefill {
 export function CallbackForm({ prefill = {} }: { prefill?: CallbackPrefill }) {
   const [existing, setExisting] = useState<Existing | null>(prefill.job ? "yes" : null);
   const [topic, setTopic] = useState("");
-  const [errors, setErrors] = useState<FieldErrors>({});
-  const [formError, setFormError] = useState<string | null>(null);
-  const [status, setStatus] = useState<"idle" | "sending" | "done">("idle");
-  const [started, setStarted] = useState(false);
-  const [token, setToken] = useState("");
-  const [resetKey, setResetKey] = useState(0);
-  const formRef = useRef<HTMLFormElement>(null);
   const doneRef = useRef<HTMLDivElement>(null);
-  const id = useId();
-  const onToken = useCallback((t: string) => setToken(t), []);
+  const f = useLeadForm("callback", () => ({ existing_job: existing === "yes", topic }));
 
-  useEffect(() => setTopic(""), [existing]);
-
-  const onStart = () => {
-    if (started) return;
-    setStarted(true);
-    track("form_start", { form: "callback" });
+  const chooseExisting = (v: Existing) => {
+    setExisting(v);
+    // Topics differ per branch, so a choice from the other list no longer applies.
+    if (v !== existing) setTopic("");
   };
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (status === "sending") return;
     const fd = new FormData(e.currentTarget);
     const get = (k: string) => String(fd.get(k) ?? "").trim();
     const local: FieldErrors = {};
     if (!existing) local.existingJob = "Choose an answer.";
     if (!topic) local.topic = "Choose a topic.";
     if (get("message").length < 3) local.message = "Tell us what you would like to discuss.";
-    if (!/^\d{5}(-\d{4})?$/.test(get("zip"))) local.zip = "Enter a 5-digit zip code.";
     if (!get("firstName")) local.firstName = "Enter your first name.";
     if (!get("lastName")) local.lastName = "Enter your last name.";
-    if (get("phone").replace(/\D/g, "").length < 10) local.phone = "Enter a phone number with area code.";
-    if (!/^\S+@\S+\.\S+$/.test(get("email"))) local.email = "Enter a valid email address.";
-    setErrors(local);
-    setFormError(null);
-    if (Object.keys(local).length) return focusFirst(local);
+    Object.assign(local, contactErrors(get));
 
-    setStatus("sending");
-    try {
+    const ok = await f.submit(local, async () => {
       await submitLead({
         type: "callback",
         existingJob: existing,
@@ -79,35 +63,14 @@ export function CallbackForm({ prefill = {} }: { prefill?: CallbackPrefill }) {
         email: get("email"),
         preferredContact: get("preferredContact") || "phone",
         company: get("company"),
-        turnstileToken: token,
+        turnstileToken: f.token,
+        requestId: f.requestId,
       });
-      track("form_submit", { form: "callback", existing_job: existing === "yes", topic });
-      setStatus("done");
-      requestAnimationFrame(() => doneRef.current?.focus());
-    } catch (err) {
-      const se = err instanceof SubmitError ? err : new SubmitError("Something went wrong. Please try again or call us.");
-      setErrors(se.fields);
-      setFormError(se.message);
-      setStatus("idle");
-      setResetKey((k) => k + 1);
-      focusFirst(se.fields);
-    }
+    });
+    if (ok) requestAnimationFrame(() => doneRef.current?.focus());
   }
 
-  function focusFirst(errs: FieldErrors) {
-    const first = Object.keys(errs)[0];
-    if (!first) return;
-    formRef.current?.querySelector<HTMLElement>(`[name="${first}"]`)?.focus();
-  }
-
-  const fid = (k: string) => `${id}-${k}`;
-  const err = (k: string) =>
-    errors[k] ? (
-      <span className="field-error" id={`${fid(k)}-err`}>
-        {errors[k]}
-      </span>
-    ) : null;
-  const aria = (k: string) => ({ id: fid(k), name: k, "aria-invalid": errors[k] ? true : undefined, "aria-describedby": errors[k] ? `${fid(k)}-err` : undefined });
+  const { field, error: err, id: fid, errors, status } = f;
 
   if (status === "done") {
     return (
@@ -129,7 +92,7 @@ export function CallbackForm({ prefill = {} }: { prefill?: CallbackPrefill }) {
   const topics = existing === "yes" ? CALLBACK_TOPICS_EXISTING : CALLBACK_TOPICS_NEW;
 
   return (
-    <form ref={formRef} className="cs-form" id="callback" noValidate onSubmit={onSubmit} onFocus={onStart} aria-label="Request a callback">
+    <form ref={f.formRef} className="cs-form" id="callback" noValidate onSubmit={onSubmit} onFocus={f.onStart} aria-label="Request a callback" aria-busy={status === "sending"}>
       <div className="cs-step">
         <span className="cs-step__n" aria-hidden="true">
           1
@@ -137,7 +100,7 @@ export function CallbackForm({ prefill = {} }: { prefill?: CallbackPrefill }) {
         <h2 className="cs-step__t">About your request</h2>
       </div>
 
-      <fieldset aria-describedby={errors.existingJob ? `${fid("existingJob")}-err` : undefined}>
+      <fieldset aria-describedby={errors.existingJob ? f.errorId("existingJob") : undefined}>
         <legend>Is this about a job you have already booked?</legend>
         <div className="choice-row">
           {(
@@ -148,7 +111,7 @@ export function CallbackForm({ prefill = {} }: { prefill?: CallbackPrefill }) {
             ] as [Existing, string][]
           ).map(([v, l]) => (
             <label className="choice" key={v}>
-              <input type="radio" name="existingJob" value={v} checked={existing === v} onChange={() => setExisting(v)} />
+              <input type="radio" name="existingJob" value={v} checked={existing === v} onChange={() => chooseExisting(v)} />
               {l}
             </label>
           ))}
@@ -161,7 +124,7 @@ export function CallbackForm({ prefill = {} }: { prefill?: CallbackPrefill }) {
           {existing === "yes" && (
             <div className="field">
               <label htmlFor={fid("jobNumber")}>Job number</label>
-              <input className="input" type="text" defaultValue={prefill.job} maxLength={40} autoComplete="off" {...aria("jobNumber")} aria-describedby={`${fid("jobNumber")}-hint`} />
+              <input className="input" type="text" defaultValue={prefill.job} maxLength={40} autoComplete="off" {...field("jobNumber", `${fid("jobNumber")}-hint`)} />
               <span className="field-hint" id={`${fid("jobNumber")}-hint`}>
                 Shown on your booking confirmation or invoice, for example {site.callback.jobNumberExample}
               </span>
@@ -169,7 +132,7 @@ export function CallbackForm({ prefill = {} }: { prefill?: CallbackPrefill }) {
           )}
           <div className="field">
             <label htmlFor={fid("topic")}>{existing === "yes" ? "What would you like to discuss?" : "What type of enquiry?"}</label>
-            <select className="select" value={topic} onChange={(e) => setTopic(e.target.value)} {...aria("topic")}>
+            <select className="select" value={topic} onChange={(e) => setTopic(e.target.value)} {...field("topic")}>
               <option value="">Choose from the list</option>
               {topics.map((t) => (
                 <option key={t} value={t}>
@@ -204,13 +167,15 @@ export function CallbackForm({ prefill = {} }: { prefill?: CallbackPrefill }) {
       </div>
       <div className="field">
         <label htmlFor={fid("message")}>What would you like to discuss?</label>
-        <textarea className="textarea" rows={4} maxLength={2000} {...aria("message")} />
+        <textarea className="textarea" rows={4} maxLength={2000} {...field("message")} />
         {err("message")}
       </div>
       <div className="field">
         <label htmlFor={fid("zip")}>Zip code</label>
-        <input className="input" type="text" inputMode="numeric" autoComplete="postal-code" maxLength={10} defaultValue={prefill.zip} {...aria("zip")} />
-        <span className="field-hint">So we can confirm we cover your area</span>
+        <input className="input" type="text" inputMode="numeric" autoComplete="postal-code" maxLength={10} defaultValue={prefill.zip} {...field("zip", `${fid("zip")}-hint`)} />
+        <span className="field-hint" id={`${fid("zip")}-hint`}>
+          So we can confirm we cover your area
+        </span>
         {err("zip")}
       </div>
 
@@ -223,22 +188,22 @@ export function CallbackForm({ prefill = {} }: { prefill?: CallbackPrefill }) {
       <div className="grid-2" style={{ gap: 16 }}>
         <div className="field">
           <label htmlFor={fid("firstName")}>First name</label>
-          <input className="input" type="text" autoComplete="given-name" maxLength={80} defaultValue={prefill.first} {...aria("firstName")} />
+          <input className="input" type="text" autoComplete="given-name" maxLength={80} defaultValue={prefill.first} {...field("firstName")} />
           {err("firstName")}
         </div>
         <div className="field">
           <label htmlFor={fid("lastName")}>Last name</label>
-          <input className="input" type="text" autoComplete="family-name" maxLength={80} defaultValue={prefill.last} {...aria("lastName")} />
+          <input className="input" type="text" autoComplete="family-name" maxLength={80} defaultValue={prefill.last} {...field("lastName")} />
           {err("lastName")}
         </div>
         <div className="field">
           <label htmlFor={fid("phone")}>Phone</label>
-          <input className="input" type="tel" autoComplete="tel" maxLength={30} defaultValue={prefill.phone} {...aria("phone")} />
+          <input className="input" type="tel" autoComplete="tel" maxLength={30} defaultValue={prefill.phone} {...field("phone")} />
           {err("phone")}
         </div>
         <div className="field">
           <label htmlFor={fid("email")}>Email</label>
-          <input className="input" type="email" autoComplete="email" maxLength={200} defaultValue={prefill.email} {...aria("email")} />
+          <input className="input" type="email" autoComplete="email" maxLength={200} defaultValue={prefill.email} {...field("email")} />
           {err("email")}
         </div>
       </div>
@@ -264,11 +229,11 @@ export function CallbackForm({ prefill = {} }: { prefill?: CallbackPrefill }) {
         <label htmlFor={fid("company")}>Company</label>
         <input id={fid("company")} name="company" type="text" tabIndex={-1} autoComplete="off" />
       </div>
-      <Turnstile active={started} onToken={onToken} resetKey={resetKey} />
+      <Turnstile active={f.started} onToken={f.onToken} resetKey={f.resetKey} />
 
-      {formError && (
+      {f.formError && (
         <p className="form-status form-status--error" role="alert">
-          {formError}
+          {f.formError}
         </p>
       )}
       <button type="submit" className="btn btn--ink btn--block" style={{ minHeight: 56 }} disabled={status === "sending"}>

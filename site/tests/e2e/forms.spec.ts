@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { expect, test, type Page } from "@playwright/test";
-import { solidPng } from "./helpers";
+import { solidBmp, solidPng } from "./helpers";
 
 const LEADS_DIR = path.join(process.cwd(), ".data", "leads");
 
@@ -117,5 +117,19 @@ test.describe("Concept Preview", () => {
     await page.goto("/concept-preview");
     await page.getByRole("button", { name: "Get my Concept Preview" }).click();
     await expect(page.getByText("Choose a trade.")).toBeVisible();
+  });
+
+  test("converts photo formats storage refuses into JPEG", async ({ page }) => {
+    await page.goto("/masonry");
+    const section = page.locator("#preview");
+    await section.locator('input[type="file"]').setInputFiles({ name: "wall.bmp", mimeType: "image/bmp", buffer: solidBmp(320, 240) });
+    await expect(section.locator("svg.strokes")).toBeVisible();
+    await section.locator('textarea[name="message"]').fill("Repoint the front steps");
+    await section.locator('[name="name"]').fill("Dana Smith");
+    const email = unique();
+    await fillContact(page, "#preview form", email);
+    await section.getByRole("button", { name: "Get my Concept Preview" }).click();
+    await expect(section.getByRole("status")).toContainText("Received.");
+    await expect.poll(async () => ((await findLead((l) => l.email === email))?.photos as { original_path: string }[] | undefined)?.[0]?.original_path).toMatch(/original-1\.jpg$/);
   });
 });

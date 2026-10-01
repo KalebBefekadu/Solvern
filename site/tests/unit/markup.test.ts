@@ -59,3 +59,18 @@ describe("serialized markup", () => {
     expect(serializeNotes(photo)[0]).toMatchObject({ n: 1, text: "Open this wall", anchor: { x: 10, y: 21 } });
   });
 });
+
+describe("uid", () => {
+  it("returns RFC 4122 v4 ids, with or without randomUUID", async () => {
+    const { uid } = await import("@/lib/markup");
+    const v4 = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+    expect(uid()).toMatch(v4);
+    const original = crypto.randomUUID;
+    Object.defineProperty(crypto, "randomUUID", { value: undefined, configurable: true });
+    try {
+      expect(uid()).toMatch(v4);
+    } finally {
+      Object.defineProperty(crypto, "randomUUID", { value: original, configurable: true });
+    }
+  });
+});

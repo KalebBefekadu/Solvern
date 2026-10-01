@@ -2,7 +2,7 @@
  * Email notifications through Resend's HTTP API (no SDK needed).
  * Without RESEND_API_KEY the messages are logged instead, so local testing works.
  */
-import { site } from "@/content/site";
+import { hasPlaceholder, site } from "@/content/site";
 import { fetchWithTimeout } from "./env";
 
 interface Mail {
@@ -65,16 +65,26 @@ ${p.notes.length ? `<ol>${p.notes.map((t) => `<li>${esc(t)}</li>`).join("")}</ol
   await send({ to, subject, text, html, replyTo: n.replyTo });
 }
 
-/** Customer confirmation. Wording follows the brand voice and the 48-hour promise. */
-export async function confirmCustomer(type: string, toEmail: string, firstName: string) {
-  const body =
+/**
+ * Customer confirmation. Wording follows the brand voice and the 48-hour promise.
+ * A sentence that still carries an owner placeholder ([HOURS], [YOUR NUMBER]) is left out,
+ * so a customer never receives bracketed text.
+ */
+export function confirmationEmail(type: string, firstName: string) {
+  const sentences =
     type === "concept_preview"
-      ? "Received. Your Concept Preview and estimate will arrive within 48 hours."
+      ? ["Received. Your Concept Preview and estimate will arrive within 48 hours."]
       : type === "visit"
-        ? "Received. We will call you back to confirm a time for your visit."
-        : `Received. The right person on our team will contact you. We aim to reply within ${site.callback.responseTime} during ${site.callback.hours}.`;
-  const text = `Hi ${firstName},\n\n${body}\n\nIf anything changes, call us at ${site.phone.display}.\n\nSolvern Home\n${site.tagline}`;
-  const html = `<div style="font-family:Arial,sans-serif;color:#1B2330;font-size:16px;line-height:24px"><p>Hi ${esc(firstName)},</p><p>${esc(body)}</p><p>If anything changes, call us at ${esc(site.phone.display)}.</p><p><strong>Solvern Home</strong><br>${esc(site.tagline)}</p></div>`;
+        ? ["Received. We will call you back to confirm a time for your visit."]
+        : ["Received. The right person on our team will contact you.", `We aim to reply within ${site.callback.responseTime} during ${site.callback.hours}.`];
+  const body = sentences.filter((x) => !hasPlaceholder(x)).join(" ");
+  const callLine = hasPlaceholder(site.phone.display) ? null : `If anything changes, call us at ${site.phone.display}.`;
+  const text = [`Hi ${firstName},`, body, callLine, `Solvern Home\n${site.tagline}`].filter(Boolean).join("\n\n");
+  const html = `<div style="font-family:Arial,sans-serif;color:#1B2330;font-size:16px;line-height:24px"><p>Hi ${esc(firstName)},</p><p>${esc(body)}</p>${callLine ? `<p>${esc(callLine)}</p>` : ""}<p><strong>Solvern Home</strong><br>${esc(site.tagline)}</p></div>`;
   const subject = type === "concept_preview" ? "Your Concept Preview request is in" : type === "visit" ? "Your visit request is in" : "Your callback request is in";
-  await send({ to: [toEmail], subject, text, html });
+  return { subject, text, html };
+}
+
+export async function confirmCustomer(type: string, toEmail: string, firstName: string) {
+  await send({ to: [toEmail], ...confirmationEmail(type, firstName) });
 }

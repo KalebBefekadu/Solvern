@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/metadata";
 import Link from "next/link";
 import { site } from "@/content/site";
 import { SimplePage } from "@/components/SimplePage";
 import { FaqSection } from "@/components/sections";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Financing: pay over time | Solvern Home",
   description: "Monthly payment options for Solvern Home projects across metro Atlanta. Know your options before work begins, then see your project in a Concept Preview.",
-  alternates: { canonical: "/financing" },
-};
+  path: "/financing",
+});
 
 /**
  * The financing partner (candidates: Wisetack, Hearth, GreenSky) handles approval and credit.

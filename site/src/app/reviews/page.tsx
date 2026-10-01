@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/metadata";
 import { site } from "@/content/site";
 import { SimplePage } from "@/components/SimplePage";
 import { ClosingBand, ReviewsSection } from "@/components/sections";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Reviews | Solvern Home",
   description: "What metro Atlanta homeowners say about Solvern Home: one team for 23 trades, a Concept Preview before work begins, and updates at every stage.",
-  alternates: { canonical: "/reviews" },
-};
+  path: "/reviews",
+});
 
 /**
  * Reviews come from the Google Business Profile once it exists (05-features.md).

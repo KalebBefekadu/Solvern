@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/metadata";
 import { Suspense } from "react";
 import { HUB_THEME, PROJECT_PREFIX, projects, tradePage, trades } from "@/lib/content";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -8,11 +9,11 @@ import { PreviewFormWithQuery } from "@/components/PreviewFormWithQuery";
 import { HowItWorks, JsonLd, SectionHead } from "@/components/sections";
 import { localBusinessJsonLd } from "@/lib/structured-data";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Get your Concept Preview | Solvern Home",
   description: "Send a photo of your home, draw on it to show what you want, and get a concept image and an estimate within 48 hours from Solvern Home in metro Atlanta.",
-  alternates: { canonical: "/concept-preview" },
-};
+  path: "/concept-preview",
+});
 
 function options(): TradeOption[] {
   const projectOpts: TradeOption[] = projects.map((p) => ({

@@ -4,7 +4,7 @@
  */
 import type { CallbackLead, PreviewLead } from "@/lib/leads/schema";
 import { previewTarget } from "@/lib/content";
-import { insertLead, signedViewUrl, uploadExists, type LeadRow, type PhotoRow } from "./backend";
+import { DuplicateRequest, findLeadByRequestId, insertLead, signedViewUrl, uploadExists, type LeadRow, type PhotoRow } from "./backend";
 import { confirmCustomer, notifyTeam } from "./notify";
 import { HttpError } from "./http";
 
@@ -46,6 +46,7 @@ export function prepareCallback(d: CallbackLead): Prepared {
       source_url: d.sourceUrl,
       utm: d.utm,
       status: "new",
+      request_id: d.requestId ?? null,
     },
     fields: [
       ["Existing job", jobNumber ? `Yes, ${jobNumber}` : EXISTING_LABEL[d.existingJob]],
@@ -91,6 +92,7 @@ export async function preparePreview(d: PreviewLead): Promise<Prepared> {
       source_url: d.sourceUrl,
       utm: d.utm,
       status: "new",
+      request_id: d.requestId ?? null,
     },
     fields: [
       ["Trade", target.name],
@@ -106,10 +108,26 @@ export async function preparePreview(d: PreviewLead): Promise<Prepared> {
   };
 }
 
-/** Stores the lead, then sends both emails. A failed email never fails the customer's request. */
+/**
+ * Stores the lead, then sends both emails. A failed email never fails the customer's request.
+ * A retry of a form attempt that was already stored returns the same id and sends nothing again.
+ */
 export async function createLead(data: CallbackLead | PreviewLead): Promise<string> {
+  if (data.requestId) {
+    const existing = await findLeadByRequestId(data.requestId);
+    if (existing) return existing;
+  }
   const p = data.type === "callback" ? prepareCallback(data) : await preparePreview(data);
-  const leadId = await insertLead(p.lead, p.photos);
+  let leadId: string;
+  try {
+    leadId = await insertLead(p.lead, p.photos);
+  } catch (e) {
+    if (e instanceof DuplicateRequest && data.requestId) {
+      const existing = await findLeadByRequestId(data.requestId);
+      if (existing) return existing;
+    }
+    throw e;
+  }
 
   const photoLinks = await Promise.all(
     p.photos.map(async (ph) => ({

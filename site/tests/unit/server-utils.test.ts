@@ -56,3 +56,31 @@ describe("email escaping", () => {
     expect(esc(`<script>"x" & 'y'</script>`)).toBe("&lt;script&gt;&quot;x&quot; &amp; &#39;y&#39;&lt;/script&gt;");
   });
 });
+
+describe("customer confirmation email", () => {
+  it("never sends bracketed placeholders", async () => {
+    const { confirmationEmail } = await import("@/lib/server/notify");
+    for (const type of ["concept_preview", "visit", "callback"]) {
+      const m = confirmationEmail(type, "Dana");
+      expect(m.text, type).not.toMatch(/\[[^\]]+\]/);
+      expect(m.html, type).not.toMatch(/\[[^\]]+\]/);
+      expect(m.text).toMatch(/^Hi Dana,/);
+    }
+  });
+
+  it("escapes the customer's name in HTML", async () => {
+    const { confirmationEmail } = await import("@/lib/server/notify");
+    expect(confirmationEmail("visit", "<b>Dana</b>").html).toContain("&lt;b&gt;Dana&lt;/b&gt;");
+  });
+});
+
+describe("robots", () => {
+  it("blocks every crawler on preview deployments", async () => {
+    const { default: robots } = await import("@/app/robots");
+    process.env.VERCEL_ENV = "preview";
+    expect(robots().rules).toEqual([{ userAgent: "*", disallow: "/" }]);
+    process.env.VERCEL_ENV = "production";
+    expect(robots().sitemap).toMatch(/sitemap\.xml$/);
+    delete process.env.VERCEL_ENV;
+  });
+});

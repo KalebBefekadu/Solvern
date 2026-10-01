@@ -46,3 +46,5 @@ All placeholders are set in one file: `site/src/content/site.ts`.
 | Approve relabeling the callback message box (two fields share "What would you like to discuss?") | /customer-service, see docs/decision-log.md |
 | When GTM or GA4 is chosen, add its hosts to the Content Security Policy | site/next.config.ts |
 | After the first deploy, open `/api/health` and confirm `storage` is `supabase`, and `email` and `turnstile` are true | Production |
+| Before launch, run `npm run check:launch` in `site/` and clear every line it prints | site/src/content, Vercel env |
+| Run `supabase/migrations/0002_lead_hardening.sql` after 0001 | Supabase SQL editor |

@@ -9,7 +9,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint .",
+    "lint": "eslint . --max-warnings=0",
     "typecheck": "tsc --noEmit",
     "check:brand": "node scripts/check-brand.mjs",
     "check:colors": "node scripts/check-colors.mjs",
@@ -17,7 +17,8 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "verify": "npm run typecheck && npm run lint && npm run check:brand && npm run check:colors && npm test && npm run build",
-    "verify:full": "npm run verify && npm run test:e2e"
+    "verify:full": "npm run verify && npm run test:e2e",
+    "check:launch": "node scripts/check-launch.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0",

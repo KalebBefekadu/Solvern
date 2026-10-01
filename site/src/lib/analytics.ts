@@ -5,9 +5,9 @@
  * and are re-dispatched as a DOM event `solvern:track` for any other listener.
  *
  * Events (05-features.md > Analytics):
- *   phone_click, cta_click, form_start, form_submit, markup_use, financing_click
+ *   phone_click, cta_click, form_start, form_submit, form_error, markup_use, financing_click
  */
-export type TrackEvent = "phone_click" | "cta_click" | "form_start" | "form_submit" | "markup_use" | "financing_click";
+export type TrackEvent = "phone_click" | "cta_click" | "form_start" | "form_submit" | "form_error" | "markup_use" | "financing_click";
 
 declare global {
   interface Window {

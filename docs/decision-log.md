@@ -25,3 +25,16 @@ No approved design, copy or color was changed.
 - 2026-10-01: Security headers: Content Security Policy, HSTS, frame blocking. Adding Google Tag Manager later needs its hosts added to the policy in `site/next.config.ts`.
 - 2026-10-01: Added `/api/health` (reports which services are configured, never their values), error pages, unit and API tests (Vitest), browser tests on desktop and phone with an axe accessibility scan (Playwright), and a GitHub Actions workflow that runs all of it on every push and pull request.
 - PENDING 2026-10-01: On /customer-service, the topic select and the message box share the label "What would you like to discuss?" when the visitor picks Yes (that is how the approved design reads). Screen reader users hear two fields with the same name. Proposed: label the message box "Tell us more". Not changed until the owner approves.
+
+## 2026-10-01: build pass 3, review across SEO, reliability, accessibility and code quality (Claude)
+No approved design, copy or color was changed.
+- 2026-10-01: Share cards (Open Graph and Twitter) for every page, rendered from the brand: the mark, Plus Jakarta Sans, the page headline and the trade color. Not an illustration. Static 600 and 800 weights of the same font were cut for the renderer (`src/fonts/og`), which cannot read the variable file.
+- 2026-10-01: Every page now uses one metadata helper, so canonical, Open Graph and Twitter tags always agree. Before this, most pages had no share image and no Twitter tags.
+- 2026-10-01: Breadcrumb structured data on trade pages; the four named service areas are listed in the business structured data. Home screen icon and web manifest added.
+- 2026-10-01: Vercel preview deployments are kept out of search (robots disallow and noindex header).
+- 2026-10-01: Customer confirmation emails leave out any sentence that still holds a placeholder. `npm run check:launch` lists everything left to fill in before go-live.
+- 2026-10-01: A retried form submission is stored once (request id per attempt, migration 0002). Migration 0002 also adds `updated_at` and database length limits.
+- 2026-10-01: Photos in formats the bucket refuses (GIF, AVIF, BMP), or over 15 MB, are converted to JPEG in the browser instead of failing at upload. The drop zone line no longer says "JPG or PNG, up to 15 MB" since any phone photo now works.
+- 2026-10-01: Leaving a page with unsent marked-up photos asks first. Forms report `form_error` to analytics and set `aria-busy` while sending. The mobile menu closes on Escape and returns focus to its button.
+- 2026-10-01: Both forms share one submission hook and one set of client validators (tested to match the server). The hub header is one component. Lint now fails on warnings.
+- 2026-10-01: The logo SVG is about 6 KB smaller per copy (coordinates rounded to 2 decimals, no visible change).

@@ -14,6 +14,8 @@ export const CALLBACK_TOPICS_NEW = ["New project or estimate", "Help or advice",
 /** Markup limits, enforced by the drawing tool and by the server schema. */
 export const MAX_PHOTOS = 5;
 export const MAX_PHOTO_BYTES = 15 * 1024 * 1024;
+/** Types the storage bucket accepts (supabase/migrations). Others are converted to JPEG in the browser. */
+export const PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"] as const;
 export const MAX_STROKES = 300;
 export const MAX_NOTES = 60;
 export const MAX_POINTS_PER_STROKE = 1500;

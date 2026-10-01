@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/metadata";
 import { site } from "@/content/site";
 import { SimplePage } from "@/components/SimplePage";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Privacy policy | Solvern Home",
   description: "How Solvern Home collects, uses and protects the information and photos you send us through our website, forms and Concept Preview requests.",
-  alternates: { canonical: "/privacy" },
-};
+  path: "/privacy",
+});
 
 // Template for the owner's attorney to review before launch. Bracketed values are open items.
 export default function PrivacyPage() {

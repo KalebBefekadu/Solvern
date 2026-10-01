@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const dev = process.env.NODE_ENV !== "production";
+const preview = !!process.env.VERCEL_ENV && process.env.VERCEL_ENV !== "production";
 const supabaseOrigin = (() => {
   try {
     return process.env.SUPABASE_URL ? new URL(process.env.SUPABASE_URL).origin : "";
@@ -32,6 +33,8 @@ const csp = [
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  // Share cards read these fonts from disk; make sure the serverless bundle carries them.
+  outputFileTracingIncludes: { "/**/*": ["./src/fonts/og/*.woff"] },
   async headers() {
     return [
       {
@@ -49,6 +52,8 @@ const nextConfig: NextConfig = {
         source: "/api/(.*)",
         headers: [{ key: "X-Robots-Tag", value: "noindex" }],
       },
+      // Preview deployments: keep every page out of search, whatever links to them.
+      ...(preview ? [{ source: "/(.*)", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }] }] : []),
     ];
   },
 };

@@ -2,7 +2,7 @@
 
 import { flattenToPng, serializeMarkup, serializeNotes, type MarkupPhoto } from "@/lib/markup";
 import { readUtm } from "@/lib/analytics";
-import type { FieldErrors } from "./constants";
+import { PHOTO_TYPES, type FieldErrors } from "./constants";
 
 export class SubmitError extends Error {
   constructor(
@@ -33,7 +33,7 @@ async function putFile(t: Target, blob: Blob) {
   if (!res.ok) throw new SubmitError("A photo did not upload. Check your connection and try again.");
 }
 
-const okType = (t: string) => ["image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"].includes(t);
+const okType = (t: string) => (PHOTO_TYPES as readonly string[]).includes(t);
 
 /** Flattens each marked-up photo, uploads originals and annotated PNGs, and returns the photo records for the lead. */
 export async function uploadPhotos(photos: MarkupPhoto[], onProgress?: (msg: string) => void) {

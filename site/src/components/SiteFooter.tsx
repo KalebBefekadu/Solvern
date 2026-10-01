@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { site } from "@/content/site";
+import { hasPlaceholder, site } from "@/content/site";
 import { navName, tradesByFamily } from "@/lib/content";
 import { Lockup } from "./Logo";
 
@@ -35,7 +35,7 @@ export function SiteFooter({ withTrades = false, compact = false }: { withTrades
               <a href={site.phone.href} data-location="footer">
                 {site.phone.display}
               </a>
-              <span>{site.email}</span>
+              {hasPlaceholder(site.email) ? <span>{site.email}</span> : <a href={`mailto:${site.email}`}>{site.email}</a>}
             </div>
             <div>
               <span className="site-footer__h">Company</span>

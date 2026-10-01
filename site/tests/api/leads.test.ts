@@ -184,3 +184,19 @@ describe("photo upload flow", () => {
     expect(res.status).toBe(400);
   });
 });
+
+describe("retries", () => {
+  it("stores a form attempt once, however many times it is sent", async () => {
+    const requestId = "0d6f4c2e-8a51-4c3b-9f0e-6b1d2a7c9e11";
+    const body = { ...callback, email: "retry@example.com", requestId };
+    const first = await (await leads.POST(post("/api/leads", body))).json();
+    const second = await (await leads.POST(post("/api/leads", body))).json();
+    expect(second.id).toBe(first.id);
+    expect((await storedLeads()).filter((l) => l.email === "retry@example.com")).toHaveLength(1);
+  });
+
+  it("rejects a request id that is not a UUID", async () => {
+    const res = await leads.POST(post("/api/leads", { ...callback, requestId: "not-a-uuid" }));
+    expect(res.status).toBe(422);
+  });
+});

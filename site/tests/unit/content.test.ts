@@ -71,3 +71,31 @@ describe("helpers", () => {
     if (hasPlaceholder(site.phone.display)) expect(site.phone.e164).toBe("");
   });
 });
+
+describe("metadata and structured data", () => {
+  it("builds consistent page metadata", async () => {
+    const { pageMetadata } = await import("@/lib/metadata");
+    const m = pageMetadata({ title: "T", description: "D", path: "/x", noindex: true });
+    expect(m.alternates?.canonical).toBe("/x");
+    expect(m.openGraph).toMatchObject({ title: "T", description: "D", url: "/x" });
+    expect(m.twitter).toMatchObject({ card: "summary_large_image" });
+    expect(m.robots).toEqual({ index: false, follow: true });
+    expect(pageMetadata({ title: "T", description: "D", path: "/" }).robots).toBeUndefined();
+  });
+
+  it("numbers breadcrumbs and makes their URLs absolute", async () => {
+    const { breadcrumbJsonLd } = await import("@/lib/structured-data");
+    const b = breadcrumbJsonLd([
+      { name: "Solvern Home", path: "/" },
+      { name: "Solvern HVAC", path: "/hvac" },
+    ]);
+    expect(b.itemListElement.map((i) => i.position)).toEqual([1, 2]);
+    expect(b.itemListElement[1].item).toMatch(/^https?:\/\/.+\/hvac$/);
+  });
+
+  it("leaves FAQ structured data out when every answer is a placeholder", async () => {
+    const { faqJsonLd } = await import("@/lib/structured-data");
+    expect(faqJsonLd([{ q: "Q", a: "[Wording from your financing partner]" }])).toBeNull();
+    expect(faqJsonLd([{ q: "Q", a: "Yes." }])?.mainEntity).toHaveLength(1);
+  });
+});

@@ -31,12 +31,25 @@ export function SiteHeader({ variant, links = [], primary, tradeGroups = [], lab
   const megaId = useId();
   const megaRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const menuBtnRef = useRef<HTMLButtonElement>(null);
+
+  // The mobile menu only exists below 1024px: close it if the window grows past that.
+  useEffect(() => {
+    if (!open) return;
+    const mq = window.matchMedia("(min-width: 1025px)");
+    const onChange = () => mq.matches && setOpen(false);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, [open]);
 
   useEffect(() => {
     if (!open && !megaOpen) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        setOpen(false);
+        if (open) {
+          setOpen(false);
+          menuBtnRef.current?.focus();
+        }
         if (megaOpen) {
           setMegaOpen(false);
           triggerRef.current?.focus();
@@ -111,6 +124,7 @@ export function SiteHeader({ variant, links = [], primary, tradeGroups = [], lab
           </a>
           {variant !== "minimal" && (
             <button
+              ref={menuBtnRef}
               type="button"
               className="icon-btn"
               aria-expanded={open}
