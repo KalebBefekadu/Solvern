@@ -38,3 +38,11 @@ All placeholders are set in one file: `site/src/content/site.ts`.
 | Supabase project, Resend key, Turnstile keys | Vercel env, see site/README.md |
 | Analytics tool (GTM or GA4) and call tracking number | Events already fire to dataLayer |
 | Project and Concept Preview example photos | Hub project cards use placeholders |
+
+## Added during build pass 2 (2026-10-01)
+
+| Item | Where it shows |
+| --- | --- |
+| Approve relabeling the callback message box (two fields share "What would you like to discuss?") | /customer-service, see docs/decision-log.md |
+| When GTM or GA4 is chosen, add its hosts to the Content Security Policy | site/next.config.ts |
+| After the first deploy, open `/api/health` and confirm `storage` is `supabase`, and `email` and `turnstile` are true | Production |

@@ -39,8 +39,10 @@ export function serviceJsonLd(t: Trade, page: TradePage) {
   };
 }
 
+/** FAQPage for answered questions only; null when every answer is still a placeholder. */
 export function faqJsonLd(items: Faq[]) {
-  const real = items.filter((f) => !hasPlaceholder(f.a));
+  const real = items.filter((f) => !hasPlaceholder(f.q) && !hasPlaceholder(f.a));
+  if (!real.length) return null;
   return {
     "@context": "https://schema.org",
     "@type": "FAQPage",

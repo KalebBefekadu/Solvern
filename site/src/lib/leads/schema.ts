@@ -1,5 +1,15 @@
 import { z } from "zod";
-import { CALLBACK_TOPICS_EXISTING, CALLBACK_TOPICS_NEW } from "./constants";
+import {
+  CALLBACK_TOPICS_EXISTING,
+  CALLBACK_TOPICS_NEW,
+  MAX_NOTE_LENGTH,
+  MAX_NOTES,
+  MAX_PHOTO_BYTES,
+  MAX_PHOTOS,
+  MAX_POINTS_PER_STROKE,
+  MAX_STROKES,
+  type FieldErrors,
+} from "./constants";
 
 export { CALLBACK_TOPICS_EXISTING, CALLBACK_TOPICS_NEW };
 
@@ -29,12 +39,12 @@ export const photoSchema = z.object({
     width: z.number().int().positive(),
     height: z.number().int().positive(),
     strokes: z
-      .array(z.object({ pen: z.enum(["blue", "orange", "green"]), color: z.string().max(9), note: z.number().int().nullable(), points: z.array(point).max(5000) }))
-      .max(300),
+      .array(z.object({ pen: z.enum(["blue", "orange", "green"]), color: z.string().max(9), note: z.number().int().nullable(), points: z.array(point).min(1).max(MAX_POINTS_PER_STROKE) }))
+      .max(MAX_STROKES),
   }),
   notes: z
-    .array(z.object({ n: z.number().int(), pen: z.enum(["blue", "orange", "green"]), color: z.string().max(9), text: trimmed(500), anchor: z.object({ x: z.number(), y: z.number() }) }))
-    .max(60),
+    .array(z.object({ n: z.number().int(), pen: z.enum(["blue", "orange", "green"]), color: z.string().max(9), text: trimmed(MAX_NOTE_LENGTH), anchor: z.object({ x: z.number(), y: z.number() }) }))
+    .max(MAX_NOTES),
 });
 
 const base = {
@@ -54,7 +64,7 @@ export const previewLeadSchema = z.object({
   phone,
   email,
   preferredContact: z.enum(CONTACT_PREFS).optional(),
-  photos: z.array(photoSchema).max(5).default([]),
+  photos: z.array(photoSchema).max(MAX_PHOTOS).default([]),
   ...base,
 });
 
@@ -88,15 +98,14 @@ export const uploadRequestSchema = z.object({
       z.object({
         kind: z.enum(["original", "annotated"]),
         contentType: z.enum(["image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"]),
-        size: z.number().int().positive().max(15 * 1024 * 1024),
+        size: z.number().int().positive().max(MAX_PHOTO_BYTES),
       }),
     )
     .min(1)
-    .max(10),
+    .max(MAX_PHOTOS * 2),
 });
 
-export type { FieldErrors } from "./constants";
-import type { FieldErrors } from "./constants";
+export type { FieldErrors };
 
 export function flattenErrors(err: z.ZodError): FieldErrors {
   const out: FieldErrors = {};

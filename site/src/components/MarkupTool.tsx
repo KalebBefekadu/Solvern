@@ -17,10 +17,9 @@ import {
   uid,
 } from "@/lib/markup";
 import { track } from "@/lib/analytics";
+import { MAX_NOTE_LENGTH, MAX_NOTES, MAX_PHOTO_BYTES, MAX_PHOTOS, MAX_STROKES } from "@/lib/leads/constants";
 import { CloseIcon, PlusIcon, TrashIcon, UndoIcon, UploadIcon } from "./Icons";
 
-export const MAX_PHOTOS = 5;
-export const MAX_PHOTO_BYTES = 15 * 1024 * 1024;
 const ACCEPT = "image/jpeg,image/png,image/webp,image/heic,image/heif";
 
 interface Props {
@@ -91,18 +90,16 @@ export function MarkupTool({ photos, setPhotos, photoSubject, exampleNotes, diag
     }
     if (files.length > room) setError(`You can add up to ${MAX_PHOTOS} photos. The first ${room} were added.`);
     if (added.length) {
-      setPhotos((all) => [...all, ...added]);
+      setPhotos((all) => [...all, ...added].slice(0, MAX_PHOTOS));
       setActiveId(added[0].id);
       setGroupId(null);
     }
   }
 
   function removePhoto(id: string) {
-    setPhotos((all) => {
-      const p = all.find((x) => x.id === id);
-      if (p) URL.revokeObjectURL(p.url);
-      return all.filter((x) => x.id !== id);
-    });
+    const p = photos.find((x) => x.id === id);
+    if (p) URL.revokeObjectURL(p.url);
+    setPhotos((all) => all.filter((x) => x.id !== id));
     if (activeId === id) setActiveId(null);
     setGroupId(null);
   }
@@ -123,12 +120,16 @@ export function MarkupTool({ photos, setPhotos, photoSubject, exampleNotes, diag
   function onPointerDown(e: React.PointerEvent<SVGSVGElement>) {
     if (!active || (e.pointerType === "mouse" && e.button !== 0)) return;
     e.preventDefault();
-    (e.target as Element).setPointerCapture?.(e.pointerId);
+    const currentGroup = active.notes.find((n) => n.id === groupId);
+    const startNew = !currentGroup || currentGroup.pen !== pen;
+    if (active.strokes.length >= MAX_STROKES || (startNew && active.notes.length >= MAX_NOTES)) {
+      setError("This photo has as many marks as it can hold. Undo or delete a note to draw more.");
+      return;
+    }
+    e.currentTarget.setPointerCapture?.(e.pointerId);
     const pt = toImagePoint(e);
     const strokeId = uid();
     let noteId = groupId;
-    const currentGroup = active.notes.find((n) => n.id === groupId);
-    const startNew = !currentGroup || currentGroup.pen !== pen;
     if (startNew) noteId = uid();
     drawing.current = { strokeId, pointerId: e.pointerId };
     updateActive((p) => {
@@ -184,6 +185,7 @@ export function MarkupTool({ photos, setPhotos, photoSubject, exampleNotes, diag
 
   function undo() {
     if (!active || !active.strokes.length) return;
+    setError(null);
     updateActive((p) => {
       const last = p.strokes[p.strokes.length - 1];
       const strokes = p.strokes.slice(0, -1);
@@ -204,7 +206,7 @@ export function MarkupTool({ photos, setPhotos, photoSubject, exampleNotes, diag
   }
 
   function editNote(id: string, text: string) {
-    updateActive((p) => ({ ...p, notes: p.notes.map((n) => (n.id === id ? { ...n, text: text.slice(0, 500) } : n)) }));
+    updateActive((p) => ({ ...p, notes: p.notes.map((n) => (n.id === id ? { ...n, text: text.slice(0, MAX_NOTE_LENGTH) } : n)) }));
   }
 
   const size = active ? strokeSize(active.width, active.height) : 6;
@@ -308,7 +310,7 @@ export function MarkupTool({ photos, setPhotos, photoSubject, exampleNotes, diag
               <label className="visually-hidden" htmlFor={`list-${n.id}`}>
                 Note {n.n}
               </label>
-              <textarea id={`list-${n.id}`} rows={2} value={n.text} placeholder="What should change here?" onChange={(e) => editNote(n.id, e.target.value)} />
+              <textarea id={`list-${n.id}`} rows={2} maxLength={MAX_NOTE_LENGTH} value={n.text} placeholder="What should change here?" onChange={(e) => editNote(n.id, e.target.value)} />
               <button type="button" className="note-box__del" aria-label={`Delete note ${n.n} and its drawing`} onClick={() => deleteNote(n.id)}>
                 <TrashIcon />
               </button>
@@ -446,7 +448,7 @@ function NoteBox({
           <TrashIcon size={14} />
         </button>
       </div>
-      <textarea ref={ref} id={`box-${note.id}`} rows={2} value={note.text} placeholder="What should change here?" onChange={(e) => onChange(e.target.value)} />
+      <textarea ref={ref} id={`box-${note.id}`} rows={2} maxLength={MAX_NOTE_LENGTH} value={note.text} placeholder="What should change here?" onChange={(e) => onChange(e.target.value)} />
     </div>
   );
 }

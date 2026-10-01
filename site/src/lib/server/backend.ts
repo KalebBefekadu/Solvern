@@ -21,6 +21,7 @@ export function supabase(): SupabaseClient | null {
   return client;
 }
 
+/** Local ./.data storage: always in development, in production only when explicitly allowed (end to end tests). */
 export const devFallbackAllowed = () => process.env.NODE_ENV !== "production" || process.env.ALLOW_LOCAL_LEAD_STORE === "true";
 
 export class BackendUnavailable extends Error {}
@@ -45,25 +46,23 @@ export async function createUploadTargets(files: { kind: string; contentType: st
   const batch = randomUUID();
   const day = new Date().toISOString().slice(0, 10);
   const sb = supabase();
-  const targets: UploadTarget[] = [];
-  for (const [i, f] of files.entries()) {
-    const p = `leads/${day}/${batch}/${f.kind}-${i + 1}.${EXT[f.contentType]}`;
-    if (sb) {
+  if (!sb && !devFallbackAllowed()) throw new BackendUnavailable("Storage is not configured");
+  const targets = await Promise.all(
+    files.map(async (f, i): Promise<UploadTarget> => {
+      const p = `leads/${day}/${batch}/${f.kind}-${i + 1}.${EXT[f.contentType]}`;
+      if (!sb) return { path: p, url: `/api/uploads/local?path=${encodeURIComponent(p)}`, method: "PUT", mode: "local" };
       const { data, error } = await sb.storage.from(BUCKET).createSignedUploadUrl(p);
       if (error || !data) throw new Error(`Could not create upload URL: ${error?.message}`);
-      targets.push({ path: p, url: data.signedUrl, method: "PUT", mode: "supabase" });
-    } else if (devFallbackAllowed()) {
-      targets.push({ path: p, url: `/api/uploads/local?path=${encodeURIComponent(p)}`, method: "PUT", mode: "local" });
-    } else {
-      throw new BackendUnavailable("Storage is not configured");
-    }
-  }
+      return { path: p, url: data.signedUrl, method: "PUT", mode: "supabase" };
+    }),
+  );
   return { batch, targets };
 }
 
 export async function writeLocalUpload(p: string, body: ArrayBuffer) {
-  const full = path.join(DATA_DIR, "uploads", p);
-  if (!full.startsWith(path.join(DATA_DIR, "uploads"))) throw new Error("Bad path");
+  const root = path.join(DATA_DIR, "uploads");
+  const full = path.join(root, p);
+  if (!full.startsWith(root + path.sep)) throw new Error("Bad path");
   await fs.mkdir(path.dirname(full), { recursive: true });
   await fs.writeFile(full, Buffer.from(body));
 }
@@ -124,7 +123,11 @@ export async function insertLead(lead: LeadRow, photos: PhotoRow[]): Promise<str
     if (error || !data) throw new Error(`Lead insert failed: ${error?.message}`);
     if (photos.length) {
       const { error: pErr } = await sb.from("lead_photos").insert(photos.map((p) => ({ ...p, lead_id: data.id })));
-      if (pErr) throw new Error(`Lead photo insert failed: ${pErr.message}`);
+      if (pErr) {
+        // No half-saved leads: remove the parent row so the customer's retry starts clean.
+        await sb.from("leads").delete().eq("id", data.id);
+        throw new Error(`Lead photo insert failed: ${pErr.message}`);
+      }
     }
     return data.id as string;
   }

@@ -1645,7 +1645,7 @@ fieldset legend {
 }
 @media (max-width: 1024px) {
   .hub-hero {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 32px;
     padding-top: 48px;
     padding-bottom: 48px;
@@ -1659,6 +1659,13 @@ fieldset legend {
   .hub-hero .h1 {
     font-size: 38px;
     line-height: 42px;
+  }
+  .hub-hero__aside {
+    padding: 24px;
+  }
+  .hub-stat b {
+    font-size: 32px;
+    line-height: 36px;
   }
 }
 .directory {

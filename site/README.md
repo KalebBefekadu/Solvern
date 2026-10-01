@@ -22,7 +22,12 @@ Without Supabase or Resend keys, development still works end to end: leads are w
 | `npm run lint` | ESLint (Next.js rules) |
 | `npm run check:brand` | Fails on gray hex values, em dashes, banned words (AI, smart, licensing...), exclamation marks in copy |
 | `npm run check:colors` | WCAG AA contrast for all 23 trade themes and a gray check on every trade color and tint |
+| `npm test` | Unit and API tests (Vitest): validation, content integrity, markup serialization, the lead and upload routes end to end against the local store |
 | `npm run verify` | All of the above, then a production build. Run before every deploy |
+| `npm run test:e2e` | Browser tests (Playwright) against the production build, desktop and phone: every page with an axe WCAG 2.1 AA scan and a 320px overflow check, the callback form, photo upload and drawing, Concept Preview and visit submissions, SEO and security headers. Run `npm run build` first |
+| `npm run verify:full` | `verify` plus the browser tests |
+
+CI (`.github/workflows/ci.yml`) runs `verify` and `test:e2e` on every push to main and every pull request.
 
 ## Pages
 
@@ -34,6 +39,7 @@ Without Supabase or Resend keys, development still works end to end: leads are w
 | `/concept-preview` | `src/app/concept-preview/page.tsx` | Standalone Concept Preview with trade or project picker. Preselect with `?trade=roofing` or `?project=kitchen` |
 | `/reviews`, `/financing`, `/about`, `/privacy`, `/terms` | `src/app/*` | Placeholder-driven; privacy and terms are templates for an attorney to review |
 | `/sitemap.xml`, `/robots.txt` | `src/app/sitemap.ts`, `robots.ts` | Sitemap lists approved trade pages only |
+| `/api/health` | `src/app/api/health/route.ts` | Deploy check, see Production setup |
 
 Trade pages never link out to other trades (owner rule). The full directory lives only on the hub, its menu and footer.
 
@@ -76,8 +82,38 @@ Callback requests use the same `/api/leads` route with `type: "callback"`, flagg
 1. **Supabase:** create a project, run `supabase/migrations/0001_leads.sql` (tables, indexes, RLS on with no public policies, private `lead-uploads` bucket). Copy the URL and service role key.
 2. **Resend:** verify the sending domain, create an API key.
 3. **Turnstile:** create a widget for the domain, copy the site key and secret.
-4. **Vercel:** import the `site` folder, set every variable from `.env.example`, deploy. Point the domain (open item: solvern.com or solvernhome.com) and set `NEXT_PUBLIC_SITE_URL`.
-5. Submit a real test from a phone and confirm the photo, annotated PNG, strokes, notes and fields are stored and the team email arrives (build plan Phase 4 acceptance).
+4. **Vercel:** import the `site` folder, set every variable from `.env.example`, deploy. Set them before the build: the Content Security Policy reads `SUPABASE_URL` at build time to allow direct photo uploads, so redeploy after changing it. Point the domain (open item: solvern.com or solvernhome.com) and set `NEXT_PUBLIC_SITE_URL`.
+5. Open `https://<domain>/api/health`. It should report `"storage": "supabase"`, `"email": true` and `"turnstile": true`. It returns 503 if leads would be refused.
+6. Submit a real test from a phone and confirm the photo, annotated PNG, strokes, notes and fields are stored and the team email arrives (build plan Phase 4 acceptance).
+
+## Code layout
+
+```
+src/
+  app/                 Routes. Pages are server components; API routes live in app/api
+    api/leads          POST: validate, honeypot, Turnstile, store, email. Thin HTTP layer
+    api/uploads        POST: signed upload targets (Supabase, or ./.data in development)
+    api/health         GET: which services are configured (booleans only)
+  components/          UI. Client components are marked "use client"
+  content/             Data the owner edits: site.ts, trades, copy, SEO, projects
+  lib/
+    content.ts         Typed access to the content files
+    markup.ts          Drawing geometry, stroke thinning, PNG flattening
+    leads/             Shared by browser and server: constants (limits, topics), schema (Zod), client (upload and submit)
+    server/            Server only: backend (Supabase or local store), leads (intake logic), notify (Resend),
+                       turnstile, http (body limits, origin check), rate-limit, env
+  styles/              tokens.css and globals.css
+tests/
+  unit/, api/          Vitest
+  e2e/                 Playwright
+```
+
+## Security
+
+- Leads and photos are written only by server routes with the service role key. Row level security is on with no public policies, and the photo bucket is private; the team email carries 7-day signed links.
+- The lead and upload routes refuse cross-site posts, JSON bodies over 1 MB and bursts from one address, then validate every field with Zod. Upload paths must match the pattern the server issued, and every referenced photo must exist before a lead can point at it.
+- Content Security Policy, HSTS, `X-Frame-Options: DENY`, `nosniff` and a strict referrer policy are set in `next.config.ts`.
+- Customer text is HTML-escaped in emails. Structured data is serialized with `<` escaped.
 
 ## Analytics
 
@@ -89,8 +125,9 @@ Plus Jakarta Sans is self-hosted from `src/fonts` (variable, latin subset, SIL O
 
 ## Verified on this build
 
-- Type check, lint, brand check and color check pass; production build succeeds (40 static pages).
+- 2026-10-01 (pass 2): `npm run verify` passes (44 unit and API tests) and `npm run test:e2e` passes (48 browser tests on desktop and phone, axe clean on every page, no horizontal scroll at 320px or 1440px on any page).
+- Type check, lint, brand check and color check pass; production build succeeds.
 - axe WCAG 2.1 AA: no violations on every page at 1440px and 375px.
-- Lighthouse mobile: performance 98 to 99, accessibility 100, best practices 100, SEO 100. LCP 1.6 to 2.0 s, CLS 0.
+- Lighthouse mobile (pass 2, warm server in a shared container): performance 98, accessibility 100, best practices 100, SEO 100. LCP 2.1 to 2.3 s, CLS 0. Pass 1 measured LCP 1.6 to 2.0 s.
 - No horizontal scroll at 320px.
 - End to end in a browser: photo upload, drawing with two pens, notes, submit, lead and both images stored, emails generated; callback form branching, prefill, validation, keyboard use and submit; honeypot, path injection and topic tampering rejected server side.

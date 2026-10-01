@@ -11,7 +11,8 @@ import { PreviewForm } from "@/components/PreviewForm";
 import { ClosingBand, FaqSection, FinancingBand, HowItWorks, JsonLd, NumberedList, ProofRow, ReviewsSection, SectionHead, TeamSection } from "@/components/sections";
 import { faqJsonLd, localBusinessJsonLd, serviceJsonLd } from "@/lib/structured-data";
 
-export const dynamicParams = false;
+// Unknown slugs fall through to notFound() below. (dynamicParams = false logs a NoFallbackError for every probe in Next 15.5.)
+export const dynamicParams = true;
 
 export function generateStaticParams() {
   return trades.filter((t) => tradePage(t.slug)).map((t) => ({ trade: t.slug }));

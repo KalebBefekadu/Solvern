@@ -3,7 +3,7 @@
 You are building the production website for **Solvern Home**, a residential construction company in metro Atlanta with 23 trades under one brand. Read this file first, then the docs in the order listed. The owner, Kaleb, is the final decision-maker on every brand choice.
 
 ## Code
-The app lives in `site/` (see `site/README.md`). Run `npm run verify` there before every deploy: it enforces the no-gray, no-em-dash and banned-word rules and WCAG contrast for every trade.
+The app lives in `site/` (see `site/README.md`). Run `npm run verify` there before every deploy: it type checks, lints, enforces the no-gray, no-em-dash and banned-word rules and WCAG contrast for every trade, runs the unit and API tests, and builds. `npm run test:e2e` runs the browser tests (forms, uploads, accessibility) against that build. CI runs both on every push.
 
 ## Read in this order
 1. `docs/01-product-brief.md`: the business, customer, positioning and every decision made so far.

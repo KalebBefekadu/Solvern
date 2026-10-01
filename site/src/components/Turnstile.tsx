@@ -63,6 +63,14 @@ export function Turnstile({ active, onToken, resetKey }: { active: boolean; onTo
     if (resetKey && widget.current) window.turnstile?.reset(widget.current);
   }, [resetKey]);
 
+  useEffect(
+    () => () => {
+      if (widget.current) window.turnstile?.remove(widget.current);
+      widget.current = null;
+    },
+    [],
+  );
+
   if (!SITE_KEY) return null;
   return <div ref={ref} />;
 }

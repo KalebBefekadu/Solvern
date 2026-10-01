@@ -3,6 +3,7 @@
  * Without RESEND_API_KEY the messages are logged instead, so local testing works.
  */
 import { site } from "@/content/site";
+import { fetchWithTimeout } from "./env";
 
 interface Mail {
   to: string[];
@@ -19,15 +20,15 @@ async function send(mail: Mail) {
     console.info("[notify] email not sent (Resend not configured)\n", JSON.stringify({ to: mail.to, subject: mail.subject, text: mail.text }, null, 2));
     return;
   }
-  const res = await fetch("https://api.resend.com/emails", {
+  const res = await fetchWithTimeout("https://api.resend.com/emails", {
     method: "POST",
     headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
     body: JSON.stringify({ from, to: mail.to, subject: mail.subject, text: mail.text, html: mail.html, reply_to: mail.replyTo }),
   });
-  if (!res.ok) console.error("[notify] Resend error", res.status, await res.text());
+  if (!res.ok) throw new Error(`Resend ${res.status}: ${(await res.text()).slice(0, 300)}`);
 }
 
-const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
+export const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 
 export interface TeamNotice {
   leadId: string;

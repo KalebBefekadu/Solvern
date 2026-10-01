@@ -220,6 +220,10 @@ export function ClosingBand({ headline, primary }: { headline: string; primary: 
   );
 }
 
-export function JsonLd({ data }: { data: unknown }) {
-  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data).replace(/</g, "\\u003c") }} />;
+/** Structured data. Null entries (sections with nothing publishable yet) are dropped. */
+export function JsonLd({ data }: { data: object | (object | null)[] }) {
+  const items = Array.isArray(data) ? data.filter((d): d is object => d !== null) : [data];
+  if (!items.length) return null;
+  const json = items.length === 1 ? items[0] : items;
+  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(json).replace(/</g, "\\u003c") }} />;
 }

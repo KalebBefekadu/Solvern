@@ -1,4 +1,5 @@
 import { getStroke } from "perfect-freehand";
+import { MAX_NOTE_LENGTH, MAX_NOTES, MAX_POINTS_PER_STROKE, MAX_STROKES } from "@/lib/leads/constants";
 
 export const PENS = [
   { id: "blue", label: "Blue pen", color: "#2F63D6", text: "#2F63D6" },
@@ -73,16 +74,45 @@ export function bbox(points: Pt[]) {
   return { minX, minY, maxX, maxY };
 }
 
+
+/**
+ * Drops points closer than `minDist` to the last kept point, then samples evenly down to `max`.
+ * Keeps the saved vector data small (coalesced pointer events arrive at up to 240 per second)
+ * without changing the drawn shape at the resolution it is reviewed at.
+ */
+export function simplifyPoints(points: Pt[], minDist: number, max = MAX_POINTS_PER_STROKE): Pt[] {
+  if (points.length <= 2) return points;
+  const kept: Pt[] = [points[0]];
+  const min2 = minDist * minDist;
+  for (let i = 1; i < points.length - 1; i++) {
+    const [lx, ly] = kept[kept.length - 1];
+    const dx = points[i][0] - lx;
+    const dy = points[i][1] - ly;
+    if (dx * dx + dy * dy >= min2) kept.push(points[i]);
+  }
+  kept.push(points[points.length - 1]);
+  if (kept.length <= max) return kept;
+  const step = (kept.length - 1) / (max - 1);
+  return Array.from({ length: max }, (_, i) => kept[Math.round(i * step)]);
+}
+
 /** Serializable stroke data saved with the lead (vector, in image pixel space). */
 export function serializeMarkup(photo: MarkupPhoto) {
+  const minDist = Math.max(1, Math.max(photo.width, photo.height) / 1000);
+  const noteNumber = new Map(photo.notes.map((n) => [n.id, n.n]));
   return {
     width: photo.width,
     height: photo.height,
-    strokes: photo.strokes.map((s) => ({ pen: s.pen, color: penById(s.pen).color, note: photo.notes.find((n) => n.id === s.noteId)?.n ?? null, points: s.points.map((p) => [round(p[0]), round(p[1]), round(p[2])]) })),
+    strokes: photo.strokes.slice(0, MAX_STROKES).map((s) => ({
+      pen: s.pen,
+      color: penById(s.pen).color,
+      note: noteNumber.get(s.noteId) ?? null,
+      points: simplifyPoints(s.points, minDist).map((p) => [round(p[0]), round(p[1]), round(p[2])] as Pt),
+    })),
   };
 }
 export function serializeNotes(photo: MarkupPhoto) {
-  return photo.notes.map((n) => ({ n: n.n, pen: n.pen, color: penById(n.pen).color, text: n.text.trim(), anchor: { x: Math.round(n.anchor.x), y: Math.round(n.anchor.y) } }));
+  return photo.notes.slice(0, MAX_NOTES).map((n) => ({ n: n.n, pen: n.pen, color: penById(n.pen).color, text: n.text.trim().slice(0, MAX_NOTE_LENGTH), anchor: { x: Math.round(n.anchor.x), y: Math.round(n.anchor.y) } }));
 }
 
 /** Draws the photo, strokes and numbered note markers into a PNG (long edge capped). */
