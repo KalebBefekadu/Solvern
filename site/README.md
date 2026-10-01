@@ -139,7 +139,7 @@ Plus Jakarta Sans is self-hosted from `src/fonts` (variable, latin subset, SIL O
 
 ## Verified on this build
 
-- 2026-10-01 (pass 3): `npm run verify` passes (55 unit and API tests) and `npm run test:e2e` passes (53 browser tests on desktop and phone, axe clean on every page, no horizontal scroll at 320px or 1440px on any page).
+- 2026-10-01 (pass 3): `npm run verify` passes (55 unit and API tests) and `npm run test:e2e` passes (55 browser tests on desktop and phone: axe clean on every page, focus rings at 3:1 or better on all 27 pages, no horizontal scroll at 320px or 1440px).
 - Type check, lint, brand check and color check pass; production build succeeds.
 - axe WCAG 2.1 AA: no violations on every page at 1440px and 375px.
 - Lighthouse mobile (pass 3, warm server in a shared container): performance 99, accessibility 100, best practices 100, SEO 100 on /, /carpentry and /customer-service. LCP 1.8 to 2.1 s, CLS 0.

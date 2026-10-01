@@ -1901,3 +1901,54 @@ fieldset legend {
     display: flex;
   }
 }
+
+/* Focus rings on dark and trade-colored surfaces: the default blue falls under 3:1 there (WCAG 2.4.7, 1.4.11). */
+.site-footer,
+.cs-card--ink {
+  --focus-ring: var(--white);
+}
+.band {
+  --focus-ring: var(--trade-on);
+}
+.band--closing {
+  --focus-ring: var(--ink);
+}
+
+/* Windows high contrast and other forced-color modes strip backgrounds. Pen choices, trade swatches,
+   note markers and the drawing itself carry meaning in their color, so they keep it. */
+@media (forced-colors: active) {
+  .pen,
+  .pen span,
+  .swatch,
+  .trade-link__chip,
+  .note-marker,
+  .markup__canvas,
+  .thumb__count {
+    forced-color-adjust: none;
+  }
+  .pen[aria-pressed="true"] {
+    outline: 3px solid CanvasText;
+    outline-offset: 2px;
+  }
+}
+
+/* Print: the page content without navigation, sticky bars or forms. */
+@media print {
+  .site-header,
+  .mobile-menu,
+  .mega,
+  .bottom-bar,
+  .bottom-bar-spacer,
+  .skip-link,
+  .draft-banner,
+  .see-grid,
+  .site-footer__trades {
+    display: none !important;
+  }
+  .section,
+  .hero {
+    padding-top: 24px !important;
+    padding-bottom: 24px !important;
+    break-inside: avoid-page;
+  }
+}

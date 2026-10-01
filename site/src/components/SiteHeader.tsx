@@ -158,28 +158,31 @@ export function SiteHeader({ variant, links = [], primary, tradeGroups = [], lab
 
       {variant !== "minimal" && (
         <div className="mobile-menu" id={menuId} data-open={open}>
-          <nav aria-label="Mobile" className="wrap">
-            {links.map((l) => (
-              <Link key={l.href} href={l.href} onClick={close}>
-                {l.label}
-              </Link>
-            ))}
-            <Link href="/customer-service" onClick={close}>
-              Customer service
-            </Link>
-            {variant === "hub" &&
-              tradeGroups.map((g) => (
-                <div key={g.family}>
-                  <div className="mobile-menu__group">{g.family}</div>
-                  {g.trades.map((t) => (
-                    <Link key={t.slug} href={`/${t.slug}`} className="mobile-menu__trade" onClick={close}>
-                      <span className="swatch" style={{ ["--sw" as string]: t.color }} aria-hidden="true" />
-                      {t.shortName}
-                    </Link>
-                  ))}
-                </div>
+          {/* Rendered only while open: the button needs JavaScript anyway, and this keeps 23 links out of every page's HTML. */}
+          {open && (
+            <nav aria-label="Mobile" className="wrap">
+              {links.map((l) => (
+                <Link key={l.href} href={l.href} onClick={close}>
+                  {l.label}
+                </Link>
               ))}
-          </nav>
+              <Link href="/customer-service" onClick={close}>
+                Customer service
+              </Link>
+              {variant === "hub" &&
+                tradeGroups.map((g) => (
+                  <div key={g.family}>
+                    <div className="mobile-menu__group">{g.family}</div>
+                    {g.trades.map((t) => (
+                      <Link key={t.slug} href={`/${t.slug}`} className="mobile-menu__trade" onClick={close}>
+                        <span className="swatch" style={{ ["--sw" as string]: t.color }} aria-hidden="true" />
+                        {t.shortName}
+                      </Link>
+                    ))}
+                  </div>
+                ))}
+            </nav>
+          )}
         </div>
       )}
     </header>

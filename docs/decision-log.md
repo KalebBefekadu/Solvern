@@ -38,3 +38,9 @@ No approved design, copy or color was changed.
 - 2026-10-01: Leaving a page with unsent marked-up photos asks first. Forms report `form_error` to analytics and set `aria-busy` while sending. The mobile menu closes on Escape and returns focus to its button.
 - 2026-10-01: Both forms share one submission hook and one set of client validators (tested to match the server). The hub header is one component. Lint now fails on warnings.
 - 2026-10-01: The logo SVG is about 6 KB smaller per copy (coordinates rounded to 2 decimals, no visible change).
+
+## 2026-10-01: build pass 4, accessibility beyond axe (Claude)
+- 2026-10-01: The blue focus ring measured 2.92:1 on the ink footer, the ink phone card and the hub financing band, under the 3:1 WCAG asks. On those surfaces the ring now takes the surface's text color (white on ink, the trade's text color on trade bands). A browser test checks every focusable element on all 27 pages.
+- 2026-10-01: Windows high contrast mode keeps the pen colors, trade swatches, note markers and drawings, which carry meaning in their color. The selected pen gets an outline.
+- 2026-10-01: Print styles leave out navigation, sticky bars and forms.
+- 2026-10-01: The mobile menu's links render only while it is open (about 3.5 KB less HTML per page).
