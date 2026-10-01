@@ -24,7 +24,7 @@ export default function CustomerServicePage() {
       <main id="main">
         <section className="wrap page-head" aria-labelledby="cs-title">
           <span className="eyebrow">Customer service</span>
-          <h1 className="h1" id="cs-title" style={{ fontSize: "clamp(38px, 5vw, 56px)", lineHeight: 1.08 }}>
+          <h1 className="h1 h1--cs" id="cs-title">
             Request a callback.
           </h1>
           <p className="lead">
@@ -33,13 +33,13 @@ export default function CustomerServicePage() {
           </p>
         </section>
 
-        <section className="wrap cs-grid" style={{ paddingBottom: 80 }}>
+        <section className="wrap cs-grid page-end">
           <Suspense fallback={<CallbackForm />}>
             <CallbackFormWithPrefill />
           </Suspense>
           <aside className="cs-aside" aria-label="Other ways to reach us">
             <div className="cs-card cs-card--ink">
-              <span style={{ fontSize: 14, fontWeight: 700 }}>Prefer to call?</span>
+              <span className="cs-call__label">Prefer to call?</span>
               <a href={site.phone.href} className="cs-phone" data-location="customer-service">
                 {site.phone.display}
               </a>
@@ -52,7 +52,7 @@ export default function CustomerServicePage() {
             <div className="cs-card cs-card--outline">
               <h2 className="cs-card__t">Planning something new?</h2>
               <p>Send a photo and get a concept image and estimate within 48 hours.</p>
-              <Link href="/concept-preview" className="btn btn--ink" style={{ minHeight: 46 }} data-track="cta_click" data-location="customer-service">
+              <Link href="/concept-preview" className="btn btn--ink btn--compact" data-track="cta_click" data-location="customer-service">
                 Get my Concept Preview
               </Link>
             </div>

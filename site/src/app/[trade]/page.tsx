@@ -86,7 +86,7 @@ export default async function TradePage({ params }: { params: Promise<{ trade: s
           </div>
         </section>
 
-        <section className="section" id="services" aria-labelledby="services-title" style={{ paddingTop: 72, paddingBottom: 72 }}>
+        <section className="section section--services" id="services" aria-labelledby="services-title">
           <div className="wrap cols-4-8">
             <div className="stack">
               <SectionHead eyebrow="What we do" title={page.servicesTitle} lead={page.servicesLead} id="services-title" />

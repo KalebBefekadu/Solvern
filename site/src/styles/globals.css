@@ -122,6 +122,34 @@ textarea {
   display: flex;
   flex-direction: column;
 }
+.stack--6 {
+  gap: 6px;
+}
+.stack--14 {
+  gap: 14px;
+}
+.stack--16 {
+  gap: 16px;
+}
+.section.section--flush-top {
+  padding-top: 0;
+}
+.section.section--band {
+  padding-top: 80px;
+}
+.section.section--services {
+  padding-top: 72px;
+  padding-bottom: 72px;
+}
+.wrap.closing__wrap {
+  padding-top: 80px;
+}
+.wrap.page-end {
+  padding-bottom: 80px;
+}
+.wrap.page-end.page-end--short {
+  padding-bottom: 40px;
+}
 @media (max-width: 1100px) {
   .wrap {
     padding-left: 40px;
@@ -177,6 +205,10 @@ textarea {
 .small {
   font-size: 14px;
   line-height: 22px;
+}
+.h1.h1--cs {
+  font-size: clamp(38px, 5vw, 56px);
+  line-height: 1.08;
 }
 .eyebrow {
   font-size: 14px;
@@ -245,6 +277,12 @@ textarea {
 }
 .btn--block {
   width: 100%;
+}
+.btn.btn--tall {
+  min-height: 56px;
+}
+.btn.btn--compact {
+  min-height: 46px;
 }
 .btn--ink {
   background: var(--ink);
@@ -363,6 +401,11 @@ textarea {
   font-size: 14px;
   font-weight: 600;
   padding: 10px 0;
+}
+/* The minimal header's page label stays visible at every width. */
+.site-header__cs.site-header__cs--label {
+  display: inline;
+  font-weight: 700;
 }
 .site-header__phone {
   font-size: 15px;
@@ -587,6 +630,13 @@ textarea {
   gap: 14px;
   max-width: 760px;
 }
+.section-head.section-head--wide {
+  max-width: none;
+  gap: 40px;
+}
+.h2.how__title {
+  margin-top: 40px;
+}
 .section-head--split {
   max-width: none;
   flex-direction: row;
@@ -769,6 +819,9 @@ fieldset legend {
   grid-template-columns: 1fr 1fr;
   gap: 14px;
 }
+.grid-2.grid-2--roomy {
+  gap: 16px;
+}
 @media (max-width: 560px) {
   .grid-2 {
     grid-template-columns: 1fr;
@@ -851,8 +904,16 @@ fieldset legend {
   align-items: center;
   justify-content: center;
 }
+.form-success__icon.form-success__icon--ink {
+  background: var(--ink);
+  color: var(--white);
+}
 
 /* ---------- Markup tool ---------- */
+.small.preview__fineprint {
+  margin-top: 24px;
+  max-width: 760px;
+}
 .markup {
   display: flex;
   flex-direction: column;
@@ -943,6 +1004,23 @@ fieldset legend {
   align-items: center;
   justify-content: center;
 }
+.markup__stage.markup__stage--empty {
+  cursor: pointer;
+}
+.markup__stage .markup__example-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.note-box.example-note--1 {
+  left: 46%;
+  top: 10%;
+}
+.note-box.example-note--2 {
+  left: 61%;
+  top: 56%;
+}
 @media (max-width: 640px) {
   .markup__stage--empty {
     height: 300px;
@@ -1018,6 +1096,10 @@ fieldset legend {
   font-weight: 800;
   color: var(--note-text);
 }
+.note-box__label.example-note__label {
+  display: block;
+  margin-bottom: 4px;
+}
 .note-box__del {
   width: 28px;
   height: 28px;
@@ -1065,6 +1147,11 @@ fieldset legend {
   pointer-events: none;
   z-index: 1;
 }
+/* Marker beside a note in the phone list, not pinned on the photo. */
+.note-marker.note-marker--inline {
+  position: static;
+  margin: 0;
+}
 .notes-list {
   list-style: none;
   margin: 0;
@@ -1097,6 +1184,17 @@ fieldset legend {
   flex-wrap: wrap;
   gap: 8px;
   align-items: center;
+}
+.thumb-wrap {
+  position: relative;
+}
+.note-box__del.thumb__remove {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 28px;
+  height: 28px;
+  border: 1.5px solid var(--trade-tint-strong);
 }
 .thumb {
   position: relative;
@@ -1265,6 +1363,9 @@ fieldset legend {
   align-items: center;
   justify-content: flex-end;
 }
+.rating-summary__count {
+  font-weight: 700;
+}
 .rating-big {
   font-size: 64px;
   line-height: 1;
@@ -1295,6 +1396,14 @@ fieldset legend {
   align-items: center;
   gap: 12px;
   margin-top: auto;
+}
+.review-card__author {
+  font-size: 15px;
+  line-height: 22px;
+  font-weight: 700;
+}
+.review-card__meta {
+  font-weight: 500;
 }
 .avatar {
   width: 40px;
@@ -1353,6 +1462,16 @@ fieldset legend {
   justify-content: space-between;
   align-items: center;
   gap: 48px;
+}
+.band .band__text {
+  font-size: 18px;
+  line-height: 29px;
+}
+.band.band--single {
+  grid-template-columns: 1fr;
+}
+.band.band--closing.band--tint {
+  background: var(--trade-tint);
 }
 @media (max-width: 1024px) {
   .band {
@@ -1428,6 +1547,17 @@ fieldset legend {
 .site-footer a:hover {
   color: var(--white);
   text-decoration: underline;
+}
+.site-footer.site-footer--compact {
+  padding-top: 40px;
+}
+.wrap.site-footer__bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  font-size: 14px;
 }
 .site-footer__top {
   display: flex;
@@ -1516,6 +1646,10 @@ fieldset legend {
   grid-template-columns: 7fr 5fr;
   gap: 40px;
   align-items: start;
+}
+.cs-call__label {
+  font-size: 14px;
+  font-weight: 700;
 }
 .cs-form {
   padding: 40px;
@@ -1620,6 +1754,9 @@ fieldset legend {
   grid-template-columns: 7fr 5fr;
   gap: 64px;
   align-items: end;
+}
+.lead.hub-hero__lead {
+  max-width: 620px;
 }
 .hub-hero .h1 {
   font-size: 72px;
@@ -1760,6 +1897,9 @@ fieldset legend {
   display: flex;
   flex-direction: column;
 }
+.text-link.project-card__link {
+  margin-top: 4px;
+}
 .project-card .photo-ph {
   border-radius: 0;
   height: 200px;
@@ -1862,6 +2002,10 @@ fieldset legend {
   gap: 16px;
   max-width: 820px;
 }
+/* A page head with nothing under it (404, error). */
+.page-head.page-head--alone {
+  padding-bottom: 96px;
+}
 .notice {
   padding: 16px 20px;
   border-radius: var(--radius-card);
@@ -1869,6 +2013,9 @@ fieldset legend {
   background: var(--white);
   font-size: 14px;
   line-height: 22px;
+}
+.notice.notice--spaced {
+  margin-top: 20px;
 }
 .draft-banner {
   background: var(--trade-tint-strong);

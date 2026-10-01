@@ -11,7 +11,7 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
   }, [error]);
 
   return (
-    <main id="main" className="wrap page-head" style={{ paddingBottom: 96 }}>
+    <main id="main" className="wrap page-head page-head--alone">
       <span className="eyebrow">Something went wrong</span>
       <h1 className="h1">This page did not load.</h1>
       <p className="lead">Try again, or call us and we will take it from here.</p>

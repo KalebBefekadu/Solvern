@@ -18,7 +18,7 @@ export default function PrivacyPage() {
         <h1 className="h1">Privacy policy</h1>
         <p className="small">Last updated: [DATE]</p>
       </section>
-      <section className="wrap" style={{ paddingBottom: 80 }}>
+      <section className="wrap page-end">
         <div className="prose">
           <p>
             This policy explains how {site.legalName}, doing business as Solvern Home (&quot;Solvern&quot;, &quot;we&quot;), handles information you share with us through this

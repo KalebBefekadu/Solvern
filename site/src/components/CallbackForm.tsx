@@ -76,7 +76,7 @@ export function CallbackForm({ prefill = {} }: { prefill?: CallbackPrefill }) {
     return (
       <div className="cs-form" id="callback">
         <div className="form-success" ref={doneRef} tabIndex={-1} role="status">
-          <span className="form-success__icon" style={{ background: "var(--ink)", color: "var(--white)" }}>
+          <span className="form-success__icon form-success__icon--ink">
             <CheckIcon />
           </span>
           <h2 className="h3">Received.</h2>
@@ -187,7 +187,7 @@ export function CallbackForm({ prefill = {} }: { prefill?: CallbackPrefill }) {
         </span>
         <h2 className="cs-step__t">How to reach you</h2>
       </div>
-      <div className="grid-2" style={{ gap: 16 }}>
+      <div className="grid-2 grid-2--roomy">
         <div className="field">
           <label htmlFor={fid("firstName")}>First name</label>
           <input className="input" type="text" autoComplete="given-name" maxLength={80} defaultValue={prefill.first} {...field("firstName")} />
@@ -238,7 +238,7 @@ export function CallbackForm({ prefill = {} }: { prefill?: CallbackPrefill }) {
           {f.formError}
         </p>
       )}
-      <button type="submit" className="btn btn--ink btn--block" style={{ minHeight: 56 }} disabled={status === "sending"}>
+      <button type="submit" className="btn btn--ink btn--block btn--tall" disabled={status === "sending"}>
         {status === "sending" ? "Sending" : "Request a callback"}
       </button>
     </form>

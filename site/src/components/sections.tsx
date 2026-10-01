@@ -80,10 +80,10 @@ export function HowItWorks({ steps, title = "Simple from the first photo to the 
   return (
     <section className="section" aria-labelledby="how-title">
       <div className="wrap">
-        <div className="section-head" style={{ maxWidth: "none", gap: 40 }}>
+        <div className="section-head section-head--wide">
           <span className="eyebrow">How it works</span>
         </div>
-        <h2 className="h2" id="how-title" style={{ marginTop: 40 }}>
+        <h2 className="h2 how__title" id="how-title">
           {title}
         </h2>
         <ol className="steps">
@@ -115,12 +115,12 @@ export function ReviewsSection({ topic }: { topic?: string }) {
             </h2>
           </div>
           <div className="rating-summary">
-            <div className="stack" style={{ gap: 6 }}>
+            <div className="stack stack--6">
               <span className="rating-big">{site.rating.value}</span>
               <Stars label={`Rated ${site.rating.value} out of 5`} />
             </div>
-            <div className="stack" style={{ gap: 6 }}>
-              <span style={{ fontWeight: 700 }}>
+            <div className="stack stack--6">
+              <span className="rating-summary__count">
                 {site.rating.count} reviews on {site.rating.source}
               </span>
               <Link href="/reviews" className="text-link">
@@ -138,10 +138,10 @@ export function ReviewsSection({ topic }: { topic?: string }) {
                 <span className="avatar" aria-hidden="true">
                   [A]
                 </span>
-                <span style={{ fontSize: 15, lineHeight: "22px", fontWeight: 700 }}>
+                <span className="review-card__author">
                   [Name]
                   <br />
-                  <span style={{ fontWeight: 500 }}>[Neighborhood], via {site.rating.source}</span>
+                  <span className="review-card__meta">[Neighborhood], via {site.rating.source}</span>
                 </span>
               </footer>
             </blockquote>
@@ -155,14 +155,14 @@ export function ReviewsSection({ topic }: { topic?: string }) {
 export function FinancingBand({ location }: { location: string }) {
   const href = site.financing.applyUrl || "/financing";
   return (
-    <section className="section" id="financing" aria-labelledby="financing-title" style={{ paddingTop: 80 }}>
+    <section className="section section--band" id="financing" aria-labelledby="financing-title">
       <div className="wrap">
         <div className="band">
-          <div className="stack" style={{ gap: 14 }}>
+          <div className="stack stack--14">
             <h2 className="h2" id="financing-title">
               Pay over time.
             </h2>
-            <p style={{ fontSize: 18, lineHeight: "29px" }}>
+            <p className="band__text">
               Monthly payment options through {site.financing.partner} for projects over {site.financing.minimum}. Apply in minutes and know your options before work begins.
             </p>
           </div>
@@ -200,8 +200,8 @@ export function FaqSection({ title, items }: { title: string; items: Faq[] }) {
 
 export function ClosingBand({ headline, primary }: { headline: string; primary: { label: string; href: string } }) {
   return (
-    <section className="section" style={{ paddingTop: 0 }} aria-labelledby="closing-title">
-      <div className="wrap" style={{ paddingTop: 80 }}>
+    <section className="section section--flush-top" aria-labelledby="closing-title">
+      <div className="wrap closing__wrap">
         <div className="band band--closing">
           <h2 className="h2 h2--xl" id="closing-title">
             {headline}

@@ -5,7 +5,7 @@ import { SimplePage } from "@/components/SimplePage";
 export default function NotFound() {
   return (
     <SimplePage>
-      <section className="wrap page-head" style={{ paddingBottom: 96 }}>
+      <section className="wrap page-head page-head--alone">
         <span className="eyebrow">Page not found</span>
         <h1 className="h1">This page is not here.</h1>
         <p className="lead">The link may be old or mistyped. Start from the home page, or call us and we will point you in the right direction.</p>

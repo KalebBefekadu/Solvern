@@ -18,7 +18,7 @@ export default function TermsPage() {
         <h1 className="h1">Terms of use</h1>
         <p className="small">Last updated: [DATE]</p>
       </section>
-      <section className="wrap" style={{ paddingBottom: 80 }}>
+      <section className="wrap page-end">
         <div className="prose">
           <p>These terms apply to your use of this website, operated by {site.legalName}, doing business as Solvern Home.</p>
           <h2>Concept Previews and estimates</h2>

@@ -30,7 +30,7 @@ export default function AboutPage() {
       </section>
       <section className="section section--tint" aria-labelledby="v-title">
         <div className="wrap cols-4-8">
-          <div className="stack" style={{ gap: 16 }}>
+          <div className="stack stack--16">
             <span className="eyebrow">How we work</span>
             <h2 className="h2" id="v-title">
               Five standards on every job.

@@ -96,9 +96,7 @@ export function SiteHeader({ variant, links = [], primary, tradeGroups = [], lab
 
         <div className="site-header__right">
           {variant === "minimal" ? (
-            <span className="site-header__cs" style={{ display: "inline", fontWeight: 700 }}>
-              {label}
-            </span>
+            <span className="site-header__cs site-header__cs--label">{label}</span>
           ) : (
             <Link href="/customer-service" className="site-header__cs">
               Customer service

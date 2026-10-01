@@ -28,8 +28,8 @@ export default function FinancingPage() {
           Monthly payment options through {site.financing.partner} for projects over {site.financing.minimum}. Apply in minutes and know your options before work begins.
         </p>
       </section>
-      <section className="wrap" style={{ paddingBottom: 40 }} aria-label="Prequalification">
-        <div className="band" style={{ gridTemplateColumns: "1fr" }}>
+      <section className="wrap page-end page-end--short" aria-label="Prequalification">
+        <div className="band band--single">
           <div className="band__cta">
             <a href={site.financing.applyUrl || "#financing-apply"} className="btn btn--white" data-track="financing_click" data-location="financing-page">
               See financing options
@@ -37,7 +37,7 @@ export default function FinancingPage() {
             <span className="small">{site.financing.terms}</span>
           </div>
         </div>
-        <div className="notice" id="financing-apply" style={{ marginTop: 20 }}>
+        <div className="notice notice--spaced" id="financing-apply">
           [Prequalification widget or link from {site.financing.partner}]
         </div>
       </section>

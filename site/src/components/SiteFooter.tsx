@@ -9,8 +9,8 @@ import { Lockup } from "./Logo";
 export function SiteFooter({ withTrades = false, compact = false }: { withTrades?: boolean; compact?: boolean }) {
   if (compact) {
     return (
-      <footer className="site-footer" style={{ paddingTop: 40 }}>
-        <div className="wrap" style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: 16, fontSize: 14 }}>
+      <footer className="site-footer site-footer--compact">
+        <div className="wrap site-footer__bar">
           <Link href="/" aria-label="Solvern Home">
             <Lockup />
           </Link>

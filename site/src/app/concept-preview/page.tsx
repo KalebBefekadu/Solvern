@@ -72,7 +72,7 @@ export default function ConceptPreviewPage() {
             <Suspense fallback={<PreviewForm tradeOptions={opts} />}>
               <PreviewFormWithQuery options={opts} />
             </Suspense>
-            <p className="small" style={{ marginTop: 24, maxWidth: 760 }}>
+            <p className="small preview__fineprint">
               Every concept image is labeled Concept Preview. Concept image for planning. Final materials and measurements are confirmed at your site visit.
             </p>
           </div>

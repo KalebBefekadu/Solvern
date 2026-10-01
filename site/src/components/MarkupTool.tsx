@@ -309,7 +309,7 @@ export function MarkupTool({ photos, setPhotos, photoSubject, exampleNotes, diag
         <ol className="notes-list notes-list--inline" aria-label="Your notes">
           {active.notes.map((n) => (
             <li key={n.id} style={{ ["--note" as string]: penById(n.pen).color }}>
-              <span className="note-marker" style={{ position: "static", margin: 0, ["--note" as string]: penById(n.pen).color }} aria-hidden="true">
+              <span className="note-marker note-marker--inline" aria-hidden="true">
                 {n.n}
               </span>
               <label className="visually-hidden" htmlFor={`list-${n.id}`}>
@@ -333,7 +333,7 @@ export function MarkupTool({ photos, setPhotos, photoSubject, exampleNotes, diag
 
       <div className="thumbs" aria-label="Your photos">
         {photos.map((p, i) => (
-          <span key={p.id} style={{ position: "relative" }}>
+          <span key={p.id} className="thumb-wrap">
             <button
               type="button"
               className="thumb"
@@ -348,13 +348,7 @@ export function MarkupTool({ photos, setPhotos, photoSubject, exampleNotes, diag
               <img src={p.url} alt="" />
               {p.notes.length > 0 && <span className="thumb__count">{p.notes.length}</span>}
             </button>
-            <button
-              type="button"
-              className="note-box__del"
-              style={{ position: "absolute", top: -10, right: -10, width: 28, height: 28, border: "1.5px solid var(--trade-tint-strong)" }}
-              aria-label={`Remove photo ${i + 1}`}
-              onClick={() => removePhoto(p.id)}
-            >
+            <button type="button" className="note-box__del thumb__remove" aria-label={`Remove photo ${i + 1}`} onClick={() => removePhoto(p.id)}>
               <CloseIcon size={14} />
             </button>
           </span>
@@ -498,9 +492,9 @@ function ExampleStage({
   };
   return (
     <>
-      <div className="markup__stage markup__stage--empty" data-dragging={dragging} {...dnd} onClick={onPick} style={{ cursor: "pointer" }} aria-hidden="true">
+      <div className="markup__stage markup__stage--empty" data-dragging={dragging} {...dnd} onClick={onPick} aria-hidden="true">
         <span className="example-tag">Example</span>
-        <svg viewBox="0 0 720 420" preserveAspectRatio="xMidYMid slice" style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}>
+        <svg className="markup__example-art" viewBox="0 0 720 420" preserveAspectRatio="xMidYMid slice">
           <path
             d="M120 250 C140 200 260 190 300 240 C330 280 250 320 170 305 C120 295 110 270 120 250"
             fill="none"
@@ -511,8 +505,8 @@ function ExampleStage({
           />
           <path d="M430 320 L640 320 L640 380" fill="none" stroke="#E8742C" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
-        {notes[0] && <ExampleNote n={1} pen="blue" text={notes[0]} style={{ left: "46%", top: "10%" }} />}
-        {notes[1] && <ExampleNote n={2} pen="orange" text={notes[1]} style={{ left: "61%", top: "56%" }} />}
+        {notes[0] && <ExampleNote n={1} pen="blue" text={notes[0]} />}
+        {notes[1] && <ExampleNote n={2} pen="orange" text={notes[1]} />}
       </div>
       <div className="dropzone dropzone--row" data-dragging={dragging} {...dnd}>
         <span className="small">Drag photos here, or choose them from your phone or computer.</span>
@@ -524,13 +518,11 @@ function ExampleStage({
   );
 }
 
-function ExampleNote({ n, pen, text, style }: { n: number; pen: PenId; text: string; style: React.CSSProperties }) {
+function ExampleNote({ n, pen, text }: { n: 1 | 2; pen: PenId; text: string }) {
   const p = penById(pen);
   return (
-    <div className="note-box example-note" style={{ ...style, ["--note" as string]: p.color, ["--note-text" as string]: p.text }} aria-hidden="true">
-      <span className="note-box__label" style={{ display: "block", marginBottom: 4 }}>
-        Note {n}
-      </span>
+    <div className={`note-box example-note example-note--${n}`} style={{ ["--note" as string]: p.color, ["--note-text" as string]: p.text }} aria-hidden="true">
+      <span className="note-box__label example-note__label">Note {n}</span>
       {text}
     </div>
   );

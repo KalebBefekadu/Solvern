@@ -61,7 +61,7 @@ export default function HomePage() {
             <h1 className="h1" id="hero-title">
               One team for every part of your home.
             </h1>
-            <p className="lead" style={{ maxWidth: 620 }}>
+            <p className="lead hub-hero__lead">
               From a single repair to a complete renovation, 23 trades across metro Atlanta under one accountable team. Send a photo and see your project before any work begins.
             </p>
             <div className="btn-row">
@@ -149,7 +149,7 @@ export default function HomePage() {
                         .filter(Boolean)
                         .join(", ")}
                     </p>
-                    <Link href={`/concept-preview?project=${p.slug}`} className="text-link" style={{ marginTop: 4 }} data-track="cta_click" data-location={`project-${p.slug}`}>
+                    <Link href={`/concept-preview?project=${p.slug}`} className="text-link project-card__link" data-track="cta_click" data-location={`project-${p.slug}`}>
                       See your {p.formName.toLowerCase()} first
                     </Link>
                   </div>
@@ -159,7 +159,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="section" style={{ paddingTop: 0 }} aria-labelledby="hub-services-title">
+        <section className="section section--flush-top" aria-labelledby="hub-services-title">
           <div className="wrap">
             <h2 className="h2" id="hub-services-title">
               One plan, one schedule, one team.
@@ -190,10 +190,10 @@ export default function HomePage() {
         <ReviewsSection />
         <FinancingBand location="hub" />
 
-        <section className="section" aria-labelledby="areas-title" style={{ paddingTop: 0 }}>
+        <section className="section section--flush-top" aria-labelledby="areas-title">
           <div className="wrap">
-            <div className="band band--closing" style={{ background: "var(--trade-tint)" }}>
-              <div className="stack" style={{ gap: 14 }}>
+            <div className="band band--closing band--tint">
+              <div className="stack stack--14">
                 <span className="eyebrow">Service area</span>
                 <h2 className="h2" id="areas-title">
                   Serving metro Atlanta.
