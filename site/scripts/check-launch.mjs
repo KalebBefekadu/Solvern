@@ -23,7 +23,16 @@ for (const f of ["src/content/trade-pages.json", "src/content/projects.json"]) {
 const drafts = Object.keys(JSON.parse(fs.readFileSync("src/content/trade-pages-draft.json", "utf8")).pages);
 if (drafts.length) problems.push(`src/content/trade-pages-draft.json  ${drafts.length} trade pages still in draft (noindex): ${drafts.join(", ")}`);
 
-for (const k of ["NEXT_PUBLIC_SITE_URL", "SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY", "RESEND_API_KEY", "LEAD_NOTIFY_TO", "LEAD_NOTIFY_FROM", "NEXT_PUBLIC_TURNSTILE_SITE_KEY", "TURNSTILE_SECRET_KEY"]) {
+for (const k of [
+  "NEXT_PUBLIC_SITE_URL",
+  "SUPABASE_URL",
+  "SUPABASE_SERVICE_ROLE_KEY",
+  "RESEND_API_KEY",
+  "LEAD_NOTIFY_TO",
+  "LEAD_NOTIFY_FROM",
+  "NEXT_PUBLIC_TURNSTILE_SITE_KEY",
+  "TURNSTILE_SECRET_KEY",
+]) {
   if (!process.env[k]) problems.push(`env  ${k} is not set in this shell (set it in Vercel)`);
 }
 

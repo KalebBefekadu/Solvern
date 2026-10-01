@@ -46,10 +46,15 @@ const TYPE_LABEL: Record<string, string> = {
 };
 
 export async function notifyTeam(n: TeamNotice) {
-  const to = (process.env.LEAD_NOTIFY_TO || "").split(",").map((s) => s.trim()).filter(Boolean);
+  const to = (process.env.LEAD_NOTIFY_TO || "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
   const subject = `${TYPE_LABEL[n.type] ?? "New lead"}${n.trade ? `: ${n.trade}` : ""}`;
   const lines = n.fields.map(([k, v]) => `${k}: ${v}`);
-  const photoText = n.photos.map((p, i) => [`Photo ${i + 1}`, p.annotated ? `  Marked up: ${p.annotated}` : "", p.original ? `  Original: ${p.original}` : "", ...p.notes.map((t) => `  ${t}`)].filter(Boolean).join("\n"));
+  const photoText = n.photos.map((p, i) =>
+    [`Photo ${i + 1}`, p.annotated ? `  Marked up: ${p.annotated}` : "", p.original ? `  Original: ${p.original}` : "", ...p.notes.map((t) => `  ${t}`)].filter(Boolean).join("\n"),
+  );
   const text = [subject, "", ...lines, "", ...photoText, "", `Lead id: ${n.leadId}`].join("\n");
   const html = `<div style="font-family:Arial,sans-serif;color:#1B2330;font-size:15px;line-height:22px">
 <h2 style="margin:0 0 12px">${esc(subject)}</h2>

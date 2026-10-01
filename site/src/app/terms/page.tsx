@@ -23,11 +23,13 @@ export default function TermsPage() {
           <p>These terms apply to your use of this website, operated by {site.legalName}, doing business as Solvern Home.</p>
           <h2>Concept Previews and estimates</h2>
           <p>
-            A Concept Preview is a concept image for planning. Final materials and measurements are confirmed at your site visit. Estimates sent before a site visit are ranges, not fixed prices. Work begins only under a signed agreement.
+            A Concept Preview is a concept image for planning. Final materials and measurements are confirmed at your site visit. Estimates sent before a site visit are ranges, not
+            fixed prices. Work begins only under a signed agreement.
           </p>
           <h2>What you send us</h2>
           <p>
-            When you upload photos or notes, you confirm you have the right to share them, and you allow us to use them to prepare your Concept Preview and estimate. We will not publish them without your permission.
+            When you upload photos or notes, you confirm you have the right to share them, and you allow us to use them to prepare your Concept Preview and estimate. We will not
+            publish them without your permission.
           </p>
           <h2>Website content</h2>
           <p>The text, design and logos on this site belong to Solvern Home. Please do not copy them without permission.</p>

@@ -42,8 +42,6 @@ export async function POST(req: Request) {
   } catch (e) {
     if (e instanceof HttpError) return errorResponse(e);
     console.error("[leads]", e);
-    return errorResponse(
-      new HttpError(e instanceof BackendUnavailable ? 503 : 500, "Something went wrong on our side. Please call us and we will take it from here."),
-    );
+    return errorResponse(new HttpError(e instanceof BackendUnavailable ? 503 : 500, "Something went wrong on our side. Please call us and we will take it from here."));
   }
 }

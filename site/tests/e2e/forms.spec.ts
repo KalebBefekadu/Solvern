@@ -91,7 +91,10 @@ test.describe("Concept Preview", () => {
     await section.getByRole("button", { name: "Get my Concept Preview" }).click();
 
     await expect(section.getByRole("status")).toContainText("Received.", { timeout: 15_000 });
-    const lead = await expect.poll(() => findLead((l) => l.email === email)).not.toBeNull().then(() => findLead((l) => l.email === email));
+    const lead = await expect
+      .poll(() => findLead((l) => l.email === email))
+      .not.toBeNull()
+      .then(() => findLead((l) => l.email === email));
     expect(lead).toMatchObject({ type: "concept_preview", trade_slug: "carpentry" });
     const photo = (lead!.photos as { annotated_path: string; original_path: string; notes: { text: string }[]; strokes: { strokes: unknown[] } }[])[0];
     expect(photo.notes[0].text).toBe("Built-in shelves on this wall");

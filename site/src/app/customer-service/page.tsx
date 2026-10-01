@@ -28,7 +28,8 @@ export default function CustomerServicePage() {
             Request a callback.
           </h1>
           <p className="lead">
-            Questions about new work or a job you have booked? Fill in the form and the right person on our team will call you back. We aim to reply within {site.callback.responseTime} during {site.callback.hours}.
+            Questions about new work or a job you have booked? Fill in the form and the right person on our team will call you back. We aim to reply within{" "}
+            {site.callback.responseTime} during {site.callback.hours}.
           </p>
         </section>
 

@@ -40,11 +40,26 @@ export const photoSchema = z.object({
     width: z.number().int().positive(),
     height: z.number().int().positive(),
     strokes: z
-      .array(z.object({ pen: z.enum(["blue", "orange", "green"]), color: z.string().max(9), note: z.number().int().nullable(), points: z.array(point).min(1).max(MAX_POINTS_PER_STROKE) }))
+      .array(
+        z.object({
+          pen: z.enum(["blue", "orange", "green"]),
+          color: z.string().max(9),
+          note: z.number().int().nullable(),
+          points: z.array(point).min(1).max(MAX_POINTS_PER_STROKE),
+        }),
+      )
       .max(MAX_STROKES),
   }),
   notes: z
-    .array(z.object({ n: z.number().int(), pen: z.enum(["blue", "orange", "green"]), color: z.string().max(9), text: trimmed(MAX_NOTE_LENGTH), anchor: z.object({ x: z.number(), y: z.number() }) }))
+    .array(
+      z.object({
+        n: z.number().int(),
+        pen: z.enum(["blue", "orange", "green"]),
+        color: z.string().max(9),
+        text: trimmed(MAX_NOTE_LENGTH),
+        anchor: z.object({ x: z.number(), y: z.number() }),
+      }),
+    )
     .max(MAX_NOTES),
 });
 

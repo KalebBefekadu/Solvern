@@ -47,21 +47,19 @@ export interface OgCard {
 
 export async function renderOgImage({ eyebrow, title, color, onColor }: OgCard) {
   return new ImageResponse(
-    (
-      <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", background: WHITE, fontFamily: "Plus Jakarta Sans", color: INK }}>
-        <div style={{ display: "flex", flex: 1, flexDirection: "column", justifyContent: "space-between", padding: "64px 72px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-            <Mark color={INK} size={64} />
-            <span style={{ fontSize: 34, fontWeight: 800 }}>{eyebrow}</span>
-          </div>
-          <div style={{ display: "flex", fontSize: title.length > 48 ? 64 : 76, lineHeight: 1.08, fontWeight: 800, maxWidth: 1000 }}>{title}</div>
+    <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", background: WHITE, fontFamily: "Plus Jakarta Sans", color: INK }}>
+      <div style={{ display: "flex", flex: 1, flexDirection: "column", justifyContent: "space-between", padding: "64px 72px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+          <Mark color={INK} size={64} />
+          <span style={{ fontSize: 34, fontWeight: 800 }}>{eyebrow}</span>
         </div>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: color, color: onColor, padding: "0 72px", height: 108 }}>
-          <span style={{ fontSize: 32, fontWeight: 800 }}>See it first. Built right.</span>
-          <span style={{ fontSize: 26, fontWeight: 600 }}>Metro Atlanta</span>
-        </div>
+        <div style={{ display: "flex", fontSize: title.length > 48 ? 64 : 76, lineHeight: 1.08, fontWeight: 800, maxWidth: 1000 }}>{title}</div>
       </div>
-    ),
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: color, color: onColor, padding: "0 72px", height: 108 }}>
+        <span style={{ fontSize: 32, fontWeight: 800 }}>See it first. Built right.</span>
+        <span style={{ fontSize: 26, fontWeight: 600 }}>Metro Atlanta</span>
+      </div>
+    </div>,
     { ...OG_SIZE, fonts: await loadFonts() },
   );
 }

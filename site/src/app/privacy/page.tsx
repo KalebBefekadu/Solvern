@@ -21,7 +21,8 @@ export default function PrivacyPage() {
       <section className="wrap" style={{ paddingBottom: 80 }}>
         <div className="prose">
           <p>
-            This policy explains how {site.legalName}, doing business as Solvern Home (&quot;Solvern&quot;, &quot;we&quot;), handles information you share with us through this website.
+            This policy explains how {site.legalName}, doing business as Solvern Home (&quot;Solvern&quot;, &quot;we&quot;), handles information you share with us through this
+            website.
           </p>
           <h2>What we collect</h2>
           <ul>
@@ -40,11 +41,13 @@ export default function PrivacyPage() {
           <p>We do not sell your personal information.</p>
           <h2>Your photos</h2>
           <p>
-            Photos are stored privately and used by our team to prepare your Concept Preview and estimate. We will only show your photos or Concept Preview publicly, such as in our project gallery, with your permission.
+            Photos are stored privately and used by our team to prepare your Concept Preview and estimate. We will only show your photos or Concept Preview publicly, such as in our
+            project gallery, with your permission.
           </p>
           <h2>Who we share it with</h2>
           <p>
-            Service providers that help us run the website and our business, such as hosting, data storage, email and spam protection, under agreements that limit how they use it. If you apply for financing, you share information directly with {site.financing.partner} under their own privacy policy.
+            Service providers that help us run the website and our business, such as hosting, data storage, email and spam protection, under agreements that limit how they use it.
+            If you apply for financing, you share information directly with {site.financing.partner} under their own privacy policy.
           </p>
           <h2>How long we keep it</h2>
           <p>[Retention period set by the owner]</p>

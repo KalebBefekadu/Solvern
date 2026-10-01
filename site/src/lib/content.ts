@@ -4,13 +4,7 @@ import draftPages from "@/content/trade-pages-draft.json";
 import seoData from "@/content/seo.json";
 import projectsData from "@/content/projects.json";
 
-export type Family =
-  | "Groundwork"
-  | "Structure & Shell"
-  | "Interior Finishes"
-  | "Home Systems"
-  | "Outdoor Living"
-  | "Specialty";
+export type Family = "Groundwork" | "Structure & Shell" | "Interior Finishes" | "Home Systems" | "Outdoor Living" | "Specialty";
 
 export type PrimaryAction = "concept-preview" | "diagnosis";
 
@@ -64,14 +58,7 @@ export interface TradePage {
   copyStatus: "approved" | "draft-pending-owner-approval";
 }
 
-export const FAMILIES: Family[] = [
-  "Groundwork",
-  "Structure & Shell",
-  "Interior Finishes",
-  "Home Systems",
-  "Outdoor Living",
-  "Specialty",
-];
+export const FAMILIES: Family[] = ["Groundwork", "Structure & Shell", "Interior Finishes", "Home Systems", "Outdoor Living", "Specialty"];
 
 export const FAMILY_BLURB: Record<Family, string> = {
   Groundwork: "What everything stands on.",
@@ -96,10 +83,8 @@ const HOW_DIAGNOSIS: Item[] = [
   { title: "We fix it right", description: "On schedule, tested and walked through with you." },
 ];
 
-const SEE_LEAD_VISUAL =
-  "Upload a photo, draw on it to show what you want, and get a concept image and estimate within 48 hours.";
-const SEE_LEAD_DIAGNOSIS =
-  "Draw on a photo to show us the problem. We diagnose it on site and give you clear options before any work begins.";
+const SEE_LEAD_VISUAL = "Upload a photo, draw on it to show what you want, and get a concept image and estimate within 48 hours.";
+const SEE_LEAD_DIAGNOSIS = "Draw on a photo to show us the problem. We diagnose it on site and give you clear options before any work begins.";
 const SEE_TITLE_DIAGNOSIS = "Something not right? Show us where.";
 
 export const trades: Trade[] = (tradesData.trades as unknown as Trade[]).map((t) => ({ ...t }));
@@ -112,8 +97,7 @@ export function navName(t: Pick<Trade, "name">) {
 
 export const tradeBySlug = (slug: string) => trades.find((t) => t.slug === slug);
 
-export const tradesByFamily = () =>
-  FAMILIES.map((family) => ({ family, trades: trades.filter((t) => t.family === family) }));
+export const tradesByFamily = () => FAMILIES.map((family) => ({ family, trades: trades.filter((t) => t.family === family) }));
 
 type RawPage = Record<string, unknown> & {
   concept_markup_example_notes?: string[];
@@ -178,7 +162,6 @@ export const HUB_THEME = tradeTheme({
   tintStrong: "#D6E1F4",
   deep: "#1D3F7A",
 });
-
 
 export interface Project {
   slug: string;

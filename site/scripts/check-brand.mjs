@@ -21,7 +21,11 @@ const report = (f, line, msg) => problems.push(`${f}:${line}  ${msg}`);
 // A hex reads as gray when its channels are nearly equal. White is the page ground and allowed.
 const isGray = (hex) => {
   let h = hex.slice(1);
-  if (h.length === 3) h = h.split("").map((c) => c + c).join("");
+  if (h.length === 3)
+    h = h
+      .split("")
+      .map((c) => c + c)
+      .join("");
   if (h.length !== 6) return false;
   const [r, g, b] = [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16));
   if (r === 255 && g === 255 && b === 255) return false;

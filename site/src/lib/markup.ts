@@ -71,7 +71,10 @@ export function outlineToPath(outline: number[][]) {
 const round = (n: number) => Math.round(n * 10) / 10;
 
 export function bbox(points: Pt[]) {
-  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  let minX = Infinity,
+    minY = Infinity,
+    maxX = -Infinity,
+    maxY = -Infinity;
   for (const [x, y] of points) {
     if (x < minX) minX = x;
     if (y < minY) minY = y;
@@ -80,7 +83,6 @@ export function bbox(points: Pt[]) {
   }
   return { minX, minY, maxX, maxY };
 }
-
 
 /**
  * Drops points closer than `minDist` to the last kept point, then samples evenly down to `max`.
@@ -119,7 +121,15 @@ export function serializeMarkup(photo: MarkupPhoto) {
   };
 }
 export function serializeNotes(photo: MarkupPhoto) {
-  return photo.notes.slice(0, MAX_NOTES).map((n) => ({ n: n.n, pen: n.pen, color: penById(n.pen).color, text: n.text.trim().slice(0, MAX_NOTE_LENGTH), anchor: { x: Math.round(n.anchor.x), y: Math.round(n.anchor.y) } }));
+  return photo.notes
+    .slice(0, MAX_NOTES)
+    .map((n) => ({
+      n: n.n,
+      pen: n.pen,
+      color: penById(n.pen).color,
+      text: n.text.trim().slice(0, MAX_NOTE_LENGTH),
+      anchor: { x: Math.round(n.anchor.x), y: Math.round(n.anchor.y) },
+    }));
 }
 
 /** Draws the photo, strokes and numbered note markers into a PNG (long edge capped). */

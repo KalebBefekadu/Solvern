@@ -315,7 +315,14 @@ export function MarkupTool({ photos, setPhotos, photoSubject, exampleNotes, diag
               <label className="visually-hidden" htmlFor={`list-${n.id}`}>
                 Note {n.n}
               </label>
-              <textarea id={`list-${n.id}`} rows={2} maxLength={MAX_NOTE_LENGTH} value={n.text} placeholder="What should change here?" onChange={(e) => editNote(n.id, e.target.value)} />
+              <textarea
+                id={`list-${n.id}`}
+                rows={2}
+                maxLength={MAX_NOTE_LENGTH}
+                value={n.text}
+                placeholder="What should change here?"
+                onChange={(e) => editNote(n.id, e.target.value)}
+              />
               <button type="button" className="note-box__del" aria-label={`Delete note ${n.n} and its drawing`} onClick={() => deleteNote(n.id)}>
                 <TrashIcon />
               </button>
@@ -357,11 +364,7 @@ export function MarkupTool({ photos, setPhotos, photoSubject, exampleNotes, diag
             <PlusIcon />
           </button>
         )}
-        <span className="small">
-          {photos.length === 0
-            ? `Add 1 to ${MAX_PHOTOS} photos.`
-            : `${photos.length} of ${MAX_PHOTOS} photos. Draw on one at a time.`}
-        </span>
+        <span className="small">{photos.length === 0 ? `Add 1 to ${MAX_PHOTOS} photos.` : `${photos.length} of ${MAX_PHOTOS} photos. Draw on one at a time.`}</span>
       </div>
 
       <input
@@ -453,7 +456,15 @@ function NoteBox({
           <TrashIcon size={14} />
         </button>
       </div>
-      <textarea ref={ref} id={`box-${note.id}`} rows={2} maxLength={MAX_NOTE_LENGTH} value={note.text} placeholder="What should change here?" onChange={(e) => onChange(e.target.value)} />
+      <textarea
+        ref={ref}
+        id={`box-${note.id}`}
+        rows={2}
+        maxLength={MAX_NOTE_LENGTH}
+        value={note.text}
+        placeholder="What should change here?"
+        onChange={(e) => onChange(e.target.value)}
+      />
     </div>
   );
 }
@@ -490,7 +501,14 @@ function ExampleStage({
       <div className="markup__stage markup__stage--empty" data-dragging={dragging} {...dnd} onClick={onPick} style={{ cursor: "pointer" }} aria-hidden="true">
         <span className="example-tag">Example</span>
         <svg viewBox="0 0 720 420" preserveAspectRatio="xMidYMid slice" style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}>
-          <path d="M120 250 C140 200 260 190 300 240 C330 280 250 320 170 305 C120 295 110 270 120 250" fill="none" stroke="#2F63D6" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
+          <path
+            d="M120 250 C140 200 260 190 300 240 C330 280 250 320 170 305 C120 295 110 270 120 250"
+            fill="none"
+            stroke="#2F63D6"
+            strokeWidth="5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
           <path d="M430 320 L640 320 L640 380" fill="none" stroke="#E8742C" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
         {notes[0] && <ExampleNote n={1} pen="blue" text={notes[0]} style={{ left: "46%", top: "10%" }} />}

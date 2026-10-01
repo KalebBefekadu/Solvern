@@ -42,11 +42,7 @@ export default function AboutPage() {
       </section>
       <TeamSection
         id="team"
-        shots={[
-          "[Photo: the Solvern team in branded uniforms]",
-          "[Photo: project lead with homeowners at a final walkthrough]",
-          "[Photo: Solvern technician arriving at a home]",
-        ]}
+        shots={["[Photo: the Solvern team in branded uniforms]", "[Photo: project lead with homeowners at a final walkthrough]", "[Photo: Solvern technician arriving at a home]"]}
       />
       <ClosingBand headline="See your project before we build it." primary={{ label: "Get my Concept Preview", href: "/concept-preview" }} />
     </SimplePage>

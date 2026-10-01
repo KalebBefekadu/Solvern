@@ -106,11 +106,7 @@ export function PreviewForm({ trade, tradeOptions, initial }: Props) {
               <CheckIcon />
             </span>
             <h3 className="h3">Received.</h3>
-            <p className="body-l">
-              {diagnosis
-                ? "We will call you back to confirm a time for your visit."
-                : "Your Concept Preview and estimate will arrive within 48 hours."}
-            </p>
+            <p className="body-l">{diagnosis ? "We will call you back to confirm a time for your visit." : "Your Concept Preview and estimate will arrive within 48 hours."}</p>
             <p className="small">A confirmation is on its way to your email.</p>
           </div>
         ) : (
@@ -122,12 +118,7 @@ export function PreviewForm({ trade, tradeOptions, initial }: Props) {
             {tradeOptions && (
               <div className="field">
                 <label htmlFor={fid("tradeSlug")}>Trade or project</label>
-                <select
-                  className="select"
-                  {...field("tradeSlug")}
-                  value={selected?.slug ?? ""}
-                  onChange={(e) => setSelected(tradeOptions.find((t) => t.slug === e.target.value))}
-                >
+                <select className="select" {...field("tradeSlug")} value={selected?.slug ?? ""} onChange={(e) => setSelected(tradeOptions.find((t) => t.slug === e.target.value))}>
                   <option value="">Choose a trade</option>
                   {tradeOptions.map((t) => (
                     <option key={t.slug} value={t.slug}>

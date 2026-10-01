@@ -145,7 +145,9 @@ export function CallbackForm({ prefill = {} }: { prefill?: CallbackPrefill }) {
           {topic === "New project or estimate" && (
             <div className="callout">
               <strong>The fastest route is a Concept Preview.</strong>
-              <span className="small">Send a photo, draw on it to show what you want, and get a concept image and estimate within 48 hours. Or carry on here and we will call you.</span>
+              <span className="small">
+                Send a photo, draw on it to show what you want, and get a concept image and estimate within 48 hours. Or carry on here and we will call you.
+              </span>
               <Link href="/concept-preview" className="btn btn--ink btn--sm" data-track="cta_click" data-location="callback-new-project">
                 Get my Concept Preview
               </Link>

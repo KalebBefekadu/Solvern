@@ -82,14 +82,7 @@ export function SiteHeader({ variant, links = [], primary, tradeGroups = [], lab
         {variant !== "minimal" && (
           <nav aria-label="Main" className="site-nav">
             {variant === "hub" && (
-              <button
-                ref={triggerRef}
-                type="button"
-                className="nav-trigger"
-                aria-expanded={megaOpen}
-                aria-controls={megaId}
-                onClick={() => setMegaOpen((v) => !v)}
-              >
+              <button ref={triggerRef} type="button" className="nav-trigger" aria-expanded={megaOpen} aria-controls={megaId} onClick={() => setMegaOpen((v) => !v)}>
                 Trades <ChevronDown />
               </button>
             )}

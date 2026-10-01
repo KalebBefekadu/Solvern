@@ -32,10 +32,19 @@ const HUB_SERVICES = [
 
 const FAQ = [
   { q: "How fast can I get an estimate?", a: "Send photos through the Concept Preview form and you will have a concept image and an estimate range within 48 hours." },
-  { q: "Is the Concept Preview exactly what I will get?", a: "It is a concept image for planning. We confirm final materials and measurements at your site visit before any work begins." },
-  { q: "Can one team really handle my whole project?", a: "Yes. Solvern covers 23 trades, so one project lead plans the work, schedules every trade and keeps you updated at every stage." },
+  {
+    q: "Is the Concept Preview exactly what I will get?",
+    a: "It is a concept image for planning. We confirm final materials and measurements at your site visit before any work begins.",
+  },
+  {
+    q: "Can one team really handle my whole project?",
+    a: "Yes. Solvern covers 23 trades, so one project lead plans the work, schedules every trade and keeps you updated at every stage.",
+  },
   { q: "What if I only need one small job?", a: "We take single repairs too. Every job gets the same standard, and you have one team to call for whatever comes next." },
-  { q: "Which areas do you serve?", a: `Homeowners across metro Atlanta, including ${site.areas.slice(0, -1).join(", ")} and ${site.areas.at(-1)}. Enter your zip code on any form and we will confirm coverage.` },
+  {
+    q: "Which areas do you serve?",
+    a: `Homeowners across metro Atlanta, including ${site.areas.slice(0, -1).join(", ")} and ${site.areas.at(-1)}. Enter your zip code on any form and we will confirm coverage.`,
+  },
 ];
 
 export default function HomePage() {
