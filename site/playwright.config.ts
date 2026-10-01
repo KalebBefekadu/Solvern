@@ -12,6 +12,11 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? [["github"], ["list"]] : "list",
+  // Screenshot baselines (tests/e2e/visual.spec.ts): one folder per test file, named by project.
+  snapshotPathTemplate: "{testDir}/__screenshots__/{testFilePath}/{projectName}/{arg}{ext}",
+  expect: {
+    toHaveScreenshot: { animations: "disabled", caret: "hide", scale: "css", maxDiffPixelRatio: 0.002 },
+  },
   use: {
     baseURL: `http://localhost:${PORT}`,
     trace: "retain-on-failure",

@@ -422,7 +422,9 @@ textarea {
   .mobile-menu nav {
     display: flex;
     flex-direction: column;
-    padding: 8px 0 24px;
+    /* Vertical only: the side gutters come from .wrap. */
+    padding-top: 8px;
+    padding-bottom: 24px;
   }
   .mobile-menu a {
     display: flex;
