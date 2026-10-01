@@ -1,0 +1,44 @@
+/* Solvern design tokens, v2 (approved direction). Supersedes brand-kit-v1-tokens.json where they differ.
+   Rule: no gray. Ground is pure white, text is ink, structure comes from trade tints. */
+:root {
+  /* Core */
+  --ink: #1B2330;            /* all text, primary buttons, footer */
+  --white: #FFFFFF;          /* page ground */
+  --chalk-blue: #2F63D6;     /* measurement lines, focus ring, first markup pen */
+  --focus-ring: #2F63D6;
+  --error: #B3261E;
+  --success: #2E7D4F;
+
+  /* Markup tool pens (Concept Preview). Limit to these three. */
+  --pen-blue: #2F63D6;
+  --pen-orange: #E8742C;
+  --pen-green: #1FA35B;
+
+  /* Per-trade theme (set on the page root from trades.json) */
+  --trade: #2D5BA8;          /* badge, primary trade button, financing band, stars */
+  --trade-on: #FFFFFF;       /* text on --trade */
+  --trade-tint: #EEF3FB;     /* alternating section background, photo placeholders */
+  --trade-tint-strong: #D6E1F4; /* borders, dividers, input borders, closing CTA band */
+  --trade-deep: #1D3F7A;     /* eyebrows, small colored text, icons on tint */
+
+  /* Type */
+  --font: "Plus Jakarta Sans", "Helvetica Neue", Arial, sans-serif;
+  --weight-regular: 400; --weight-medium: 500; --weight-semibold: 600; --weight-bold: 700; --weight-heavy: 800;
+
+  /* Radius */
+  --radius-input: 14px;
+  --radius-card: 20px;
+  --radius-panel: 28px;
+  --radius-band: 32px;
+  --radius-pill: 999px;
+
+  /* Spacing (4px base) */
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 20px; --space-6: 24px;
+  --space-8: 32px; --space-10: 40px; --space-12: 48px; --space-16: 64px; --space-20: 80px;
+}
+/* Type scale (desktop / mobile)
+   h1 60/64 heavy, -0.03em  | mobile 38/42
+   h2 44/49 heavy, -0.02em  | mobile 30/34
+   h3 26/32 heavy           | mobile 22/28
+   lead 19/30 regular | body 16/26 | small 14/22 | eyebrow 14 bold, --trade-deep
+   buttons 16 bold, pill, 52px tall (44px in header) */

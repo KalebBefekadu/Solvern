@@ -1,0 +1,1302 @@
+{
+  "_note": "DRAFT copy for the 20 undesigned trades, written in the approved voice. Not approved: the owner reviews and approves each page before launch. Bracketed text is a placeholder.",
+  "pages": {
+    "demolition": {
+      "heroPrimaryButton": "Get my Concept Preview",
+      "heroProofLine": "Concept and estimate in 48 hours",
+      "primaryAction": "concept-preview",
+      "shortName": "Demolition",
+      "topic": "demolition",
+      "heroHeadline": "Demolition that takes out only what should go.",
+      "heroLead": "Interior and exterior demolition, selective tear-outs and debris hauling across metro Atlanta, handled by one accountable team.",
+      "servicesTitle": "Taken down clean, hauled away.",
+      "servicesLead": "We protect what stays, remove what goes and leave the site ready for the next trade.",
+      "services": [
+        {
+          "title": "Interior demolition",
+          "description": "Kitchens, baths and walls removed with floors and finishes protected."
+        },
+        {
+          "title": "Exterior demolition",
+          "description": "Decks, sheds, porches and outbuildings taken down safely."
+        },
+        {
+          "title": "Selective demolition",
+          "description": "Only what needs to go, cut and removed with care around what stays."
+        },
+        {
+          "title": "Debris hauling",
+          "description": "Loaded, hauled and disposed of, so nothing sits in your driveway."
+        },
+        {
+          "title": "Site cleanup",
+          "description": "Swept, cleared and ready for whatever comes next."
+        }
+      ],
+      "photoSubject": "space",
+      "formPlaceholder": "Take out the wall between the kitchen and dining room",
+      "teamPhotoShotList": [
+        "[Photo: Solvern crew in branded uniform removing old cabinets with floors covered]",
+        "[Photo: technician walking a homeowner through what stays and what goes]",
+        "[Photo: clean, swept room ready for the next trade]"
+      ],
+      "faq": [
+        {
+          "q": "How fast can I get an estimate?",
+          "a": "Send photos through the Concept Preview form and you will have a concept image and an estimate range within 48 hours."
+        },
+        {
+          "q": "Is the Concept Preview exactly what I will get?",
+          "a": "It is a concept image for planning. We confirm final materials and measurements at your site visit before any work begins."
+        },
+        {
+          "q": "Do you haul away the debris?",
+          "a": "Yes. Hauling and disposal are part of the job, and we leave the site swept and ready for the next step."
+        },
+        {
+          "q": "Can you handle more than demolition?",
+          "a": "Yes. One Solvern team covers 23 trades, so framing, drywall and finishes can follow without a new contractor."
+        }
+      ],
+      "seeItFirstTitle": "See the open space before we take anything down.",
+      "closingHeadline": "See the space before we open it up.",
+      "concept_markup_example_notes": [
+        "Remove this wall up to the ceiling.",
+        "Haul away the old shed back here."
+      ],
+      "copyStatus": "draft-pending-owner-approval"
+    },
+    "site-work": {
+      "heroPrimaryButton": "Get my Concept Preview",
+      "heroProofLine": "Concept and estimate in 48 hours",
+      "primaryAction": "concept-preview",
+      "shortName": "Site Work",
+      "topic": "site work",
+      "heroHeadline": "Ground graded right, so water goes where it should.",
+      "heroLead": "Clearing, excavation, grading, drainage and erosion control across metro Atlanta, planned and done by one accountable team.",
+      "servicesTitle": "The ground under everything else.",
+      "servicesLead": "Good site work is invisible later: level pads, firm soil and water that drains away from your home.",
+      "services": [
+        {
+          "title": "Clearing",
+          "description": "Brush, small trees and debris cleared to open up the space."
+        },
+        {
+          "title": "Excavation",
+          "description": "Digging for foundations, additions and utilities, to the right depth."
+        },
+        {
+          "title": "Grading",
+          "description": "Yards and pads shaped so water runs away from the house."
+        },
+        {
+          "title": "Drainage",
+          "description": "French drains, swales and downspout lines that move water off the lot."
+        },
+        {
+          "title": "Erosion control",
+          "description": "Silt fence, matting and stabilization that keep soil in place."
+        }
+      ],
+      "photoSubject": "yard or lot",
+      "formPlaceholder": "Regrade the side yard so water drains toward the street",
+      "teamPhotoShotList": [
+        "[Photo: Solvern operator in branded uniform grading a yard with a compact excavator]",
+        "[Photo: technician walking a homeowner along the planned drainage line]",
+        "[Photo: finished, seeded grade sloping away from a home]"
+      ],
+      "faq": [
+        {
+          "q": "How fast can I get an estimate?",
+          "a": "Send photos through the Concept Preview form and you will have a concept image and an estimate range within 48 hours."
+        },
+        {
+          "q": "Is the Concept Preview exactly what I will get?",
+          "a": "It is a concept image for planning. We confirm final materials and measurements at your site visit before any work begins."
+        },
+        {
+          "q": "Can you fix water pooling near my foundation?",
+          "a": "Yes. We look at the slope, downspouts and soil, then grade or add drainage so water moves away from the house."
+        },
+        {
+          "q": "Can you handle more than site work?",
+          "a": "Yes. One Solvern team covers 23 trades, from foundations and concrete to landscaping."
+        }
+      ],
+      "seeItFirstTitle": "See your yard graded before we dig.",
+      "closingHeadline": "See your site ready before we break ground.",
+      "concept_markup_example_notes": [
+        "Water pools here after it rains.",
+        "Level this area for a patio."
+      ],
+      "copyStatus": "draft-pending-owner-approval"
+    },
+    "concrete": {
+      "heroPrimaryButton": "Get my Concept Preview",
+      "heroProofLine": "Concept and estimate in 48 hours",
+      "primaryAction": "concept-preview",
+      "shortName": "Concrete",
+      "topic": "concrete",
+      "heroHeadline": "Concrete poured flat, finished clean and built to last.",
+      "heroLead": "Foundations, slabs, foundation repair and waterproofing, driveways and paving across metro Atlanta, by one accountable team.",
+      "servicesTitle": "From the footing to the driveway.",
+      "servicesLead": "A proper base, the right reinforcement and planned joints, so concrete stays flat and cracks are controlled, not left to chance.",
+      "services": [
+        {
+          "title": "Foundations and footings",
+          "description": "Formed, reinforced and poured to the plan."
+        },
+        {
+          "title": "Slabs",
+          "description": "Garage, patio and addition slabs, level and properly cured."
+        },
+        {
+          "title": "Foundation repair",
+          "description": "Cracks and settling assessed and repaired at the cause."
+        },
+        {
+          "title": "Waterproofing",
+          "description": "Foundation walls sealed and drained to keep basements dry."
+        },
+        {
+          "title": "Driveways and paving",
+          "description": "New driveways, walkways and aprons with clean edges and joints."
+        }
+      ],
+      "photoSubject": "driveway or area",
+      "formPlaceholder": "A wider driveway with a broom finish and a new front walkway",
+      "teamPhotoShotList": [
+        "[Photo: Solvern finisher in branded uniform floating a fresh slab]",
+        "[Photo: technician reviewing finish samples with a homeowner]",
+        "[Photo: clean control joint being cut in a new driveway]"
+      ],
+      "faq": [
+        {
+          "q": "How fast can I get an estimate?",
+          "a": "Send photos through the Concept Preview form and you will have a concept image and an estimate range within 48 hours."
+        },
+        {
+          "q": "Is the Concept Preview exactly what I will get?",
+          "a": "It is a concept image for planning. We confirm final materials and measurements at your site visit before any work begins."
+        },
+        {
+          "q": "Can you replace part of a driveway?",
+          "a": "Yes. We can replace damaged sections or the whole driveway, and we show you finish options before we pour."
+        },
+        {
+          "q": "Can you handle more than concrete?",
+          "a": "Yes. One Solvern team covers 23 trades, from site work and masonry to a complete remodel."
+        }
+      ],
+      "seeItFirstTitle": "See your new driveway before we pour it.",
+      "closingHeadline": "See your new concrete before we pour it.",
+      "concept_markup_example_notes": [
+        "Widen the driveway to this line.",
+        "Replace this cracked section."
+      ],
+      "copyStatus": "draft-pending-owner-approval"
+    },
+    "tree-service": {
+      "heroPrimaryButton": "Get my Concept Preview",
+      "heroProofLine": "Concept and estimate in 48 hours",
+      "primaryAction": "concept-preview",
+      "shortName": "Tree Service",
+      "topic": "tree service",
+      "heroHeadline": "Trees trimmed, removed and cleaned up with care.",
+      "heroLead": "Tree removal, trimming, pruning and stump grinding across metro Atlanta, done by one accountable team.",
+      "servicesTitle": "Healthy trees, a clear yard.",
+      "servicesLead": "We plan every cut around your house, roof, fence and lawn, then leave the yard clean.",
+      "services": [
+        {
+          "title": "Tree removal",
+          "description": "Controlled removal, piece by piece where space is tight."
+        },
+        {
+          "title": "Trimming",
+          "description": "Branches cut back from roofs, gutters and windows."
+        },
+        {
+          "title": "Pruning",
+          "description": "Shaping cuts that help trees grow strong and balanced."
+        },
+        {
+          "title": "Stump grinding",
+          "description": "Stumps ground below grade so you can plant or seed over them."
+        },
+        {
+          "title": "Cleanup",
+          "description": "Limbs, logs and debris hauled away and the yard raked clean."
+        }
+      ],
+      "photoSubject": "tree or yard",
+      "formPlaceholder": "Take down the oak leaning toward the house and grind the stump",
+      "teamPhotoShotList": [
+        "[Photo: Solvern arborist in branded uniform and safety gear trimming a limb]",
+        "[Photo: technician walking a homeowner through which trees stay]",
+        "[Photo: raked, clean yard after a removal]"
+      ],
+      "faq": [
+        {
+          "q": "How fast can I get an estimate?",
+          "a": "Send photos through the Concept Preview form and you will have a concept image and an estimate range within 48 hours."
+        },
+        {
+          "q": "Is the Concept Preview exactly what I will get?",
+          "a": "It is a concept image for planning. We confirm final materials and measurements at your site visit before any work begins."
+        },
+        {
+          "q": "Do you clean up after the work?",
+          "a": "Yes. We haul away limbs and debris and rake the area before we leave."
+        },
+        {
+          "q": "Can you handle more than tree service?",
+          "a": "Yes. One Solvern team covers 23 trades, from fencing and landscaping to a complete outdoor project."
+        }
+      ],
+      "seeItFirstTitle": "See your yard before we make the first cut.",
+      "closingHeadline": "See your yard opened up before we start.",
+      "concept_markup_example_notes": [
+        "Remove this tree near the roof.",
+        "Grind this stump down."
+      ],
+      "copyStatus": "draft-pending-owner-approval"
+    },
+    "roofing": {
+      "heroPrimaryButton": "Get my Concept Preview",
+      "heroProofLine": "Concept and estimate in 48 hours",
+      "primaryAction": "concept-preview",
+      "shortName": "Roofing",
+      "topic": "roofing",
+      "heroHeadline": "A roof that sheds water and looks sharp from the street.",
+      "heroLead": "Roof replacement and repair, decking, flashing, gutters and downspouts across metro Atlanta, by one accountable team.",
+      "servicesTitle": "Every layer, from deck to gutter.",
+      "servicesLead": "A roof is a system. We check the decking, flashing and gutters together so the whole thing keeps water out.",
+      "services": [
+        {
+          "title": "Roof replacement",
+          "description": "Tear-off, new underlayment and shingles, with a clean site after."
+        },
+        {
+          "title": "Roof repair",
+          "description": "Leaks, missing shingles and storm damage traced and fixed."
+        },
+        {
+          "title": "Decking",
+          "description": "Soft or rotted decking replaced before new roofing goes on."
+        },
+        {
+          "title": "Flashing",
+          "description": "Chimneys, walls and valleys sealed where leaks usually start."
+        },
+        {
+          "title": "Gutters and downspouts",
+          "description": "Sized and pitched to carry water away from your foundation."
+        }
+      ],
+      "photoSubject": "roof or house",
+      "formPlaceholder": "Replace the roof with a darker shingle and new black gutters",
+      "teamPhotoShotList": [
+        "[Photo: Solvern roofer in branded uniform and harness setting shingles]",
+        "[Photo: technician showing a homeowner shingle samples in the driveway]",
+        "[Photo: new flashing detail around a chimney]"
+      ],
+      "faq": [
+        {
+          "q": "How fast can I get an estimate?",
+          "a": "Send photos through the Concept Preview form and you will have a concept image and an estimate range within 48 hours."
+        },
+        {
+          "q": "Is the Concept Preview exactly what I will get?",
+          "a": "It is a concept image for planning. We confirm final materials and measurements at your site visit before any work begins."
+        },
+        {
+          "q": "Can I see the shingle color on my house first?",
+          "a": "Yes. That is what the Concept Preview is for. We show the color on a photo of your home, then confirm samples at the site visit."
+        },
+        {
+          "q": "Can you handle more than roofing?",
+          "a": "Yes. One Solvern team covers 23 trades, from siding and windows to a complete remodel."
+        }
+      ],
+      "seeItFirstTitle": "See your new roof before we tear off the old one.",
+      "closingHeadline": "See your new roof before we build it.",
+      "concept_markup_example_notes": [
+        "Switch to a darker shingle color.",
+        "New gutters along this edge."
+      ],
+      "copyStatus": "draft-pending-owner-approval"
+    },
+    "garage-doors": {
+      "heroPrimaryButton": "Get my Concept Preview",
+      "heroProofLine": "Concept and estimate in 48 hours",
+      "primaryAction": "concept-preview",
+      "shortName": "Garage Doors",
+      "topic": "garage doors",
+      "heroHeadline": "Garage doors that open smooth and look right.",
+      "heroLead": "Garage doors, tracks, springs and openers across metro Atlanta, installed and serviced by one accountable team.",
+      "servicesTitle": "The door, and everything that moves it.",
+      "servicesLead": "Doors, springs, tracks and openers are tuned together, so the door runs quiet and closes square.",
+      "services": [
+        {
+          "title": "New garage doors",
+          "description": "Styles and finishes that suit the front of your home."
+        },
+        {
+          "title": "Springs",
+          "description": "Broken or worn springs replaced and balanced."
+        },
+        {
+          "title": "Tracks and rollers",
+          "description": "Aligned and adjusted for smooth, quiet travel."
+        },
+        {
+          "title": "Openers",
+          "description": "Installed, programmed and set to stop and reverse safely."
+        },
+        {
+          "title": "Repairs",
+          "description": "Dents, panels, cables and seals fixed so the door works right."
+        }
+      ],
+      "photoSubject": "garage door",
+      "formPlaceholder": "A carriage-style door in black with windows across the top",
+      "teamPhotoShotList": [
+        "[Photo: Solvern technician in branded uniform adjusting a garage door track]",
+        "[Photo: technician showing a homeowner door style options]",
+        "[Photo: new garage door closing square to the floor]"
+      ],
+      "faq": [
+        {
+          "q": "How fast can I get an estimate?",
+          "a": "Send photos through the Concept Preview form and you will have a concept image and an estimate range within 48 hours."
+        },
+        {
+          "q": "Is the Concept Preview exactly what I will get?",
+          "a": "It is a concept image for planning. We confirm final materials and measurements at your site visit before any work begins."
+        },
+        {
+          "q": "Do you repair doors or only replace them?",
+          "a": "Both. We tell you what is worth repairing and show you replacement options when a new door makes more sense."
+        },
+        {
+          "q": "Can you handle more than garage doors?",
+          "a": "Yes. One Solvern team covers 23 trades, from windows and siding to a complete remodel."
+        }
+      ],
+      "seeItFirstTitle": "See your new garage door before we install it.",
+      "closingHeadline": "See your new garage door before we install it.",
+      "concept_markup_example_notes": [
+        "Replace with a carriage-style door.",
+        "Add windows across the top."
+      ],
+      "copyStatus": "draft-pending-owner-approval"
+    },
+    "siding": {
+      "heroPrimaryButton": "Get my Concept Preview",
+      "heroProofLine": "Concept and estimate in 48 hours",
+      "primaryAction": "concept-preview",
+      "shortName": "Siding",
+      "topic": "siding",
+      "heroHeadline": "Siding that looks crisp and keeps the weather out.",
+      "heroLead": "Siding, stucco and exterior trim across metro Atlanta, installed by one accountable team.",
+      "servicesTitle": "The outside of your home, done right.",
+      "servicesLead": "Straight lines, tight seams and sealed trim, so the outside of your home looks finished and stays dry.",
+      "services": [
+        {
+          "title": "Siding installation",
+          "description": "Fiber cement, vinyl and wood siding, installed straight and level."
+        },
+        {
+          "title": "Siding repair",
+          "description": "Damaged boards replaced and matched to what is already there."
+        },
+        {
+          "title": "Stucco",
+          "description": "Stucco repairs and new finishes with clean edges."
+        },
+        {
+          "title": "Exterior trim",
+          "description": "Corner boards and window and door trim, sealed tight."
+        },
+        {
+          "title": "Weather barrier",
+          "description": "Housewrap and flashing behind the siding, where it counts."
+        }
+      ],
+      "photoSubject": "house",
+      "formPlaceholder": "Board and batten siding in a deep green with white trim",
+      "teamPhotoShotList": [
+        "[Photo: Solvern installer in branded uniform setting a siding course]",
+        "[Photo: technician holding color samples against a home with the owner]",
+        "[Photo: clean corner trim detail on new siding]"
+      ],
+      "faq": [
+        {
+          "q": "How fast can I get an estimate?",
+          "a": "Send photos through the Concept Preview form and you will have a concept image and an estimate range within 48 hours."
+        },
+        {
+          "q": "Is the Concept Preview exactly what I will get?",
+          "a": "It is a concept image for planning. We confirm final materials and measurements at your site visit before any work begins."
+        },
+        {
+          "q": "Can you match my existing siding?",
+          "a": "We source the closest profile and color available and show you samples before we start."
+        },
+        {
+          "q": "Can you handle more than siding?",
+          "a": "Yes. One Solvern team covers 23 trades, from roofing and windows to a complete remodel."
+        }
+      ],
+      "seeItFirstTitle": "See your new exterior before we build it.",
+      "closingHeadline": "See your new exterior before we build it.",
+      "concept_markup_example_notes": [
+        "Change this siding to board and batten.",
+        "New white trim around these windows."
+      ],
+      "copyStatus": "draft-pending-owner-approval"
+    },
+    "windows-doors": {
+      "heroPrimaryButton": "Get my Concept Preview",
+      "heroProofLine": "Concept and estimate in 48 hours",
+      "primaryAction": "concept-preview",
+      "shortName": "Windows & Doors",
+      "topic": "windows and doors",
+      "heroHeadline": "Windows and doors that open easy and seal tight.",
+      "heroLead": "Windows, interior and exterior doors, sliding doors, hardware and locks across metro Atlanta, by one accountable team.",
+      "servicesTitle": "Every opening in your home.",
+      "servicesLead": "Each unit is set plumb, level and square, then sealed and trimmed so it works smoothly for years.",
+      "services": [
+        {
+          "title": "Windows",
+          "description": "Replacement and new windows, flashed, sealed and trimmed."
+        },
+        {
+          "title": "Exterior doors",
+          "description": "Entry and back doors that close tight and lock securely."
+        },
+        {
+          "title": "Interior doors",
+          "description": "Doors hung square, with even gaps and clean trim."
+        },
+        {
+          "title": "Sliding and patio doors",
+          "description": "Sliding and hinged patio doors that glide and seal."
+        },
+        {
+          "title": "Hardware and locks",
+          "description": "Handles, hinges and locks installed and adjusted."
+        }
+      ],
+      "photoSubject": "window or door",
+      "formPlaceholder": "Black-frame windows across the front and a new entry door",
+      "teamPhotoShotList": [
+        "[Photo: Solvern installers in branded uniform setting a new window]",
+        "[Photo: technician reviewing frame colors with a homeowner]",
+        "[Photo: new entry door hardware being adjusted]"
+      ],
+      "faq": [
+        {
+          "q": "How fast can I get an estimate?",
+          "a": "Send photos through the Concept Preview form and you will have a concept image and an estimate range within 48 hours."
+        },
+        {
+          "q": "Is the Concept Preview exactly what I will get?",
+          "a": "It is a concept image for planning. We confirm final materials and measurements at your site visit before any work begins."
+        },
+        {
+          "q": "Can you match the style of my house?",
+          "a": "Yes. We show you frame colors and styles on a photo of your home, then confirm sizes at the site visit."
+        },
+        {
+          "q": "Can you handle more than windows and doors?",
+          "a": "Yes. One Solvern team covers 23 trades, from siding and carpentry to a complete remodel."
+        }
+      ],
+      "seeItFirstTitle": "See your new windows and doors before we install them.",
+      "closingHeadline": "See your new windows before we install them.",
+      "concept_markup_example_notes": [
+        "Replace these with black-frame windows.",
+        "Swap this for a glass entry door."
+      ],
+      "copyStatus": "draft-pending-owner-approval"
+    },
+    "insulation": {
+      "heroPrimaryButton": "Get my Concept Preview",
+      "heroProofLine": "Concept and estimate in 48 hours",
+      "primaryAction": "concept-preview",
+      "shortName": "Insulation",
+      "topic": "insulation",
+      "heroHeadline": "Insulation that keeps every room comfortable.",
+      "heroLead": "Batt, blown-in and spray foam insulation and air sealing across metro Atlanta, by one accountable team.",
+      "servicesTitle": "Comfort you feel in every season.",
+      "servicesLead": "We seal the gaps first, then insulate, so the heating and cooling you pay for stays inside.",
+      "services": [
+        {
+          "title": "Attic insulation",
+          "description": "Blown-in or batt insulation installed to an even, full depth."
+        },
+        {
+          "title": "Wall insulation",
+          "description": "Insulation for open walls during a remodel or addition."
+        },
+        {
+          "title": "Spray foam",
+          "description": "Spray foam for crawl spaces, rim joists and hard-to-reach areas."
+        },
+        {
+          "title": "Air sealing",
+          "description": "Gaps around pipes, wires and lights sealed before insulating."
+        },
+        {
+          "title": "Crawl spaces",
+          "description": "Floors over crawl spaces insulated so the rooms above stay warm."
+        }
+      ],
+      "photoSubject": "attic or room",
+      "formPlaceholder": "Add insulation in the attic over the bonus room",
+      "teamPhotoShotList": [
+        "[Photo: Solvern installer in branded uniform and protective gear blowing attic insulation]",
+        "[Photo: technician explaining the plan to a homeowner]",
+        "[Photo: even, full-depth insulation across an attic floor]"
+      ],
+      "faq": [
+        {
+          "q": "How fast can I get an estimate?",
+          "a": "Send photos through the Concept Preview form and you will have a concept image and an estimate range within 48 hours."
+        },
+        {
+          "q": "What does the Concept Preview show for insulation?",
+          "a": "We mark up your photo with where insulation and air sealing will go, with an estimate range. We confirm depths and materials at your site visit."
+        },
+        {
+          "q": "Do you seal air leaks too?",
+          "a": "Yes. We seal gaps around pipes, wires and fixtures before insulating, because insulation works best on a sealed space."
+        },
+        {
+          "q": "Can you handle more than insulation?",
+          "a": "Yes. One Solvern team covers 23 trades, including HVAC, drywall and complete remodels."
+        }
+      ],
+      "seeItFirstTitle": "See your insulation plan before we start.",
+      "closingHeadline": "See your insulation plan before we start.",
+      "concept_markup_example_notes": [
+        "This room is always hot in summer.",
+        "Add insulation across this attic."
+      ],
+      "copyStatus": "draft-pending-owner-approval"
+    },
+    "countertops": {
+      "heroPrimaryButton": "Get my Concept Preview",
+      "heroProofLine": "Concept and estimate in 48 hours",
+      "primaryAction": "concept-preview",
+      "shortName": "Countertops",
+      "topic": "countertops",
+      "heroHeadline": "Countertops cut clean, set level and seamed tight.",
+      "heroLead": "Quartz, granite and marble countertops, fabricated and installed across metro Atlanta by one accountable team.",
+      "servicesTitle": "Stone, measured to the edge.",
+      "servicesLead": "We template on site, fabricate to the template and install level, so seams are tight and overhangs are even.",
+      "services": [
+        {
+          "title": "Quartz",
+          "description": "Consistent color and pattern, with little upkeep."
+        },
+        {
+          "title": "Granite",
+          "description": "Natural stone with movement unique to each slab."
+        },
+        {
+          "title": "Marble",
+          "description": "Classic veining, sealed and finished for daily use."
+        },
+        {
+          "title": "Fabrication",
+          "description": "Cut, edged and polished to your template."
+        },
+        {
+          "title": "Installation",
+          "description": "Set level and seamed tight, with sink and cooktop cutouts done right."
+        }
+      ],
+      "photoSubject": "kitchen or bath",
+      "formPlaceholder": "White quartz with a waterfall edge on the island",
+      "teamPhotoShotList": [
+        "[Photo: Solvern installers in branded uniform setting a quartz countertop]",
+        "[Photo: technician reviewing slab samples with a homeowner]",
+        "[Photo: polished edge and tight seam up close]"
+      ],
+      "faq": [
+        {
+          "q": "How fast can I get an estimate?",
+          "a": "Send photos through the Concept Preview form and you will have a concept image and an estimate range within 48 hours."
+        },
+        {
+          "q": "Is the Concept Preview exactly what I will get?",
+          "a": "It is a concept image for planning. We confirm final materials and measurements at your site visit before any work begins."
+        },
+        {
+          "q": "Can I choose my own slab?",
+          "a": "Yes. We help you pick the slab, then show you how it will look in your kitchen before we cut."
+        },
+        {
+          "q": "Can you handle more than countertops?",
+          "a": "Yes. One Solvern team covers 23 trades, from cabinets and tile to a complete kitchen remodel."
+        }
+      ],
+      "seeItFirstTitle": "See your new countertops before we cut them.",
+      "closingHeadline": "See your new countertops before we cut them.",
+      "concept_markup_example_notes": [
+        "Change to a white quartz with soft veining.",
+        "Add a waterfall edge here."
+      ],
+      "copyStatus": "draft-pending-owner-approval"
+    },
+    "tile": {
+      "heroPrimaryButton": "Get my Concept Preview",
+      "heroProofLine": "Concept and estimate in 48 hours",
+      "primaryAction": "concept-preview",
+      "shortName": "Tile",
+      "topic": "tile",
+      "heroHeadline": "Tile laid flat, spaced even and sealed watertight.",
+      "heroLead": "Showers, bathroom floors, backsplashes and shower waterproofing across metro Atlanta, by one accountable team.",
+      "servicesTitle": "Tile that lines up, from first row to last.",
+      "servicesLead": "Layout is planned before the first tile goes down, so cuts land in the right places and grout lines stay straight.",
+      "services": [
+        {
+          "title": "Showers",
+          "description": "Walk-in and tub showers, with niches and benches built in."
+        },
+        {
+          "title": "Bathroom floors",
+          "description": "Flat, level floors with clean transitions."
+        },
+        {
+          "title": "Backsplashes",
+          "description": "Kitchen and bar backsplashes cut neatly around outlets and windows."
+        },
+        {
+          "title": "Shower waterproofing",
+          "description": "A complete waterproof system behind every shower wall and pan."
+        },
+        {
+          "title": "Repairs and regrouting",
+          "description": "Cracked tile replaced and tired grout renewed."
+        }
+      ],
+      "photoSubject": "shower or room",
+      "formPlaceholder": "A walk-in shower with large white tile and a built-in niche",
+      "teamPhotoShotList": [
+        "[Photo: Solvern tile setter in branded uniform setting shower wall tile]",
+        "[Photo: technician laying out tile samples with a homeowner]",
+        "[Photo: straight grout lines and a clean niche up close]"
+      ],
+      "faq": [
+        {
+          "q": "How fast can I get an estimate?",
+          "a": "Send photos through the Concept Preview form and you will have a concept image and an estimate range within 48 hours."
+        },
+        {
+          "q": "Is the Concept Preview exactly what I will get?",
+          "a": "It is a concept image for planning. We confirm final materials and measurements at your site visit before any work begins."
+        },
+        {
+          "q": "Do you waterproof showers?",
+          "a": "Yes. Every shower gets a complete waterproofing system before tile goes up."
+        },
+        {
+          "q": "Can you handle more than tile?",
+          "a": "Yes. One Solvern team covers 23 trades, from plumbing and countertops to a complete bathroom remodel."
+        }
+      ],
+      "seeItFirstTitle": "See your new tile before we set it.",
+      "closingHeadline": "See your new tile before we set it.",
+      "concept_markup_example_notes": [
+        "Run this tile all the way to the ceiling.",
+        "Add a niche here."
+      ],
+      "copyStatus": "draft-pending-owner-approval"
+    },
+    "drywall": {
+      "heroPrimaryButton": "Get my Concept Preview",
+      "heroProofLine": "Concept and estimate in 48 hours",
+      "primaryAction": "concept-preview",
+      "shortName": "Drywall",
+      "topic": "drywall",
+      "heroHeadline": "Walls so smooth you only notice the room.",
+      "heroLead": "Drywall hanging, taping, finishing, texture and repairs across metro Atlanta, by one accountable team.",
+      "servicesTitle": "Flat walls, clean corners.",
+      "servicesLead": "Good paint starts with good drywall. We hang, tape and finish so seams disappear under the first coat.",
+      "services": [
+        {
+          "title": "Hanging",
+          "description": "New walls and ceilings hung tight and fastened to the frame."
+        },
+        {
+          "title": "Taping and finishing",
+          "description": "Seams and corners finished smooth and ready for paint."
+        },
+        {
+          "title": "Texture",
+          "description": "Matching or new textures for walls and ceilings."
+        },
+        {
+          "title": "Repairs",
+          "description": "Holes, cracks and water damage patched so the fix disappears."
+        },
+        {
+          "title": "Basements and additions",
+          "description": "Full rooms hung and finished as part of a larger project."
+        }
+      ],
+      "photoSubject": "wall or ceiling",
+      "formPlaceholder": "Patch the ceiling stain and smooth the textured walls",
+      "teamPhotoShotList": [
+        "[Photo: Solvern finisher in branded uniform taping a ceiling seam]",
+        "[Photo: technician pointing out repair areas to a homeowner]",
+        "[Photo: smooth, finished corner ready for paint]"
+      ],
+      "faq": [
+        {
+          "q": "How fast can I get an estimate?",
+          "a": "Send photos through the Concept Preview form and you will have a concept image and an estimate range within 48 hours."
+        },
+        {
+          "q": "Is the Concept Preview exactly what I will get?",
+          "a": "It is a concept image for planning. We confirm final materials and measurements at your site visit before any work begins."
+        },
+        {
+          "q": "Can you match my existing texture?",
+          "a": "Yes. We match the texture around the repair so the patch blends in once it is painted."
+        },
+        {
+          "q": "Can you handle more than drywall?",
+          "a": "Yes. One Solvern team covers 23 trades, from insulation and painting to a complete remodel."
+        }
+      ],
+      "seeItFirstTitle": "See your finished walls before we start.",
+      "closingHeadline": "See your finished walls before we start.",
+      "concept_markup_example_notes": [
+        "Patch this water stain on the ceiling.",
+        "Smooth out this textured wall."
+      ],
+      "copyStatus": "draft-pending-owner-approval"
+    },
+    "flooring": {
+      "heroPrimaryButton": "Get my Concept Preview",
+      "heroProofLine": "Concept and estimate in 48 hours",
+      "primaryAction": "concept-preview",
+      "shortName": "Flooring",
+      "topic": "flooring",
+      "heroHeadline": "Floors that stay flat, tight and quiet, built right.",
+      "heroLead": "Hardwood, engineered wood, luxury vinyl plank, laminate and carpet across metro Atlanta, installed by one accountable team.",
+      "servicesTitle": "Every floor, installed flat and square.",
+      "servicesLead": "We check the subfloor before anything goes down, so the finished floor stays level and quiet.",
+      "services": [
+        {
+          "title": "Hardwood",
+          "description": "Solid wood floors installed and finished to last."
+        },
+        {
+          "title": "Engineered wood",
+          "description": "A real wood surface that stays stable over slabs and basements."
+        },
+        {
+          "title": "Luxury vinyl plank",
+          "description": "Water-resistant floors for kitchens, baths and busy rooms."
+        },
+        {
+          "title": "Laminate",
+          "description": "Durable floors with a wood look, at a fair price."
+        },
+        {
+          "title": "Carpet",
+          "description": "Bedrooms and stairs, stretched tight with clean edges."
+        }
+      ],
+      "photoSubject": "room",
+      "formPlaceholder": "Wide plank white oak through the living room and kitchen",
+      "teamPhotoShotList": [
+        "[Photo: Solvern installer in branded uniform nailing hardwood boards]",
+        "[Photo: technician comparing flooring samples with a homeowner]",
+        "[Photo: tight board joints and a clean transition up close]"
+      ],
+      "faq": [
+        {
+          "q": "How fast can I get an estimate?",
+          "a": "Send photos through the Concept Preview form and you will have a concept image and an estimate range within 48 hours."
+        },
+        {
+          "q": "Is the Concept Preview exactly what I will get?",
+          "a": "It is a concept image for planning. We confirm final materials and measurements at your site visit before any work begins."
+        },
+        {
+          "q": "Do you prepare the subfloor?",
+          "a": "Yes. We check for level, squeaks and moisture, and fix what we find before the new floor goes down."
+        },
+        {
+          "q": "Can you handle more than flooring?",
+          "a": "Yes. One Solvern team covers 23 trades, from tile and painting to a complete remodel."
+        }
+      ],
+      "seeItFirstTitle": "See your new floors before we install them.",
+      "closingHeadline": "See your new floors before we install them.",
+      "concept_markup_example_notes": [
+        "Run the new floor through to the kitchen.",
+        "Switch to a lighter oak here."
+      ],
+      "copyStatus": "draft-pending-owner-approval"
+    },
+    "painting": {
+      "heroPrimaryButton": "Get my Concept Preview",
+      "heroProofLine": "Concept and estimate in 48 hours",
+      "primaryAction": "concept-preview",
+      "shortName": "Painting",
+      "topic": "painting",
+      "heroHeadline": "Paint lines so clean the room looks new.",
+      "heroLead": "Interior and exterior painting for walls, ceilings, trim, doors and cabinets across metro Atlanta, by one accountable team.",
+      "servicesTitle": "Prep first, then paint.",
+      "servicesLead": "Most of a great paint job happens before the brush comes out: patching, sanding, caulking and protecting your home.",
+      "services": [
+        {
+          "title": "Walls and ceilings",
+          "description": "Even coats, straight cut lines and furniture protected."
+        },
+        {
+          "title": "Exterior painting",
+          "description": "Siding, trim and doors cleaned, prepped and painted for the weather."
+        },
+        {
+          "title": "Trim and doors",
+          "description": "Smooth enamel finishes on baseboards, casing and doors."
+        },
+        {
+          "title": "Cabinets",
+          "description": "Cleaned, sanded, primed and sprayed for a smooth, even finish."
+        },
+        {
+          "title": "Color planning",
+          "description": "See colors on your own walls before you commit."
+        }
+      ],
+      "photoSubject": "room or exterior",
+      "formPlaceholder": "A warm white for the living room and a deep green front door",
+      "teamPhotoShotList": [
+        "[Photo: Solvern painter in branded uniform cutting in a clean ceiling line]",
+        "[Photo: technician holding color swatches on a wall with a homeowner]",
+        "[Photo: freshly painted trim and door up close]"
+      ],
+      "faq": [
+        {
+          "q": "How fast can I get an estimate?",
+          "a": "Send photos through the Concept Preview form and you will have a concept image and an estimate range within 48 hours."
+        },
+        {
+          "q": "Is the Concept Preview exactly what I will get?",
+          "a": "It is a concept image for planning. We confirm final materials and measurements at your site visit before any work begins."
+        },
+        {
+          "q": "Can I see colors before I choose?",
+          "a": "Yes. Your Concept Preview shows your chosen colors on your own room, and we bring samples to the site visit."
+        },
+        {
+          "q": "Can you handle more than painting?",
+          "a": "Yes. One Solvern team covers 23 trades, from drywall and trim to a complete remodel."
+        }
+      ],
+      "seeItFirstTitle": "See your new colors before we open a can.",
+      "closingHeadline": "See your new colors before we paint.",
+      "concept_markup_example_notes": [
+        "Paint these walls a warm white.",
+        "Make the front door deep green."
+      ],
+      "copyStatus": "draft-pending-owner-approval"
+    },
+    "plumbing": {
+      "heroPrimaryButton": "Request a visit",
+      "heroProofLine": "Clear options before any work begins",
+      "primaryAction": "diagnosis",
+      "shortName": "Plumbing",
+      "topic": "plumbing",
+      "heroHeadline": "Plumbing that runs clean, drains fast and stays dry.",
+      "heroLead": "Water supply, drains, sewer lines, water heaters and fixtures across metro Atlanta, by one accountable team.",
+      "servicesTitle": "Every pipe, from the street to the faucet.",
+      "servicesLead": "We find the cause of the problem, fix it properly and test everything before we leave.",
+      "services": [
+        {
+          "title": "Water supply",
+          "description": "Leaks found and fixed, and old supply lines replaced."
+        },
+        {
+          "title": "Drains",
+          "description": "Slow and clogged drains cleared and repaired."
+        },
+        {
+          "title": "Sewer lines",
+          "description": "Sewer line problems inspected and repaired."
+        },
+        {
+          "title": "Water heaters",
+          "description": "Tank and tankless water heaters repaired and replaced."
+        },
+        {
+          "title": "Fixtures",
+          "description": "Faucets, toilets, sinks and showers installed and sealed."
+        }
+      ],
+      "photoSubject": "fixture or area",
+      "formPlaceholder": "The kitchen sink drains slowly and the cabinet below is damp",
+      "teamPhotoShotList": [
+        "[Photo: Solvern plumber in branded uniform working under a sink]",
+        "[Photo: technician explaining repair options to a homeowner]",
+        "[Photo: new water heater connections up close]"
+      ],
+      "faq": [
+        {
+          "q": "Do you repair or only replace?",
+          "a": "Both. We diagnose first and show you repair and replacement options side by side, with the trade-offs in writing."
+        },
+        {
+          "q": "How fast can someone come out?",
+          "a": "[Response time you commit to]"
+        },
+        {
+          "q": "Can I show you the problem before you come out?",
+          "a": "Yes. Draw on a photo to show us where the problem is, and we arrive with a head start."
+        },
+        {
+          "q": "Can you handle more than plumbing?",
+          "a": "Yes. One Solvern team covers 23 trades, including tile, drywall and complete bathroom remodels."
+        }
+      ],
+      "closingHeadline": "Get your plumbing right.",
+      "concept_markup_example_notes": [
+        "Water drips from this pipe.",
+        "This drain backs up."
+      ],
+      "copyStatus": "draft-pending-owner-approval"
+    },
+    "electrical": {
+      "heroPrimaryButton": "Request a visit",
+      "heroProofLine": "Clear options before any work begins",
+      "primaryAction": "diagnosis",
+      "shortName": "Electrical",
+      "topic": "electrical",
+      "heroHeadline": "Wiring and lighting done safely and neatly.",
+      "heroLead": "Panels, wiring, outlets, switches, lighting and fixtures across metro Atlanta, by one accountable team.",
+      "servicesTitle": "Power where you need it, done safely.",
+      "servicesLead": "We trace problems to the source and leave every panel labeled and every cover plate straight.",
+      "services": [
+        {
+          "title": "Panels",
+          "description": "Panel upgrades and replacements sized for how you use power."
+        },
+        {
+          "title": "Wiring",
+          "description": "New circuits and rewiring, run neatly and labeled."
+        },
+        {
+          "title": "Outlets and switches",
+          "description": "Added, moved and replaced, including GFCI and USB outlets."
+        },
+        {
+          "title": "Lighting",
+          "description": "Recessed, pendant and outdoor lighting placed where you need it."
+        },
+        {
+          "title": "Fixtures",
+          "description": "Ceiling fans, chandeliers and fixtures hung securely."
+        }
+      ],
+      "photoSubject": "panel or room",
+      "formPlaceholder": "Breakers keep tripping when the microwave runs",
+      "teamPhotoShotList": [
+        "[Photo: Solvern electrician in branded uniform working at a labeled panel]",
+        "[Photo: technician walking a homeowner through lighting options]",
+        "[Photo: clean, straight switch plates on a finished wall]"
+      ],
+      "faq": [
+        {
+          "q": "Do you repair or only replace?",
+          "a": "Both. We diagnose first and show you repair and replacement options side by side, with the trade-offs in writing."
+        },
+        {
+          "q": "How fast can someone come out?",
+          "a": "[Response time you commit to]"
+        },
+        {
+          "q": "Can I show you the problem before you come out?",
+          "a": "Yes. Draw on a photo to show us where the problem is, and we arrive with a head start."
+        },
+        {
+          "q": "Can you handle more than electrical?",
+          "a": "Yes. One Solvern team covers 23 trades, including lighting, smart home and complete remodels."
+        }
+      ],
+      "closingHeadline": "Get your electrical right.",
+      "concept_markup_example_notes": [
+        "This outlet stopped working.",
+        "Add lights along this ceiling."
+      ],
+      "copyStatus": "draft-pending-owner-approval"
+    },
+    "low-voltage": {
+      "heroPrimaryButton": "Request a visit",
+      "heroProofLine": "Clear options before any work begins",
+      "primaryAction": "diagnosis",
+      "shortName": "Smart Home",
+      "topic": "smart home",
+      "heroHeadline": "Networks, cameras and audio that work every time.",
+      "heroLead": "Data networks, cameras, security, audio and home automation across metro Atlanta, by one accountable team.",
+      "servicesTitle": "Wired right, set up simply.",
+      "servicesLead": "We run the cable, mount the hardware and set everything up, then show you how to use it.",
+      "services": [
+        {
+          "title": "Data networks",
+          "description": "Wired and wireless networks with coverage in every room."
+        },
+        {
+          "title": "Cameras",
+          "description": "Cameras placed to cover entries, driveways and yards."
+        },
+        {
+          "title": "Security",
+          "description": "Door, window and motion sensors installed and connected."
+        },
+        {
+          "title": "Audio",
+          "description": "In-wall and in-ceiling speakers, with clean wiring."
+        },
+        {
+          "title": "Home automation",
+          "description": "Lights, locks and thermostats that work from one app."
+        }
+      ],
+      "photoSubject": "room or area",
+      "formPlaceholder": "Wi-Fi drops out in the upstairs bedrooms",
+      "teamPhotoShotList": [
+        "[Photo: Solvern technician in branded uniform mounting a camera over a door]",
+        "[Photo: technician showing a homeowner how the system works on a phone]",
+        "[Photo: neatly labeled network cabinet up close]"
+      ],
+      "faq": [
+        {
+          "q": "Can you work with equipment I already have?",
+          "a": "Often, yes. We check what you have on site and tell you what can stay and what should be replaced."
+        },
+        {
+          "q": "How fast can someone come out?",
+          "a": "[Response time you commit to]"
+        },
+        {
+          "q": "Can I show you the problem before you come out?",
+          "a": "Yes. Draw on a photo to show us where the problem is, and we arrive with a head start."
+        },
+        {
+          "q": "Can you handle more than smart home?",
+          "a": "Yes. One Solvern team covers 23 trades, including electrical, carpentry and complete remodels."
+        }
+      ],
+      "closingHeadline": "Get your smart home set up right.",
+      "concept_markup_example_notes": [
+        "Wi-Fi is weak in this room.",
+        "Add a camera over this door."
+      ],
+      "copyStatus": "draft-pending-owner-approval"
+    },
+    "fencing": {
+      "heroPrimaryButton": "Get my Concept Preview",
+      "heroProofLine": "Concept and estimate in 48 hours",
+      "primaryAction": "concept-preview",
+      "shortName": "Fencing",
+      "topic": "fencing",
+      "heroHeadline": "Fences that stand straight and gates that close right.",
+      "heroLead": "Wood, vinyl and metal fencing and gates across metro Atlanta, built by one accountable team.",
+      "servicesTitle": "Straight lines, solid posts.",
+      "servicesLead": "Posts set deep and plumb, so the fence stays straight and the gate keeps latching years from now.",
+      "services": [
+        {
+          "title": "Wood fences",
+          "description": "Privacy and picket fences built from quality lumber."
+        },
+        {
+          "title": "Vinyl fences",
+          "description": "Clean, low-upkeep fencing that holds its color."
+        },
+        {
+          "title": "Metal fences",
+          "description": "Aluminum and steel fencing for a clean, open look."
+        },
+        {
+          "title": "Gates",
+          "description": "Walk and drive gates hung to swing and latch smoothly."
+        },
+        {
+          "title": "Repairs",
+          "description": "Leaning posts, broken boards and sagging gates fixed."
+        }
+      ],
+      "photoSubject": "yard or fence line",
+      "formPlaceholder": "A 6-foot horizontal cedar fence across the backyard",
+      "teamPhotoShotList": [
+        "[Photo: Solvern crew in branded uniform setting a fence post]",
+        "[Photo: technician walking the fence line with a homeowner]",
+        "[Photo: gate latch and hinge detail on a new fence]"
+      ],
+      "faq": [
+        {
+          "q": "How fast can I get an estimate?",
+          "a": "Send photos through the Concept Preview form and you will have a concept image and an estimate range within 48 hours."
+        },
+        {
+          "q": "Is the Concept Preview exactly what I will get?",
+          "a": "It is a concept image for planning. We confirm final materials and measurements at your site visit before any work begins."
+        },
+        {
+          "q": "Do you set posts in concrete?",
+          "a": "Yes. Posts are set deep in concrete so the fence stays straight and solid."
+        },
+        {
+          "q": "Can you handle more than fencing?",
+          "a": "Yes. One Solvern team covers 23 trades, from landscaping and tree service to a complete outdoor project."
+        }
+      ],
+      "seeItFirstTitle": "See your new fence before we build it.",
+      "closingHeadline": "See your new fence before we build it.",
+      "concept_markup_example_notes": [
+        "Run a 6-foot privacy fence along here.",
+        "Add a double gate for the driveway."
+      ],
+      "copyStatus": "draft-pending-owner-approval"
+    },
+    "landscaping": {
+      "heroPrimaryButton": "Get my Concept Preview",
+      "heroProofLine": "Concept and estimate in 48 hours",
+      "primaryAction": "concept-preview",
+      "shortName": "Landscape",
+      "topic": "landscaping",
+      "heroHeadline": "A yard that looks finished and stays green.",
+      "heroLead": "Sod, planting, mulch, irrigation and landscape improvements across metro Atlanta, by one accountable team.",
+      "servicesTitle": "From bare ground to a finished yard.",
+      "servicesLead": "We plan plants, beds and watering together, so the yard looks good on day one and keeps looking good.",
+      "services": [
+        {
+          "title": "Sod",
+          "description": "Fresh sod laid tight on prepared, graded soil."
+        },
+        {
+          "title": "Planting",
+          "description": "Shrubs, trees and perennials chosen for the Atlanta climate."
+        },
+        {
+          "title": "Mulch and beds",
+          "description": "Clean bed edges and fresh mulch."
+        },
+        {
+          "title": "Irrigation",
+          "description": "Sprinkler and drip systems set to water evenly."
+        },
+        {
+          "title": "Landscape improvements",
+          "description": "Borders, stepping stones and refreshed beds that finish the yard."
+        }
+      ],
+      "photoSubject": "yard",
+      "formPlaceholder": "New sod in the backyard and a planted border along the fence",
+      "teamPhotoShotList": [
+        "[Photo: Solvern crew in branded uniform laying sod]",
+        "[Photo: technician walking a homeowner through a planting plan]",
+        "[Photo: fresh bed edge and mulch up close]"
+      ],
+      "faq": [
+        {
+          "q": "How fast can I get an estimate?",
+          "a": "Send photos through the Concept Preview form and you will have a concept image and an estimate range within 48 hours."
+        },
+        {
+          "q": "Is the Concept Preview exactly what I will get?",
+          "a": "It is a concept image for planning. We confirm final materials and measurements at your site visit before any work begins."
+        },
+        {
+          "q": "Do you install irrigation?",
+          "a": "Yes. We design and install sprinkler and drip systems sized to your yard and plants."
+        },
+        {
+          "q": "Can you handle more than landscaping?",
+          "a": "Yes. One Solvern team covers 23 trades, from fencing and site work to a complete outdoor project."
+        }
+      ],
+      "seeItFirstTitle": "See your new yard before we plant it.",
+      "closingHeadline": "See your new yard before we plant it.",
+      "concept_markup_example_notes": [
+        "New sod across this area.",
+        "Plant a row of shrubs along the fence."
+      ],
+      "copyStatus": "draft-pending-owner-approval"
+    },
+    "specialty": {
+      "heroPrimaryButton": "Get my Concept Preview",
+      "heroProofLine": "Concept and estimate in 48 hours",
+      "primaryAction": "concept-preview",
+      "shortName": "Specialty",
+      "topic": "specialty work",
+      "heroHeadline": "Custom installations, finished like they belong.",
+      "heroLead": "Railings, glass, mirrors, shower doors, fireplaces and custom installations across metro Atlanta, by one accountable team.",
+      "servicesTitle": "The details that make a home.",
+      "servicesLead": "Specialty work is precise work. We measure carefully and fit each piece to your space.",
+      "services": [
+        {
+          "title": "Railings",
+          "description": "Interior and exterior railings in metal, wood and glass."
+        },
+        {
+          "title": "Glass and mirrors",
+          "description": "Mirrors and glass panels cut and mounted to fit."
+        },
+        {
+          "title": "Shower doors",
+          "description": "Frameless and framed shower doors that seal and swing true."
+        },
+        {
+          "title": "Fireplaces",
+          "description": "Fireplace surrounds and mantels installed and finished."
+        },
+        {
+          "title": "Custom installations",
+          "description": "One-off projects measured, built and fitted to your home."
+        }
+      ],
+      "photoSubject": "space",
+      "formPlaceholder": "A frameless glass shower door and a new stair railing",
+      "teamPhotoShotList": [
+        "[Photo: Solvern installer in branded uniform fitting a glass shower door]",
+        "[Photo: technician measuring a stair railing with a homeowner]",
+        "[Photo: clean railing bracket detail up close]"
+      ],
+      "faq": [
+        {
+          "q": "How fast can I get an estimate?",
+          "a": "Send photos through the Concept Preview form and you will have a concept image and an estimate range within 48 hours."
+        },
+        {
+          "q": "Is the Concept Preview exactly what I will get?",
+          "a": "It is a concept image for planning. We confirm final materials and measurements at your site visit before any work begins."
+        },
+        {
+          "q": "What counts as specialty work?",
+          "a": "Railings, glass, mirrors, shower doors, fireplaces and custom pieces that do not fit neatly into one trade. If you are not sure, send a photo and ask."
+        },
+        {
+          "q": "Can you handle more than specialty work?",
+          "a": "Yes. One Solvern team covers 23 trades, from carpentry and tile to a complete remodel."
+        }
+      ],
+      "seeItFirstTitle": "See your custom work before we build it.",
+      "closingHeadline": "See your custom work before we build it.",
+      "concept_markup_example_notes": [
+        "Swap this for a frameless glass door.",
+        "Add a black metal railing on these stairs."
+      ],
+      "copyStatus": "draft-pending-owner-approval"
+    }
+  }
+}

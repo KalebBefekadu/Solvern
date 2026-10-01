@@ -1,0 +1,33 @@
+{
+  "name": "solvern-site",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "check:brand": "node scripts/check-brand.mjs",
+    "check:colors": "node scripts/check-colors.mjs",
+    "verify": "npm run typecheck && npm run lint && npm run check:brand && npm run check:colors && npm run build"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0",
+    "next": "15.5.27",
+    "perfect-freehand": "^1.2.2",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.1.0",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "culori": "^4.0.1",
+    "eslint": "^9.0.0",
+    "eslint-config-next": "15.5.27",
+    "typescript": "^5.6.0"
+  }
+}

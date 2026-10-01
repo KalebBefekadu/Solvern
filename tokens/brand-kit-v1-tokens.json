@@ -1,0 +1,488 @@
+{
+ "name": "Solvern Home",
+ "version": 1,
+ "color": {
+  "themes": [
+   {
+    "id": "light",
+    "name": "Light"
+   }
+  ],
+  "tokens": [
+   {
+    "name": "ink",
+    "value": {
+     "light": "#1B2330"
+    },
+    "usage": "Blueprint Ink. Primary text, the logo, the hub's dominant color. 13.8:1 on primer, 15.8:1 on white."
+   },
+   {
+    "name": "graphite",
+    "value": {
+     "light": "#4A5361"
+    },
+    "usage": "Secondary text and captions on primer or white (6.8:1 on primer)."
+   },
+   {
+    "name": "steel",
+    "value": {
+     "light": "#5F6874"
+    },
+    "usage": "Muted text for metadata and helper text on primer or white (4.9:1 on primer). Never below 13px."
+   },
+   {
+    "name": "chalk-line",
+    "value": {
+     "light": "#C9CED3"
+    },
+    "usage": "Hairlines, dividers, input borders on white. Decorative only; never text."
+   },
+   {
+    "name": "primer",
+    "value": {
+     "light": "#EEF0EE"
+    },
+    "usage": "Primer. Default page background, like a freshly primed wall."
+   },
+   {
+    "name": "white",
+    "value": {
+     "light": "#FFFFFF"
+    },
+    "usage": "Raised surfaces: cards, forms, estimate documents. Text on dark fills marked on-white."
+   },
+   {
+    "name": "chalk-blue",
+    "value": {
+     "light": "#2F63D6"
+    },
+    "usage": "Chalk Line Blue. The one parent accent: dimension lines, links, focus rings, selected states. Links on primer 4.7:1. Never a large fill."
+   },
+   {
+    "name": "focus-ring",
+    "value": {
+     "light": "{chalk-blue}"
+    },
+    "usage": "Keyboard focus: 2px ring offset 2px from the element."
+   },
+   {
+    "name": "signal-error",
+    "value": {
+     "light": "#B3261E"
+    },
+    "usage": "Form errors and destructive actions only. 5.7:1 on primer."
+   },
+   {
+    "name": "signal-success",
+    "value": {
+     "light": "#34501A"
+    },
+    "usage": "Confirmation messages only (same value as leaf-deep)."
+   },
+   {
+    "name": "clay",
+    "value": {
+     "light": "#A4471F"
+    },
+    "usage": "Groundwork family color. Section headers, family navigation, large fills. Not for body text."
+   },
+   {
+    "name": "clay-deep",
+    "value": {
+     "light": "#6E2E14"
+    },
+    "usage": "Groundwork deep. Text, icons and thin lines in Groundwork color on primer or white (passes 4.5:1)."
+   },
+   {
+    "name": "slate",
+    "value": {
+     "light": "#4F6272"
+    },
+    "usage": "Structure & Shell family color. Section headers, family navigation, large fills. Not for body text."
+   },
+   {
+    "name": "slate-deep",
+    "value": {
+     "light": "#2B3845"
+    },
+    "usage": "Structure & Shell deep. Text, icons and thin lines in Structure & Shell color on primer or white (passes 4.5:1)."
+   },
+   {
+    "name": "gold",
+    "value": {
+     "light": "#C79A1E"
+    },
+    "usage": "Interior Finishes family color. Section headers, family navigation, large fills. Not for body text."
+   },
+   {
+    "name": "gold-deep",
+    "value": {
+     "light": "#6B5210"
+    },
+    "usage": "Interior Finishes deep. Text, icons and thin lines in Interior Finishes color on primer or white (passes 4.5:1)."
+   },
+   {
+    "name": "verdigris",
+    "value": {
+     "light": "#0E6F6A"
+    },
+    "usage": "Home Systems family color. Section headers, family navigation, large fills. Not for body text."
+   },
+   {
+    "name": "verdigris-deep",
+    "value": {
+     "light": "#094744"
+    },
+    "usage": "Home Systems deep. Text, icons and thin lines in Home Systems color on primer or white (passes 4.5:1)."
+   },
+   {
+    "name": "leaf",
+    "value": {
+     "light": "#5E8A2C"
+    },
+    "usage": "Outdoor Living family color. Section headers, family navigation, large fills. Not for body text."
+   },
+   {
+    "name": "leaf-deep",
+    "value": {
+     "light": "#34501A"
+    },
+    "usage": "Outdoor Living deep. Text, icons and thin lines in Outdoor Living color on primer or white (passes 4.5:1)."
+   },
+   {
+    "name": "plum",
+    "value": {
+     "light": "#6D4A82"
+    },
+    "usage": "Specialty family color. Section headers, family navigation, large fills. Not for body text."
+   },
+   {
+    "name": "plum-deep",
+    "value": {
+     "light": "#432C52"
+    },
+    "usage": "Specialty deep. Text, icons and thin lines in Specialty color on primer or white (passes 4.5:1)."
+   },
+   {
+    "name": "trade-demolition",
+    "value": {
+     "light": "#8A3516"
+    },
+    "usage": "Demolition trade color (Groundwork family). Hero fills, 3D tool accent, trade badge. Text on it: white (8.07:1)."
+   },
+   {
+    "name": "trade-site-work",
+    "value": {
+     "light": "#9C5A2E"
+    },
+    "usage": "Site Work / Excavation trade color (Groundwork family). Hero fills, 3D tool accent, trade badge. Text on it: white (5.36:1)."
+   },
+   {
+    "name": "trade-concrete",
+    "value": {
+     "light": "#C9875E"
+    },
+    "usage": "Concrete / Foundation / Driveway trade color (Groundwork family). Hero fills, 3D tool accent, trade badge. Text on it: ink (5.35:1). Too light for lines or icons on primer; use the family deep there."
+   },
+   {
+    "name": "trade-masonry",
+    "value": {
+     "light": "#B04F2A"
+    },
+    "usage": "Masonry trade color (Groundwork family). Hero fills, 3D tool accent, trade badge. Text on it: white (5.25:1)."
+   },
+   {
+    "name": "trade-tree-service",
+    "value": {
+     "light": "#6F4A2C"
+    },
+    "usage": "Tree Service trade color (Groundwork family). Hero fills, 3D tool accent, trade badge. Text on it: white (7.8:1)."
+   },
+   {
+    "name": "trade-roofing",
+    "value": {
+     "light": "#2E3C48"
+    },
+    "usage": "Roofing & Gutters trade color (Structure & Shell family). Hero fills, 3D tool accent, trade badge. Text on it: white (11.31:1)."
+   },
+   {
+    "name": "trade-carpentry",
+    "value": {
+     "light": "#4A5D6E"
+    },
+    "usage": "Carpentry trade color (Structure & Shell family). Hero fills, 3D tool accent, trade badge. Text on it: white (6.81:1)."
+   },
+   {
+    "name": "trade-garage-doors",
+    "value": {
+     "light": "#5C7185"
+    },
+    "usage": "Garage Doors trade color (Structure & Shell family). Hero fills, 3D tool accent, trade badge. Text on it: white (5.05:1)."
+   },
+   {
+    "name": "trade-siding",
+    "value": {
+     "light": "#7D92A8"
+    },
+    "usage": "Siding / Exterior Cladding trade color (Structure & Shell family). Hero fills, 3D tool accent, trade badge. Text on it: ink (4.38:1)."
+   },
+   {
+    "name": "trade-windows-doors",
+    "value": {
+     "light": "#93A4B6"
+    },
+    "usage": "Windows & Doors trade color (Structure & Shell family). Hero fills, 3D tool accent, trade badge. Text on it: ink (6.19:1). Too light for lines or icons on primer; use the family deep there."
+   },
+   {
+    "name": "trade-insulation",
+    "value": {
+     "light": "#B3C0CC"
+    },
+    "usage": "Insulation trade color (Structure & Shell family). Hero fills, 3D tool accent, trade badge. Text on it: ink (8.52:1). Too light for lines or icons on primer; use the family deep there."
+   },
+   {
+    "name": "trade-countertops",
+    "value": {
+     "light": "#8C722C"
+    },
+    "usage": "Countertops trade color (Interior Finishes family). Hero fills, 3D tool accent, trade badge. Text on it: white (4.61:1)."
+   },
+   {
+    "name": "trade-tile",
+    "value": {
+     "light": "#A8862A"
+    },
+    "usage": "Tile trade color (Interior Finishes family). Hero fills, 3D tool accent, trade badge. Text on it: ink (4.59:1)."
+   },
+   {
+    "name": "trade-drywall",
+    "value": {
+     "light": "#B39A63"
+    },
+    "usage": "Drywall trade color (Interior Finishes family). Hero fills, 3D tool accent, trade badge. Text on it: ink (5.81:1). Too light for lines or icons on primer; use the family deep there."
+   },
+   {
+    "name": "trade-flooring",
+    "value": {
+     "light": "#C79A1E"
+    },
+    "usage": "Flooring trade color (Interior Finishes family). Hero fills, 3D tool accent, trade badge. Text on it: ink (6.07:1). Too light for lines or icons on primer; use the family deep there."
+   },
+   {
+    "name": "trade-painting",
+    "value": {
+     "light": "#E3BC4F"
+    },
+    "usage": "Painting trade color (Interior Finishes family). Hero fills, 3D tool accent, trade badge. Text on it: ink (8.7:1). Too light for lines or icons on primer; use the family deep there."
+   },
+   {
+    "name": "trade-plumbing",
+    "value": {
+     "light": "#0B5A63"
+    },
+    "usage": "Plumbing trade color (Home Systems family). Hero fills, 3D tool accent, trade badge. Text on it: white (7.9:1)."
+   },
+   {
+    "name": "trade-electrical",
+    "value": {
+     "light": "#0E6F6A"
+    },
+    "usage": "Electrical trade color (Home Systems family). Hero fills, 3D tool accent, trade badge. Text on it: white (6.0:1)."
+   },
+   {
+    "name": "trade-low-voltage",
+    "value": {
+     "light": "#3D7F8C"
+    },
+    "usage": "Low Voltage / Smart Home trade color (Home Systems family). Hero fills, 3D tool accent, trade badge. Text on it: white (4.55:1)."
+   },
+   {
+    "name": "trade-hvac",
+    "value": {
+     "light": "#46AFA6"
+    },
+    "usage": "HVAC / Mechanical trade color (Home Systems family). Hero fills, 3D tool accent, trade badge. Text on it: ink (5.97:1). Too light for lines or icons on primer; use the family deep there."
+   },
+   {
+    "name": "trade-fencing",
+    "value": {
+     "light": "#48702A"
+    },
+    "usage": "Fencing & Gates trade color (Outdoor Living family). Hero fills, 3D tool accent, trade badge. Text on it: white (5.79:1)."
+   },
+   {
+    "name": "trade-landscaping",
+    "value": {
+     "light": "#86AE45"
+    },
+    "usage": "Landscaping / Irrigation trade color (Outdoor Living family). Hero fills, 3D tool accent, trade badge. Text on it: ink (6.13:1). Too light for lines or icons on primer; use the family deep there."
+   },
+   {
+    "name": "trade-specialty",
+    "value": {
+     "light": "#6D4A82"
+    },
+    "usage": "Specialty Trades trade color (Specialty family). Hero fills, 3D tool accent, trade badge. Text on it: white (7.11:1)."
+   }
+  ]
+ },
+ "type": {
+  "fonts": [],
+  "families": {
+   "display": "\"Archivo\", \"Helvetica Neue\", Arial, sans-serif",
+   "sans": "\"Public Sans\", \"Helvetica Neue\", Arial, sans-serif"
+  },
+  "groups": [
+   {
+    "name": "Display",
+    "family": "display",
+    "styles": [
+     {
+      "name": "display-xl",
+      "fontSize": "72px",
+      "lineHeight": "72px",
+      "fontWeight": 700,
+      "letterSpacing": "-0.02em"
+     },
+     {
+      "name": "display-l",
+      "fontSize": "56px",
+      "lineHeight": "60px",
+      "fontWeight": 700,
+      "letterSpacing": "-0.015em"
+     },
+     {
+      "name": "heading-1",
+      "fontSize": "40px",
+      "lineHeight": "44px",
+      "fontWeight": 700,
+      "letterSpacing": "-0.01em"
+     },
+     {
+      "name": "heading-2",
+      "fontSize": "28px",
+      "lineHeight": "34px",
+      "fontWeight": 600
+     },
+     {
+      "name": "heading-3",
+      "fontSize": "20px",
+      "lineHeight": "26px",
+      "fontWeight": 600
+     },
+     {
+      "name": "dimension",
+      "fontSize": "12px",
+      "lineHeight": "16px",
+      "fontWeight": 500,
+      "letterSpacing": "0.02em"
+     }
+    ]
+   },
+   {
+    "name": "Text",
+    "family": "sans",
+    "styles": [
+     {
+      "name": "body-l",
+      "fontSize": "18px",
+      "lineHeight": "28px",
+      "fontWeight": 400
+     },
+     {
+      "name": "body",
+      "fontSize": "16px",
+      "lineHeight": "26px",
+      "fontWeight": 400
+     },
+     {
+      "name": "body-s",
+      "fontSize": "14px",
+      "lineHeight": "22px",
+      "fontWeight": 400
+     },
+     {
+      "name": "label",
+      "fontSize": "14px",
+      "lineHeight": "20px",
+      "fontWeight": 600
+     },
+     {
+      "name": "button",
+      "fontSize": "16px",
+      "lineHeight": "20px",
+      "fontWeight": 600
+     }
+    ]
+   }
+  ]
+ },
+ "spacing": {
+  "tokens": [
+   {
+    "name": "space-1",
+    "value": "4px",
+    "usage": "Icon to label gaps, tick marks."
+   },
+   {
+    "name": "space-2",
+    "value": "8px",
+    "usage": "Tight groups: badge padding, inline gaps."
+   },
+   {
+    "name": "space-3",
+    "value": "12px",
+    "usage": "Input and button vertical padding."
+   },
+   {
+    "name": "space-4",
+    "value": "16px",
+    "usage": "Base unit. Card padding on mobile, grid gutter on mobile."
+   },
+   {
+    "name": "space-6",
+    "value": "24px",
+    "usage": "Card padding on desktop, grid gutter on desktop, cover inset."
+   },
+   {
+    "name": "space-8",
+    "value": "32px",
+    "usage": "Space between related blocks."
+   },
+   {
+    "name": "space-12",
+    "value": "48px",
+    "usage": "Section padding on mobile."
+   },
+   {
+    "name": "space-16",
+    "value": "64px",
+    "usage": "Section padding on desktop."
+   },
+   {
+    "name": "space-24",
+    "value": "96px",
+    "usage": "Hero padding and major breaks between page sections."
+   }
+  ]
+ },
+ "radius": {
+  "tokens": [
+   {
+    "name": "radius-sm",
+    "value": "2px",
+    "usage": "Inputs, trade badges, small tags."
+   },
+   {
+    "name": "radius-md",
+    "value": "4px",
+    "usage": "Buttons, cards, the reversed mark tile."
+   },
+   {
+    "name": "radius-lg",
+    "value": "8px",
+    "usage": "Photos, renderings, the 3D tool stage."
+   }
+  ]
+ }
+}

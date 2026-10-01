@@ -1,0 +1,247 @@
+{
+  "_note": "Approved copy for the three designed trade pages (v2). Bracketed text is a placeholder the owner must fill in. Use this copy verbatim; write new trades in the same voice.",
+  "pages": {
+    "carpentry": {
+      "shortName": "Carpentry",
+      "heroHeadline": "Framing to finish trim, every piece cut square.",
+      "heroLead": "Rough and finish carpentry across metro Atlanta, measured and built by one accountable team.",
+      "heroPrimaryButton": "Get my Concept Preview",
+      "heroProofLine": "Concept and estimate in 48 hours",
+      "servicesTitle": "From the frame to the final trim.",
+      "servicesLead": "The same team handles structure and finish, so finish work starts on a straight, square frame.",
+      "services": [
+        {
+          "title": "Framing and structure",
+          "description": "Walls, beams, headers and sheathing, built plumb, level and square."
+        },
+        {
+          "title": "Decks and porches",
+          "description": "Outdoor living built to last, from footings to railings."
+        },
+        {
+          "title": "Cabinets",
+          "description": "Installed level and tight, with doors and drawers that line up."
+        },
+        {
+          "title": "Trim and millwork",
+          "description": "Baseboards, crown, casing and wainscoting with clean joints."
+        },
+        {
+          "title": "Closets and shelving",
+          "description": "Built-ins and storage fitted to the inch."
+        }
+      ],
+      "photoSubject": "space",
+      "formPlaceholder": "A covered back porch with a wood ceiling and new railings",
+      "teamPhotoShotList": [
+        "[Photo: Solvern carpenter in branded uniform framing a wall]",
+        "[Photo: technician walking a homeowner through the plan]",
+        "[Photo: finished trim detail being installed]"
+      ],
+      "howItWorks": [
+        {
+          "title": "Send a photo",
+          "description": "Draw on it to show what you want, in a few seconds."
+        },
+        {
+          "title": "See it first",
+          "description": "Your Concept Preview and estimate arrive within 48 hours."
+        },
+        {
+          "title": "Confirm on site",
+          "description": "We measure, confirm materials and give you a line-by-line estimate."
+        },
+        {
+          "title": "We build it",
+          "description": "On schedule, with updates at every stage and a final walkthrough."
+        }
+      ],
+      "faq": [
+        {
+          "q": "How fast can I get an estimate?",
+          "a": "Send photos through the Concept Preview form and you will have a concept image and an estimate range within 48 hours."
+        },
+        {
+          "q": "Is the Concept Preview exactly what I will get?",
+          "a": "It is a concept image for planning. We confirm final materials and measurements at your site visit before any work begins."
+        },
+        {
+          "q": "Do you do both framing and finish work?",
+          "a": "Yes. One team handles rough and finish carpentry, so nothing gets lost between crews."
+        },
+        {
+          "q": "Can you handle more than carpentry?",
+          "a": "Yes. One Solvern team covers 23 trades, from roofing and windows to a complete remodel."
+        }
+      ],
+      "closingHeadline": "See your project before we build it.",
+      "seeItFirstTitle": "See your project before we build it.",
+      "concept_markup_example_notes": [
+        "Replace this railing with black metal balusters.",
+        "Extend the deck out to about here."
+      ],
+      "primaryAction": "concept-preview"
+    },
+    "hvac": {
+      "shortName": "HVAC",
+      "heroHeadline": "Heating and cooling that runs quiet and even.",
+      "heroLead": "Repairs, replacements and new systems for heating, air conditioning, ductwork and ventilation across metro Atlanta.",
+      "heroPrimaryButton": "Request a visit",
+      "heroProofLine": "Clear options before any work begins",
+      "servicesTitle": "Every part of your system, one team.",
+      "servicesLead": "We treat heating, cooling and airflow as one system, because that is how your home uses them.",
+      "services": [
+        {
+          "title": "Air conditioning",
+          "description": "Repairs, tune-ups and new systems sized for your home."
+        },
+        {
+          "title": "Heating",
+          "description": "Furnaces and heat pumps that warm every room evenly."
+        },
+        {
+          "title": "Ductwork",
+          "description": "Sealed, balanced ducts that deliver air where it belongs."
+        },
+        {
+          "title": "Ventilation",
+          "description": "Fresh air and exhaust for kitchens, baths and attics."
+        },
+        {
+          "title": "System replacement",
+          "description": "Clear options when repair no longer makes sense."
+        }
+      ],
+      "photoSubject": "unit or room",
+      "formPlaceholder": "The upstairs never cools below 78 in the afternoon",
+      "teamPhotoShotList": [
+        "[Photo: Solvern HVAC technician in branded uniform servicing an outdoor unit]",
+        "[Photo: technician explaining options to a homeowner]",
+        "[Photo: technician checking airflow at a vent]"
+      ],
+      "howItWorks": [
+        {
+          "title": "Call or request a visit",
+          "description": "Tell us what the system is doing, or show us on a photo."
+        },
+        {
+          "title": "We diagnose on site",
+          "description": "We find the cause, not just the symptom."
+        },
+        {
+          "title": "Clear options",
+          "description": "Repair and replacement side by side, line by line."
+        },
+        {
+          "title": "We fix it right",
+          "description": "On schedule, tested and walked through with you."
+        }
+      ],
+      "faq": [
+        {
+          "q": "Do you repair or only replace?",
+          "a": "Both. We diagnose first and show you repair and replacement options side by side, with the trade-offs in writing."
+        },
+        {
+          "q": "How fast can someone come out?",
+          "a": "[Response time you commit to]"
+        },
+        {
+          "q": "Why isn't there a Concept Preview for HVAC?",
+          "a": "Heating and cooling problems have to be diagnosed in person. You can still draw on a photo to show us where the problem is."
+        },
+        {
+          "q": "Can you handle more than HVAC?",
+          "a": "Yes. One Solvern team covers 23 trades, including electrical, plumbing and insulation."
+        }
+      ],
+      "closingHeadline": "Get your heating and cooling right.",
+      "concept_markup_example_notes": [
+        "The outdoor unit gets loud here.",
+        "This room never cools down."
+      ],
+      "primaryAction": "diagnosis"
+    },
+    "masonry": {
+      "shortName": "Masonry",
+      "heroHeadline": "Brick and stone that looks right for generations.",
+      "heroLead": "Brick, block, stone, stone veneer, chimneys and retaining walls across metro Atlanta, laid by one accountable team.",
+      "heroPrimaryButton": "Get my Concept Preview",
+      "heroProofLine": "Concept and estimate in 48 hours",
+      "servicesTitle": "Brick, block and stone, laid true.",
+      "servicesLead": "Straight courses, full joints and mortar that matches, so new work looks like it was always there.",
+      "services": [
+        {
+          "title": "Brick",
+          "description": "New brick and matching repairs, with mortar that blends in."
+        },
+        {
+          "title": "Stone",
+          "description": "Natural stone walls, steps and accents, set to last."
+        },
+        {
+          "title": "Stone veneer",
+          "description": "Stone facing for foundations, fireplaces and exterior walls."
+        },
+        {
+          "title": "Chimneys",
+          "description": "Chimney construction and repair, capped and sealed."
+        },
+        {
+          "title": "Retaining walls",
+          "description": "Block and stone walls built to hold the grade."
+        }
+      ],
+      "photoSubject": "wall or area",
+      "formPlaceholder": "A stone retaining wall along the driveway",
+      "teamPhotoShotList": [
+        "[Photo: Solvern mason in branded uniform laying brick]",
+        "[Photo: technician reviewing stone samples with a homeowner]",
+        "[Photo: pointing a mortar joint up close]"
+      ],
+      "howItWorks": [
+        {
+          "title": "Send a photo",
+          "description": "Draw on it to show what you want, in a few seconds."
+        },
+        {
+          "title": "See it first",
+          "description": "Your Concept Preview and estimate arrive within 48 hours."
+        },
+        {
+          "title": "Confirm on site",
+          "description": "We measure, confirm materials and give you a line-by-line estimate."
+        },
+        {
+          "title": "We build it",
+          "description": "On schedule, with updates at every stage and a final walkthrough."
+        }
+      ],
+      "faq": [
+        {
+          "q": "How fast can I get an estimate?",
+          "a": "Send photos through the Concept Preview form and you will have a concept image and an estimate range within 48 hours."
+        },
+        {
+          "q": "Is the Concept Preview exactly what I will get?",
+          "a": "It is a concept image for planning. We confirm final materials and measurements at your site visit before any work begins."
+        },
+        {
+          "q": "Can you match my existing brick?",
+          "a": "We source the closest brick and mortar color available and show you samples before we start."
+        },
+        {
+          "q": "Can you handle more than masonry?",
+          "a": "Yes. One Solvern team covers 23 trades, from concrete and site work to a complete remodel."
+        }
+      ],
+      "closingHeadline": "See your new brick or stone before we build it.",
+      "seeItFirstTitle": "See your new brick or stone before we build it.",
+      "concept_markup_example_notes": [
+        "Build a stone retaining wall along this line.",
+        "Match this brick on the new steps."
+      ],
+      "primaryAction": "concept-preview"
+    }
+  }
+}
