@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { pageMetadata } from "@/lib/metadata";
 import Link from "next/link";
-import { site } from "@/content/site";
+import { site, siteReady } from "@/content/site";
 import { FAMILY_BLURB, navName, HUB_THEME, projects, seo, tradeBySlug, tradesByFamily } from "@/lib/content";
 import { HubHeader } from "@/components/HubHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { BottomBar } from "@/components/BottomBar";
 import { ArrowRight } from "@/components/Icons";
-import { ClosingBand, FaqSection, FinancingBand, HowItWorks, JsonLd, PhotoPlaceholder, ProofRow, ReviewsSection, TeamSection } from "@/components/sections";
+import { ClosingBand, FaqSection, FinancingBand, HowItWorks, JsonLd, ProofRow, ReviewsSection, TeamSection } from "@/components/sections";
 import { faqJsonLd, localBusinessJsonLd } from "@/lib/structured-data";
 
 export const metadata: Metadata = pageMetadata({
@@ -68,24 +69,43 @@ export default function HomePage() {
               <Link href="/concept-preview" className="btn btn--ink" data-track="cta_click" data-location="hero">
                 Get my Concept Preview
               </Link>
-              <a href={site.phone.href} className="btn btn--outline" data-location="hero">
-                Call {site.phone.display}
-              </a>
+              {siteReady.phone && (
+                <a href={site.phone.href} className="btn btn--outline" data-location="hero">
+                  Call {site.phone.display}
+                </a>
+              )}
             </div>
             <ProofRow proofLine="See it first. Built right." />
           </div>
           <div className="hub-hero__aside">
-            <div className="hub-stat">
-              <b>23</b>
-              <span>trades under one name</span>
-            </div>
-            <div className="hub-stat">
-              <b>48 hours</b>
-              <span>to your Concept Preview and estimate</span>
-            </div>
-            <div className="hub-stat">
-              <b>1</b>
-              <span>team accountable for the result</span>
+            <figure className="hub-hero__art">
+              <Image
+                src="/illustrations/solvern-home.jpg"
+                alt="Exploded home assembly showing framing, foundation, plumbing, electrical, heating and cooling, insulation, walls, siding and flooring working as one system."
+                width={1280}
+                height={698}
+                sizes="(max-width: 1024px) 92vw, 42vw"
+                preload
+              />
+              <figcaption aria-hidden="true">
+                <span>01</span>
+                <i />
+                <b>Whole-home system</b>
+              </figcaption>
+            </figure>
+            <div className="hub-stats">
+              <div className="hub-stat">
+                <b>23</b>
+                <span>trades under one name</span>
+              </div>
+              <div className="hub-stat">
+                <b>48 hours</b>
+                <span>to your Concept Preview and estimate</span>
+              </div>
+              <div className="hub-stat">
+                <b>1</b>
+                <span>team accountable for the result</span>
+              </div>
             </div>
           </div>
         </section>
@@ -139,7 +159,6 @@ export default function HomePage() {
             <ul className="project-grid">
               {projects.map((p) => (
                 <li className="project-card" key={p.slug}>
-                  <PhotoPlaceholder shot={p.shot} />
                   <div className="project-card__body">
                     <h3 className="project-card__t">{p.name}</h3>
                     <p>{p.description}</p>

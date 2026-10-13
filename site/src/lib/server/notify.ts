@@ -2,11 +2,11 @@
  * Email notifications through Resend's HTTP API (no SDK needed).
  * Without RESEND_API_KEY the messages are logged instead, so local testing works.
  */
-import { hasPlaceholder, site } from "@/content/site";
+import { hasPlaceholder, site, siteReady } from "@/content/site";
 import { fetchWithTimeout } from "./env";
 import { log } from "./log";
 
-interface Mail {
+export interface Mail {
   to: string[];
   subject: string;
   text: string;
@@ -14,10 +14,11 @@ interface Mail {
   replyTo?: string;
 }
 
-async function send(mail: Mail) {
+export async function sendMail(mail: Mail, idempotencyKey?: string) {
   const key = process.env.RESEND_API_KEY;
   const from = process.env.LEAD_NOTIFY_FROM;
   if (!key || !from || !mail.to.length) {
+    if (idempotencyKey) throw new Error("Lead email is not configured");
     // Development: show the email so the flow can be checked. Production: never log customer details.
     if (process.env.NODE_ENV !== "production")
       console.info("[notify] email not sent (Resend not configured)\n", JSON.stringify({ to: mail.to, subject: mail.subject, text: mail.text }, null, 2));
@@ -26,10 +27,10 @@ async function send(mail: Mail) {
   }
   const res = await fetchWithTimeout("https://api.resend.com/emails", {
     method: "POST",
-    headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+    headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json", ...(idempotencyKey ? { "Idempotency-Key": idempotencyKey } : {}) },
     body: JSON.stringify({ from, to: mail.to, subject: mail.subject, text: mail.text, html: mail.html, reply_to: mail.replyTo }),
   });
-  if (!res.ok) throw new Error(`Resend ${res.status}: ${(await res.text()).slice(0, 300)}`);
+  if (!res.ok) throw new Error(`Resend returned ${res.status}`);
 }
 
 export const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
@@ -49,7 +50,7 @@ const TYPE_LABEL: Record<string, string> = {
   callback: "Callback request",
 };
 
-export async function notifyTeam(n: TeamNotice) {
+export function teamEmail(n: TeamNotice): Mail {
   const to = (process.env.LEAD_NOTIFY_TO || "")
     .split(",")
     .map((s) => s.trim())
@@ -71,7 +72,11 @@ ${p.notes.length ? `<ol>${p.notes.map((t) => `<li>${esc(t)}</li>`).join("")}</ol
   )
   .join("")}
 <p style="margin-top:20px">Lead id: ${esc(n.leadId)}</p></div>`;
-  await send({ to, subject, text, html, replyTo: n.replyTo });
+  return { to, subject, text, html, replyTo: n.replyTo };
+}
+
+export async function notifyTeam(n: TeamNotice) {
+  await sendMail(teamEmail(n));
 }
 
 /**
@@ -85,7 +90,12 @@ export function confirmationEmail(type: string, firstName: string) {
       ? ["Received. Your Concept Preview and estimate will arrive within 48 hours."]
       : type === "visit"
         ? ["Received. We will call you back to confirm a time for your visit."]
-        : ["Received. The right person on our team will contact you.", `We aim to reply within ${site.callback.responseTime} during ${site.callback.hours}.`];
+        : [
+            "Received. The right person on our team will contact you.",
+            siteReady.callbackTiming
+              ? `We aim to reply within ${site.callback.responseTime} during ${site.callback.hours}.`
+              : "We aim to reply as soon as possible during business hours.",
+          ];
   const body = sentences.filter((x) => !hasPlaceholder(x)).join(" ");
   const callLine = hasPlaceholder(site.phone.display) ? null : `If anything changes, call us at ${site.phone.display}.`;
   const text = [`Hi ${firstName},`, body, callLine, `Solvern Home\n${site.tagline}`].filter(Boolean).join("\n\n");
@@ -95,5 +105,47 @@ export function confirmationEmail(type: string, firstName: string) {
 }
 
 export async function confirmCustomer(type: string, toEmail: string, firstName: string) {
-  await send({ to: [toEmail], ...confirmationEmail(type, firstName) });
+  await sendMail({ to: [toEmail], ...confirmationEmail(type, firstName) });
+}
+
+/** Generated files remain private and are sent only to staff for review. */
+export async function notifyPreviewReady(leadId: string, photoId: string, signedUrl: string | null) {
+  const to = (process.env.LEAD_NOTIFY_TO || "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  if (!to.length) {
+    log.warn("preview.review_inbox_missing", { leadId, photoId });
+    return;
+  }
+  const subject = "Concept Preview ready for review";
+  const text = [
+    "Review the generated photo before sending anything to the customer.",
+    `Lead id: ${leadId}`,
+    `Photo id: ${photoId}`,
+    signedUrl ? `Private review link (expires in 7 days): ${signedUrl}` : "Open the private storage record to review the image.",
+  ].join("\n");
+  const html = `<div style="font-family:Arial,sans-serif;color:#1B2330"><p>Review the generated photo before sending anything to the customer.</p><p>Lead id: ${esc(leadId)}<br>Photo id: ${esc(photoId)}</p>${signedUrl ? `<p><a href="${esc(signedUrl)}">Private review link (expires in 7 days)</a></p>` : ""}</div>`;
+  await sendMail({ to, subject, text, html });
+}
+
+export async function notifyPreviewAttention(leadId: string, photoId: string, status: "failed" | "uncertain", code: string) {
+  const to = (process.env.LEAD_NOTIFY_TO || "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  if (!to.length) {
+    log.warn("preview.review_inbox_missing", { leadId, photoId, status });
+    return;
+  }
+  const subject = "Concept Preview needs manual attention";
+  const text = [
+    `Generation status: ${status}`,
+    `Reason: ${code}`,
+    `Lead id: ${leadId}`,
+    `Photo id: ${photoId}`,
+    "Please use the manual Concept Preview workflow to meet the customer promise.",
+  ].join("\n");
+  const html = `<div style="font-family:Arial,sans-serif;color:#1B2330"><p>Generation status: ${esc(status)}<br>Reason: ${esc(code)}</p><p>Lead id: ${esc(leadId)}<br>Photo id: ${esc(photoId)}</p><p>Please use the manual Concept Preview workflow to meet the customer promise.</p></div>`;
+  await sendMail({ to, subject, text, html });
 }

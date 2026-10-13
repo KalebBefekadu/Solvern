@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
+import { siteReady } from "@/content/site";
 
 const PAGES = ["/", "/carpentry", "/hvac", "/masonry", "/roofing", "/concept-preview", "/customer-service", "/reviews", "/financing", "/about", "/privacy", "/terms"];
 
@@ -13,6 +14,7 @@ for (const path of PAGES) {
     expect(res?.status()).toBe(200);
     await expect(page.locator("h1")).toHaveCount(1);
     await expect(page.locator("main#main")).toBeVisible();
+    expect(await page.locator("body").innerText()).not.toMatch(/\[(?:YOUR|LEGAL|Photo:|Customer review|Name|Neighborhood|DATE|FINANCING|Terms|Retention|Wording)/);
 
     // No horizontal scroll at any tested width.
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
@@ -24,10 +26,11 @@ for (const path of PAGES) {
   });
 }
 
-test("the phone number is a working tel: link on every trade page", async ({ page }) => {
+test("contact actions never expose the design-reference phone number", async ({ page }) => {
   await page.goto("/carpentry");
   const tel = page.locator('a[href^="tel:"]').first();
-  await expect(tel).toHaveAttribute("href", /^tel:\+1\d{10}$/);
+  if (siteReady.phone) await expect(tel).toHaveAttribute("href", /^tel:\+1\d{10}$/);
+  else await expect(tel).toHaveCount(0);
 });
 
 test("unknown pages return 404 with a way home", async ({ page }) => {
@@ -36,18 +39,16 @@ test("unknown pages return 404 with a way home", async ({ page }) => {
   await expect(page.getByRole("link", { name: "Go to Solvern Home" })).toBeVisible();
 });
 
-test("draft trade pages stay out of search; approved ones are indexable", async ({ page, request }) => {
-  await page.goto("/roofing");
-  await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
-  await expect(page.getByRole("note")).toContainText("Draft page");
-
-  await page.goto("/carpentry");
-  await expect(page.locator('meta[name="robots"]')).toHaveCount(0);
-  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", /\/carpentry$/);
+test("approved trade pages are indexable and included in the sitemap", async ({ page, request }) => {
+  for (const path of ["/carpentry", "/roofing"]) {
+    await page.goto(path);
+    await expect(page.locator('meta[name="robots"]')).toHaveCount(0);
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", new RegExp(`${path}$`));
+  }
 
   const sitemap = await (await request.get("/sitemap.xml")).text();
   expect(sitemap).toContain("/carpentry</loc>");
-  expect(sitemap).not.toContain("/roofing</loc>");
+  expect(sitemap).toContain("/roofing</loc>");
 });
 
 test("structured data is valid JSON on trade pages", async ({ page }) => {
@@ -68,8 +69,8 @@ test("security headers are set", async ({ request }) => {
 
 test("health check reports configured services", async ({ request }) => {
   const res = await request.get("/api/health");
-  expect(res.status()).toBe(200);
-  expect(await res.json()).toMatchObject({ ok: true, storage: "local" });
+  expect(res.status()).toBe(503);
+  expect(await res.json()).toMatchObject({ ok: false, storage: "local", leadDelivery: false });
 });
 
 test.describe("at 320px", () => {

@@ -21,6 +21,10 @@ export function useLeadForm(form: string, trackProps: () => Record<string, unkno
   const [token, setToken] = useState("");
   const [resetKey, setResetKey] = useState(0);
   const onToken = useCallback((t: string) => setToken(t), []);
+  const resetChallenge = useCallback(() => {
+    setToken("");
+    setResetKey((key) => key + 1);
+  }, []);
   /** Same id for every retry of this attempt; the server stores the lead once. */
   const [requestId] = useState(uid);
 
@@ -55,11 +59,11 @@ export function useLeadForm(form: string, trackProps: () => Record<string, unkno
     } catch (err) {
       const se = err instanceof SubmitError ? err : new SubmitError("Something went wrong. Please try again or call us.");
       setStatus("idle");
-      setResetKey((k) => k + 1); // Turnstile tokens are single use.
+      resetChallenge(); // Turnstile tokens are single use.
       fail(se.fields, se.message);
       return false;
     }
   };
 
-  return { ...fields, status, formError, started, token, resetKey, onToken, onStart, submit, requestId };
+  return { ...fields, status, formError, started, token, resetKey, onToken, resetChallenge, onStart, submit, requestId };
 }

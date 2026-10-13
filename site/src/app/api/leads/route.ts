@@ -4,8 +4,9 @@ import { callbackLeadSchema, flattenErrors, previewLeadSchema } from "@/lib/lead
 import { BackendUnavailable } from "@/lib/server/backend";
 import { assertSameOrigin, clientIp, errorResponse, HttpError, readJson } from "@/lib/server/http";
 import { createLead } from "@/lib/server/leads";
-import { rateLimit } from "@/lib/server/rate-limit";
+import { rateLimitDistributed } from "@/lib/server/rate-limit";
 import { verifyTurnstile } from "@/lib/server/turnstile";
+import { markDraftFinalized, readDraft } from "@/lib/server/preview-drafts";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -17,7 +18,7 @@ export async function POST(req: Request) {
   try {
     assertSameOrigin(req);
     const ip = clientIp(req);
-    const rl = rateLimit(`leads:${ip ?? "unknown"}`, LIMIT.count, LIMIT.windowMs);
+    const rl = await rateLimitDistributed(`leads:${ip ?? "unknown"}`, LIMIT.count, LIMIT.windowMs);
     if (!rl.ok) {
       return NextResponse.json(
         { error: "Too many requests from this connection. Please wait a few minutes or call us." },
@@ -38,7 +39,19 @@ export async function POST(req: Request) {
       throw new HttpError(400, "We could not confirm you are a person. Please try again, or call us.");
     }
 
-    const id = await createLead(data);
+    const draft = data.type !== "callback" && data.draftId ? await readDraft(req) : null;
+    if (data.type !== "callback" && data.draftId && (!draft || draft.id !== data.draftId)) throw new HttpError(401, "Your photo session expired. Please reload and try again.");
+    if (draft?.finalizedLeadId) return NextResponse.json({ ok: true, id: draft.finalizedLeadId }, { headers: { "Cache-Control": "no-store" } });
+    let payload = data;
+    if (data.type !== "callback" && draft) {
+      const ids = data.photoIds ?? draft.photos.map((photo) => photo.id);
+      if (new Set(ids).size !== ids.length || ids.some((id) => !draft.photos.some((photo) => photo.id === id))) {
+        throw new HttpError(422, "Save every selected photo before sending your request.");
+      }
+      payload = { ...data, photos: ids.map((id) => draft.photos.find((photo) => photo.id === id)!.record) };
+    }
+    const id = await createLead(payload, draft?.id);
+    if (draft) await markDraftFinalized(draft, id);
     log.info("lead.stored", { id, type: data.type });
     return NextResponse.json({ ok: true, id }, { headers: { "Cache-Control": "no-store" } });
   } catch (e) {

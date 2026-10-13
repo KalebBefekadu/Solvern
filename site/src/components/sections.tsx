@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { site } from "@/content/site";
+import { site, siteReady } from "@/content/site";
 import type { Faq, Item } from "@/lib/content";
 import { CameraIcon, Star, Stars } from "./Icons";
 
@@ -19,10 +19,12 @@ export function SectionHead({ eyebrow, title, lead, id, as = "h2" }: { eyebrow?:
 export function ProofRow({ proofLine }: { proofLine: string }) {
   return (
     <div className="proof-row">
-      <span className="rating">
-        <Star size={18} />
-        {site.rating.value} from {site.rating.count} reviews
-      </span>
+      {siteReady.rating && (
+        <span className="rating">
+          <Star size={18} />
+          {site.rating.value} from {site.rating.count} reviews
+        </span>
+      )}
       <span>{proofLine}</span>
     </div>
   );
@@ -53,7 +55,7 @@ export function PhotoPlaceholder({ shot }: { shot: string }) {
   );
 }
 
-export function TeamSection({ shots, id = "about" }: { shots: string[]; id?: string }) {
+export function TeamSection({ id = "about" }: { shots: string[]; id?: string }) {
   return (
     <section className="section" id={id} aria-labelledby={`${id}-title`}>
       <div className="wrap">
@@ -66,11 +68,20 @@ export function TeamSection({ shots, id = "about" }: { shots: string[]; id?: str
           </div>
           <p className="body-l">Every Solvern technician arrives in uniform, walks you through the plan and leaves the space clean.</p>
         </div>
-        <div className="photo-grid">
-          {shots.slice(0, 3).map((s) => (
-            <PhotoPlaceholder key={s} shot={s} />
-          ))}
-        </div>
+        <ul className="promise-grid" aria-label="What to expect from our team">
+          <li>
+            <h3 className="step-t">A clear plan</h3>
+            <p>We walk through the scope, sequence and next steps before work begins.</p>
+          </li>
+          <li>
+            <h3 className="step-t">One accountable lead</h3>
+            <p>You have one point of contact coordinating the work and keeping you updated.</p>
+          </li>
+          <li>
+            <h3 className="step-t">A clean handoff</h3>
+            <p>We review the finished work with you and close out the details together.</p>
+          </li>
+        </ul>
       </div>
     </section>
   );
@@ -103,7 +114,7 @@ export function HowItWorks({ steps, title = "Simple from the first photo to the 
 }
 
 export function ReviewsSection({ topic }: { topic?: string }) {
-  const placeholder = topic ? `[Customer review mentioning ${topic}]` : "[Customer review]";
+  if (!siteReady.rating) return null;
   return (
     <section className="section section--tint" id="reviews" aria-labelledby="reviews-title">
       <div className="wrap">
@@ -129,30 +140,14 @@ export function ReviewsSection({ topic }: { topic?: string }) {
             </div>
           </div>
         </div>
-        <div className="review-grid">
-          {[0, 1, 2].map((i) => (
-            <blockquote className="review-card" key={i}>
-              <Stars label="5 out of 5" />
-              <p className="body-l">{placeholder}</p>
-              <footer>
-                <span className="avatar" aria-hidden="true">
-                  [A]
-                </span>
-                <span className="review-card__author">
-                  [Name]
-                  <br />
-                  <span className="review-card__meta">[Neighborhood], via {site.rating.source}</span>
-                </span>
-              </footer>
-            </blockquote>
-          ))}
-        </div>
+        {topic && <p className="body-l">Browse verified homeowner feedback about Solvern {topic} work.</p>}
       </div>
     </section>
   );
 }
 
 export function FinancingBand({ location }: { location: string }) {
+  if (!siteReady.financing) return null;
   const href = site.financing.applyUrl || "/financing";
   return (
     <section className="section section--band" id="financing" aria-labelledby="financing-title">
@@ -210,9 +205,11 @@ export function ClosingBand({ headline, primary }: { headline: string; primary: 
             <Link href={primary.href} className="btn btn--ink" data-track="cta_click" data-location="closing">
               {primary.label}
             </Link>
-            <a href={site.phone.href} className="btn btn--outline" data-location="closing">
-              Call {site.phone.display}
-            </a>
+            {siteReady.phone && (
+              <a href={site.phone.href} className="btn btn--outline" data-location="closing">
+                Call {site.phone.display}
+              </a>
+            )}
           </div>
         </div>
       </div>

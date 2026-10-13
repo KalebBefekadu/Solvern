@@ -3,7 +3,8 @@ import { NextResponse } from "next/server";
 import { uploadRequestSchema } from "@/lib/leads/schema";
 import { BackendUnavailable, createUploadTargets } from "@/lib/server/backend";
 import { assertSameOrigin, clientIp, errorResponse, HttpError, readJson } from "@/lib/server/http";
-import { rateLimit } from "@/lib/server/rate-limit";
+import { rateLimitDistributed } from "@/lib/server/rate-limit";
+import { readDraft } from "@/lib/server/preview-drafts";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -14,7 +15,7 @@ const LIMIT = { count: 20, windowMs: 10 * 60 * 1000 };
 export async function POST(req: Request) {
   try {
     assertSameOrigin(req);
-    const rl = rateLimit(`uploads:${clientIp(req) ?? "unknown"}`, LIMIT.count, LIMIT.windowMs);
+    const rl = await rateLimitDistributed(`uploads:${clientIp(req) ?? "unknown"}`, LIMIT.count, LIMIT.windowMs);
     if (!rl.ok) {
       return NextResponse.json(
         { error: "Too many uploads from this connection. Please wait a few minutes or call us." },
@@ -23,7 +24,13 @@ export async function POST(req: Request) {
     }
     const parsed = uploadRequestSchema.safeParse(await readJson(req, 16 * 1024));
     if (!parsed.success) throw new HttpError(400, "Those files can't be uploaded. Use JPG or PNG photos up to 15 MB.");
-    const result = await createUploadTargets(parsed.data.files);
+    if (process.env.NODE_ENV === "production" && process.env.ALLOW_LOCAL_LEAD_STORE !== "true" && !parsed.data.draftId) {
+      throw new HttpError(401, "Start a photo request before uploading files.");
+    }
+    const draft = parsed.data.draftId ? await readDraft(req) : null;
+    if (parsed.data.draftId && (!draft || draft.id !== parsed.data.draftId || draft.finalizedLeadId))
+      throw new HttpError(401, "Your photo session expired. Please reload and try again.");
+    const result = await createUploadTargets(parsed.data.files, draft?.id);
     return NextResponse.json(result, { headers: { "Cache-Control": "no-store" } });
   } catch (e) {
     if (e instanceof HttpError) return errorResponse(e);

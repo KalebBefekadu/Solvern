@@ -1,5 +1,7 @@
 "use client";
 
+import { CAMPAIGN_KEYS, safeAttribution } from "@/lib/leads/attribution";
+
 /**
  * Vendor-neutral analytics. Events go to window.dataLayer (Google Tag Manager or GA4 can pick them up)
  * and are re-dispatched as a DOM event `solvern:track` for any other listener.
@@ -24,7 +26,6 @@ export function track(event: TrackEvent, props: Record<string, unknown> = {}) {
   if (process.env.NODE_ENV !== "production") console.debug("[track]", payload);
 }
 
-const UTM_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content", "gclid", "fbclid"];
 const UTM_STORE = "solvern.utm";
 
 /** Stores UTM parameters from the landing URL for the session, so a lead submitted later keeps them. */
@@ -32,13 +33,13 @@ export function captureUtm() {
   try {
     const params = new URLSearchParams(window.location.search);
     const found: Record<string, string> = {};
-    for (const k of UTM_KEYS) {
+    for (const k of CAMPAIGN_KEYS) {
       const v = params.get(k);
-      if (v) found[k] = v.slice(0, 200);
+      if (v) found[k] = v;
     }
-    if (Object.keys(found).length) {
-      found.landing_page = window.location.pathname;
-      sessionStorage.setItem(UTM_STORE, JSON.stringify(found));
+    const safe = safeAttribution({ ...found, landing_page: window.location.pathname });
+    if (Object.keys(safe).some((key) => key !== "landing_page")) {
+      sessionStorage.setItem(UTM_STORE, JSON.stringify(safe));
     }
   } catch {
     /* storage unavailable */
@@ -47,7 +48,7 @@ export function captureUtm() {
 
 export function readUtm(): Record<string, string> {
   try {
-    return JSON.parse(sessionStorage.getItem(UTM_STORE) || "{}");
+    return safeAttribution(JSON.parse(sessionStorage.getItem(UTM_STORE) || "{}"));
   } catch {
     return {};
   }

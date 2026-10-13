@@ -32,9 +32,15 @@ for (const k of [
   "LEAD_NOTIFY_FROM",
   "NEXT_PUBLIC_TURNSTILE_SITE_KEY",
   "TURNSTILE_SECRET_KEY",
+  "LEAD_PLATFORM_WEBHOOK_URL",
+  "LEAD_PLATFORM_WEBHOOK_SECRET",
+  "RATE_LIMIT_SECRET",
 ]) {
   if (!process.env[k]) problems.push(`env  ${k} is not set in this shell (set it in Vercel)`);
 }
+if (!process.env.OUTBOX_WORKER_SECRET && !process.env.CRON_SECRET) problems.push("env  OUTBOX_WORKER_SECRET or CRON_SECRET is required for durable lead delivery");
+if (process.env.RATE_LIMIT_SECRET && process.env.RATE_LIMIT_SECRET.length < 32) problems.push("env  RATE_LIMIT_SECRET must have at least 32 characters");
+if (process.env.ALLOW_LOCAL_LEAD_STORE === "true") problems.push("env  ALLOW_LOCAL_LEAD_STORE must be disabled for a production launch");
 
 if (problems.length) {
   console.error(`Not ready to launch. ${problems.length} item${problems.length === 1 ? "" : "s"} left:\n`);

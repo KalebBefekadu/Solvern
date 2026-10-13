@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRef, useState } from "react";
-import { site } from "@/content/site";
+import { site, siteReady } from "@/content/site";
 import { CALLBACK_TOPICS_EXISTING, CALLBACK_TOPICS_NEW, type FieldErrors } from "@/lib/leads/constants";
 import { submitLead } from "@/lib/leads/client";
 import { contactErrors } from "@/lib/leads/validate";
@@ -12,21 +12,9 @@ import { useLeadForm } from "./form/useLeadForm";
 
 type Existing = "yes" | "no" | "not_sure";
 
-export interface CallbackPrefill {
-  job?: string;
-  first?: string;
-  last?: string;
-  email?: string;
-  phone?: string;
-  zip?: string;
-}
-
-/**
- * Branching callback form (04-page-specs.md, modeled on Aspect's callback page).
- * Support links in Solvern emails can prefill it: /customer-service?job=SV-1234&first=Dana&email=...
- */
-export function CallbackForm({ prefill = {} }: { prefill?: CallbackPrefill }) {
-  const [existing, setExisting] = useState<Existing | null>(prefill.job ? "yes" : null);
+/** Branching callback form (04-page-specs.md, modeled on Aspect's callback page). */
+export function CallbackForm() {
+  const [existing, setExisting] = useState<Existing | null>(null);
   const [topic, setTopic] = useState("");
   const doneRef = useRef<HTMLDivElement>(null);
   const { formRef, ...f } = useLeadForm("callback", () => ({ existing_job: existing === "yes", topic }));
@@ -81,7 +69,8 @@ export function CallbackForm({ prefill = {} }: { prefill?: CallbackPrefill }) {
           </span>
           <h2 className="h3">Received.</h2>
           <p className="body-l">
-            The right person on our team will contact you. We aim to reply within {site.callback.responseTime} during {site.callback.hours}.
+            The right person on our team will contact you. We aim to reply{" "}
+            {siteReady.callbackTiming ? `within ${site.callback.responseTime} during ${site.callback.hours}` : "as soon as possible during business hours"}.
           </p>
           <p className="small">A confirmation is on its way to your email.</p>
         </div>
@@ -124,7 +113,7 @@ export function CallbackForm({ prefill = {} }: { prefill?: CallbackPrefill }) {
           {existing === "yes" && (
             <div className="field">
               <label htmlFor={fid("jobNumber")}>Job number</label>
-              <input className="input" type="text" defaultValue={prefill.job} maxLength={40} autoComplete="off" {...field("jobNumber", `${fid("jobNumber")}-hint`)} />
+              <input className="input" type="text" maxLength={40} autoComplete="off" {...field("jobNumber", `${fid("jobNumber")}-hint`)} />
               <span className="field-hint" id={`${fid("jobNumber")}-hint`}>
                 Shown on your booking confirmation or invoice, for example {site.callback.jobNumberExample}
               </span>
@@ -174,7 +163,7 @@ export function CallbackForm({ prefill = {} }: { prefill?: CallbackPrefill }) {
       </div>
       <div className="field">
         <label htmlFor={fid("zip")}>Zip code</label>
-        <input className="input" type="text" inputMode="numeric" autoComplete="postal-code" maxLength={10} defaultValue={prefill.zip} {...field("zip", `${fid("zip")}-hint`)} />
+        <input className="input" type="text" inputMode="numeric" autoComplete="postal-code" maxLength={10} {...field("zip", `${fid("zip")}-hint`)} />
         <span className="field-hint" id={`${fid("zip")}-hint`}>
           So we can confirm we cover your area
         </span>
@@ -190,22 +179,22 @@ export function CallbackForm({ prefill = {} }: { prefill?: CallbackPrefill }) {
       <div className="grid-2 grid-2--roomy">
         <div className="field">
           <label htmlFor={fid("firstName")}>First name</label>
-          <input className="input" type="text" autoComplete="given-name" maxLength={80} defaultValue={prefill.first} {...field("firstName")} />
+          <input className="input" type="text" autoComplete="given-name" maxLength={80} {...field("firstName")} />
           {err("firstName")}
         </div>
         <div className="field">
           <label htmlFor={fid("lastName")}>Last name</label>
-          <input className="input" type="text" autoComplete="family-name" maxLength={80} defaultValue={prefill.last} {...field("lastName")} />
+          <input className="input" type="text" autoComplete="family-name" maxLength={80} {...field("lastName")} />
           {err("lastName")}
         </div>
         <div className="field">
           <label htmlFor={fid("phone")}>Phone</label>
-          <input className="input" type="tel" autoComplete="tel" maxLength={30} defaultValue={prefill.phone} {...field("phone")} />
+          <input className="input" type="tel" autoComplete="tel" maxLength={30} {...field("phone")} />
           {err("phone")}
         </div>
         <div className="field">
           <label htmlFor={fid("email")}>Email</label>
-          <input className="input" type="email" autoComplete="email" maxLength={200} defaultValue={prefill.email} {...field("email")} />
+          <input className="input" type="email" autoComplete="email" maxLength={200} {...field("email")} />
           {err("email")}
         </div>
       </div>

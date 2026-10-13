@@ -46,3 +46,17 @@ export const site = {
 } as const;
 
 export const hasPlaceholder = (s: string) => /\[[^\]]+\]/.test(s);
+
+/** Prevent owner-only launch placeholders from ever reaching customer-facing UI. */
+export const siteReady = {
+  phone: !hasPlaceholder(site.phone.display) && !!site.phone.e164,
+  email: !hasPlaceholder(site.email),
+  legal: !hasPlaceholder(site.legalName),
+  rating: !hasPlaceholder(site.rating.value) && !hasPlaceholder(site.rating.count) && !hasPlaceholder(site.rating.source),
+  callbackTiming: !hasPlaceholder(site.callback.responseTime) && !hasPlaceholder(site.callback.hours),
+  businessHours: !hasPlaceholder(site.callback.daysAndHours),
+  financing: !hasPlaceholder(site.financing.partner) && !hasPlaceholder(site.financing.minimum) && !hasPlaceholder(site.financing.terms) && !!site.financing.applyUrl,
+} as const;
+
+export const publicBusinessName = siteReady.legal ? site.legalName : site.name;
+export const publicLegalLine = siteReady.legal ? site.legalLine : `${site.name}. Serving metro Atlanta.`;

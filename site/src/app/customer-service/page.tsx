@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
 import { pageMetadata } from "@/lib/metadata";
 import Link from "next/link";
-import { Suspense } from "react";
-import { site } from "@/content/site";
+import { site, siteReady } from "@/content/site";
 import { HUB_THEME } from "@/lib/content";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { CallbackForm } from "@/components/CallbackForm";
-import { CallbackFormWithPrefill } from "@/components/CallbackFormWithPrefill";
 import { JsonLd } from "@/components/sections";
 import { localBusinessJsonLd } from "@/lib/structured-data";
 
@@ -28,26 +26,26 @@ export default function CustomerServicePage() {
             Request a callback.
           </h1>
           <p className="lead">
-            Questions about new work or a job you have booked? Fill in the form and the right person on our team will call you back. We aim to reply within{" "}
-            {site.callback.responseTime} during {site.callback.hours}.
+            Questions about new work or a job you have booked? Fill in the form and the right person on our team will call you back
+            {siteReady.callbackTiming ? ` within ${site.callback.responseTime} during ${site.callback.hours}` : " as soon as possible during business hours"}.
           </p>
         </section>
 
         <section className="wrap cs-grid page-end">
-          <Suspense fallback={<CallbackForm />}>
-            <CallbackFormWithPrefill />
-          </Suspense>
+          <CallbackForm />
           <aside className="cs-aside" aria-label="Other ways to reach us">
-            <div className="cs-card cs-card--ink">
-              <span className="cs-call__label">Prefer to call?</span>
-              <a href={site.phone.href} className="cs-phone" data-location="customer-service">
-                {site.phone.display}
-              </a>
-              <span>{site.callback.daysAndHours}</span>
-            </div>
+            {siteReady.phone && (
+              <div className="cs-card cs-card--ink">
+                <span className="cs-call__label">Prefer to call?</span>
+                <a href={site.phone.href} className="cs-phone" data-location="customer-service">
+                  {site.phone.display}
+                </a>
+                {siteReady.businessHours && <span>{site.callback.daysAndHours}</span>}
+              </div>
+            )}
             <div className="cs-card cs-card--tint">
               <h2 className="cs-card__t">Already a customer?</h2>
-              <p>Use the support link in any email from Solvern. It opens this form with your job details already filled in.</p>
+              <p>Have your job number handy when you request a callback so we can find your details quickly.</p>
             </div>
             <div className="cs-card cs-card--outline">
               <h2 className="cs-card__t">Planning something new?</h2>

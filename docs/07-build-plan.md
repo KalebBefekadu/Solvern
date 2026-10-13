@@ -28,9 +28,9 @@ Work in order. Check each acceptance item before moving on.
 - Accept: every page has unique title and description; events fire.
 
 ## Phase 6: Remaining trades and main site (needs owner input)
-- [ ] Owner approves colors and copy for the other 20 trades; generate their pages. (Pages are built from draft copy and proposed colors, marked draft and noindex.)
-- [ ] Design, then build Solvern Home (main site) with the full trade directory. (First version built at `/`, pending owner review.)
-- [ ] Swap final illustrations when supplied.
+- [x] Owner approves colors and copy for the other 20 trades; generate their pages.
+- [x] Design and build Solvern Home with the full trade directory and whole-home hero assembly.
+- [x] Replace placeholders with the complete 23-trade Precision Construction Objects hero set.
 
 ## Status (2026-09-30)
 Phases 1 to 5 are built in `site/` and verified locally: type check, lint, brand and color checks, production build, axe WCAG 2.1 AA on every page at 1440 and 375px, Lighthouse mobile 98 to 99 performance and 100 accessibility, no horizontal scroll at 320px, and a full browser test of the markup tool and both forms. Remaining for Phase 4 acceptance: connect Supabase and Resend, then send a real test from a phone. Phase 6 is drafted and waiting on owner approval.

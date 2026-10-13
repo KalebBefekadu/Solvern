@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { safeAttribution, safePagePath } from "./attribution";
 import {
   CALLBACK_TOPICS_EXISTING,
   CALLBACK_TOPICS_NEW,
@@ -30,7 +31,7 @@ const zip = z
 const email = z.string().trim().max(200).email("Enter a valid email address.");
 
 /** Paths returned by /api/uploads. Anything else is rejected. */
-export const uploadPath = z.string().regex(/^leads\/\d{4}-\d{2}-\d{2}\/[0-9a-f-]{36}\/[a-z0-9-]+\.(jpg|jpeg|png|webp|heic|heif)$/i);
+export const uploadPath = z.string().regex(/^(?:leads\/\d{4}-\d{2}-\d{2}\/[0-9a-f-]{36}|previews\/[0-9a-f-]{36}\/[0-9a-f-]{36})\/[a-z0-9-]+\.(jpg|jpeg|png|webp|heic|heif)$/i);
 
 const point = z.tuple([z.number(), z.number(), z.number()]);
 export const photoSchema = z.object({
@@ -42,7 +43,7 @@ export const photoSchema = z.object({
     strokes: z
       .array(
         z.object({
-          pen: z.enum(["blue", "orange", "green"]),
+          pen: z.enum(["red", "blue", "orange", "green"]),
           color: z.string().max(9),
           note: z.number().int().nullable(),
           points: z.array(point).min(1).max(MAX_POINTS_PER_STROKE),
@@ -54,7 +55,7 @@ export const photoSchema = z.object({
     .array(
       z.object({
         n: z.number().int(),
-        pen: z.enum(["blue", "orange", "green"]),
+        pen: z.enum(["red", "blue", "orange", "green"]),
         color: z.string().max(9),
         text: trimmed(MAX_NOTE_LENGTH),
         anchor: z.object({ x: z.number(), y: z.number() }),
@@ -64,8 +65,8 @@ export const photoSchema = z.object({
 });
 
 const base = {
-  sourceUrl: trimmed(500).optional().default(""),
-  utm: z.record(z.string().max(60), z.string().max(200)).optional().default({}),
+  sourceUrl: trimmed(500).optional().default("").transform(safePagePath),
+  utm: z.record(z.string().max(60), z.string().max(500)).optional().default({}).transform(safeAttribution),
   turnstileToken: z.string().max(4096).optional().default(""),
   /** One id per form attempt, so a retry after a lost response never stores the lead twice. */
   requestId: z.string().uuid().optional(),
@@ -83,6 +84,8 @@ export const previewLeadSchema = z.object({
   email,
   preferredContact: z.enum(CONTACT_PREFS).optional(),
   photos: z.array(photoSchema).max(MAX_PHOTOS).default([]),
+  draftId: z.string().uuid().optional(),
+  photoIds: z.array(z.string().uuid()).max(MAX_PHOTOS).optional(),
   ...base,
 });
 
@@ -111,6 +114,7 @@ export type CallbackLead = z.infer<typeof callbackLeadSchema>;
 export type LeadInput = PreviewLead | CallbackLead;
 
 export const uploadRequestSchema = z.object({
+  draftId: z.string().uuid().optional(),
   files: z
     .array(
       z.object({

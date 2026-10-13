@@ -1,5 +1,5 @@
 {
-  "_note": "Source of truth for all 23 trades. carpentry, hvac and masonry colors are approved v2 values (colorStatus: approved). The other 20 use tint/tintStrong/deep derived from the approved pattern by scripts/derive-trade-colors.mjs (colorStatus: proposed). Roofing, garage doors, siding, windows and doors, and insulation have proposed new base hues because the v1 slate values read as gray; v1Color keeps the original.",
+  "_note": "Source of truth for all 23 launch trades. The 2026-10-02 customer-ready pass approved the complete color system, content and hero-art direction.",
   "trades": [
     {
       "slug": "demolition",
@@ -14,8 +14,8 @@
       "tool": "Sledgehammer",
       "scope": "Interior and exterior demolition, selective demolition, debris hauling and disposal",
       "primaryAction": "concept-preview",
-      "status": "needs-content",
-      "colorStatus": "proposed",
+      "status": "designed",
+      "colorStatus": "approved",
       "v1Color": "#8A3516"
     },
     {
@@ -31,8 +31,8 @@
       "tool": "Compact excavator",
       "scope": "Clearing, excavation, grading, drainage, erosion control",
       "primaryAction": "concept-preview",
-      "status": "needs-content",
-      "colorStatus": "proposed",
+      "status": "designed",
+      "colorStatus": "approved",
       "v1Color": "#9C5A2E"
     },
     {
@@ -48,8 +48,8 @@
       "tool": "Magnesium concrete float",
       "scope": "Foundations, footings, slabs, foundation repair and waterproofing, driveways, paving",
       "primaryAction": "concept-preview",
-      "status": "needs-content",
-      "colorStatus": "proposed",
+      "status": "designed",
+      "colorStatus": "approved",
       "v1Color": "#C9875E"
     },
     {
@@ -81,8 +81,8 @@
       "tool": "Chainsaw",
       "scope": "Tree removal, trimming, pruning, stump grinding",
       "primaryAction": "concept-preview",
-      "status": "needs-content",
-      "colorStatus": "proposed",
+      "status": "designed",
+      "colorStatus": "approved",
       "v1Color": "#6F4A2C"
     },
     {
@@ -98,8 +98,8 @@
       "tool": "Shingle hatchet",
       "scope": "Roof replacement and repair, roof decking, flashing, gutters, downspouts",
       "primaryAction": "concept-preview",
-      "status": "needs-content",
-      "colorStatus": "proposed",
+      "status": "designed",
+      "colorStatus": "approved",
       "v1Color": "#2E3C48"
     },
     {
@@ -131,8 +131,8 @@
       "tool": "Torsion spring and winding bar",
       "scope": "Garage doors, tracks, springs, openers",
       "primaryAction": "concept-preview",
-      "status": "needs-content",
-      "colorStatus": "proposed",
+      "status": "designed",
+      "colorStatus": "approved",
       "v1Color": "#5C7185"
     },
     {
@@ -148,8 +148,8 @@
       "tool": "Chalk line reel",
       "scope": "Siding, stucco, exterior trim",
       "primaryAction": "concept-preview",
-      "status": "needs-content",
-      "colorStatus": "proposed",
+      "status": "designed",
+      "colorStatus": "approved",
       "v1Color": "#7D92A8"
     },
     {
@@ -165,8 +165,8 @@
       "tool": "Glass suction lifter",
       "scope": "Windows, interior and exterior doors, sliding doors, hardware, locks",
       "primaryAction": "concept-preview",
-      "status": "needs-content",
-      "colorStatus": "proposed",
+      "status": "designed",
+      "colorStatus": "approved",
       "v1Color": "#93A4B6"
     },
     {
@@ -182,8 +182,8 @@
       "tool": "Spray foam gun",
       "scope": "Batt, blown-in and spray foam insulation, air sealing",
       "primaryAction": "concept-preview",
-      "status": "needs-content",
-      "colorStatus": "proposed",
+      "status": "designed",
+      "colorStatus": "approved",
       "v1Color": "#B3C0CC"
     },
     {
@@ -199,8 +199,8 @@
       "tool": "Stone polisher",
       "scope": "Quartz, granite and marble countertops, fabrication and installation",
       "primaryAction": "concept-preview",
-      "status": "needs-content",
-      "colorStatus": "proposed",
+      "status": "designed",
+      "colorStatus": "approved",
       "v1Color": "#8C722C"
     },
     {
@@ -216,8 +216,8 @@
       "tool": "Manual tile cutter",
       "scope": "Showers, bathroom floors, backsplashes, shower waterproofing",
       "primaryAction": "concept-preview",
-      "status": "needs-content",
-      "colorStatus": "proposed",
+      "status": "designed",
+      "colorStatus": "approved",
       "v1Color": "#A8862A"
     },
     {
@@ -233,8 +233,8 @@
       "tool": "Taping knife",
       "scope": "Hanging, taping, finishing, texture, repairs",
       "primaryAction": "concept-preview",
-      "status": "needs-content",
-      "colorStatus": "proposed",
+      "status": "designed",
+      "colorStatus": "approved",
       "v1Color": "#B39A63"
     },
     {
@@ -250,8 +250,8 @@
       "tool": "Flooring nailer",
       "scope": "Hardwood, engineered wood, luxury vinyl plank, laminate, carpet",
       "primaryAction": "concept-preview",
-      "status": "needs-content",
-      "colorStatus": "proposed",
+      "status": "designed",
+      "colorStatus": "approved",
       "v1Color": "#C79A1E"
     },
     {
@@ -267,8 +267,8 @@
       "tool": "Paint roller",
       "scope": "Interior and exterior painting: walls, ceilings, trim, doors, cabinets",
       "primaryAction": "concept-preview",
-      "status": "needs-content",
-      "colorStatus": "proposed",
+      "status": "designed",
+      "colorStatus": "approved",
       "v1Color": "#E3BC4F"
     },
     {
@@ -284,8 +284,8 @@
       "tool": "Pipe wrench",
       "scope": "Water supply, drains, sewer lines, water heaters, fixtures",
       "primaryAction": "diagnosis",
-      "status": "needs-content",
-      "colorStatus": "proposed",
+      "status": "designed",
+      "colorStatus": "approved",
       "v1Color": "#0B5A63"
     },
     {
@@ -301,8 +301,8 @@
       "tool": "Digital multimeter",
       "scope": "Panels, wiring, outlets, switches, lighting, fixtures",
       "primaryAction": "diagnosis",
-      "status": "needs-content",
-      "colorStatus": "proposed",
+      "status": "designed",
+      "colorStatus": "approved",
       "v1Color": "#0E6F6A"
     },
     {
@@ -318,8 +318,8 @@
       "tool": "Dome security camera",
       "scope": "Data networks, cameras, security, audio, home automation",
       "primaryAction": "diagnosis",
-      "status": "needs-content",
-      "colorStatus": "proposed",
+      "status": "designed",
+      "colorStatus": "approved",
       "v1Color": "#3D7F8C"
     },
     {
@@ -351,8 +351,8 @@
       "tool": "Post hole digger",
       "scope": "Wood, vinyl and metal fencing and gates",
       "primaryAction": "concept-preview",
-      "status": "needs-content",
-      "colorStatus": "proposed",
+      "status": "designed",
+      "colorStatus": "approved",
       "v1Color": "#48702A"
     },
     {
@@ -368,8 +368,8 @@
       "tool": "Lawn mower",
       "scope": "Sod, planting, mulch, irrigation, landscape improvements",
       "primaryAction": "concept-preview",
-      "status": "needs-content",
-      "colorStatus": "proposed",
+      "status": "designed",
+      "colorStatus": "approved",
       "v1Color": "#86AE45"
     },
     {
@@ -385,8 +385,8 @@
       "tool": "Glass cutter",
       "scope": "Railings, glass, mirrors, shower doors, fireplaces, custom and specialty installations",
       "primaryAction": "concept-preview",
-      "status": "needs-content",
-      "colorStatus": "proposed",
+      "status": "designed",
+      "colorStatus": "approved",
       "v1Color": "#6D4A82"
     }
   ]

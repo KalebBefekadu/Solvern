@@ -2,6 +2,7 @@ import { getStroke } from "perfect-freehand";
 import { MAX_NOTE_LENGTH, MAX_NOTES, MAX_PHOTO_BYTES, MAX_POINTS_PER_STROKE, MAX_STROKES, PHOTO_TYPES } from "@/lib/leads/constants";
 
 export const PENS = [
+  { id: "red", label: "Red pen", color: "#D92D32", text: "#B42328" },
   { id: "blue", label: "Blue pen", color: "#2F63D6", text: "#2F63D6" },
   { id: "orange", label: "Orange pen", color: "#E8742C", text: "#A8501A" },
   { id: "green", label: "Green pen", color: "#1FA35B", text: "#16743F" },
@@ -130,6 +131,24 @@ export function serializeNotes(photo: MarkupPhoto) {
   }));
 }
 
+/** Restores saved vector annotations into the editable client shape. */
+export function restoreMarkupPhoto(
+  id: string,
+  file: File,
+  url: string,
+  record: {
+    strokes: ReturnType<typeof serializeMarkup>;
+    notes: ReturnType<typeof serializeNotes>;
+  },
+): MarkupPhoto {
+  const notes: Note[] = record.notes.map((n) => ({ id: uid(), n: n.n, pen: n.pen, text: n.text, anchor: n.anchor }));
+  const noteId = new Map(notes.map((n) => [n.n, n.id]));
+  const strokes: Stroke[] = record.strokes.strokes
+    .filter((s) => s.note !== null && noteId.has(s.note))
+    .map((s) => ({ id: uid(), pen: s.pen, noteId: noteId.get(s.note!)!, points: s.points }));
+  return { id, file, url, width: record.strokes.width, height: record.strokes.height, strokes, notes };
+}
+
 /** Draws the photo, strokes and numbered note markers into a PNG (long edge capped). */
 export async function flattenToPng(photo: MarkupPhoto, maxEdge = 1800): Promise<Blob> {
   const img = await loadImage(photo.url);
@@ -178,13 +197,20 @@ export function loadImage(src: string): Promise<HTMLImageElement> {
 
 /**
  * Makes a decoded photo acceptable to storage: a type the bucket allows and at most 15 MB.
- * Anything else the browser can open (GIF, AVIF, BMP, a very large JPEG) is re-encoded as JPEG,
- * with the long edge capped so the result fits. Accepted files pass through untouched.
+ * Anything else the browser can open (HEIC, HEIF, GIF, AVIF, BMP, an oversized or very large JPEG) is re-encoded as JPEG,
+ * with the long edge capped so the result fits. JPEG, PNG and WebP within both limits pass through untouched.
  */
 export async function normalizePhoto(file: File, img: HTMLImageElement, maxEdge = 4096): Promise<{ file: File; width: number; height: number }> {
   const w0 = img.naturalWidth;
   const h0 = img.naturalHeight;
-  if ((PHOTO_TYPES as readonly string[]).includes(file.type) && file.size <= MAX_PHOTO_BYTES) return { file, width: w0, height: h0 };
+  if (
+    (PHOTO_TYPES as readonly string[]).includes(file.type) &&
+    file.type !== "image/heic" &&
+    file.type !== "image/heif" &&
+    file.size <= MAX_PHOTO_BYTES &&
+    Math.max(w0, h0) <= maxEdge
+  )
+    return { file, width: w0, height: h0 };
   const scale = Math.min(1, maxEdge / Math.max(w0, h0));
   const width = Math.round(w0 * scale);
   const height = Math.round(h0 * scale);

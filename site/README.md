@@ -42,7 +42,7 @@ Server code logs through `src/lib/server/log.ts`: one JSON line per event with `
 | --- | --- | --- |
 | `/` | `src/app/page.tsx` | Solvern Home hub: hero, 23-trade directory by family, project types, how it works, team, reviews, financing, service area, FAQ. **Draft design**, owner review |
 | `/[trade]` | `src/app/[trade]/page.tsx` | One template for all 23 trades, themed from `trades.json` |
-| `/customer-service` | `src/app/customer-service/page.tsx` | Branching callback form. Prefill from email links: `?job=SV-1234&first=Dana&last=Smith&email=...&phone=...&zip=...` |
+| `/customer-service` | `src/app/customer-service/page.tsx` | Branching callback form. Personal details are not read from URL parameters. |
 | `/concept-preview` | `src/app/concept-preview/page.tsx` | Standalone Concept Preview with trade or project picker. Preselect with `?trade=roofing` or `?project=kitchen` |
 | `/reviews`, `/financing`, `/about`, `/privacy`, `/terms` | `src/app/*` | Placeholder-driven; privacy and terms are templates for an attorney to review |
 | `/sitemap.xml`, `/robots.txt` | `src/app/sitemap.ts`, `robots.ts` | Sitemap lists approved trade pages only |
@@ -80,20 +80,35 @@ Replace values in `src/content/site.ts` only with real information from the owne
 
 ## Concept Preview and lead flow
 
-1. The visitor uploads 1 to 5 photos and draws on them (`src/components/MarkupTool.tsx`): three pens, one note per stroke group, switching pen starts a new note, Undo, Clear, New note, delete note. Pointer events cover mouse, touch and stylus; strokes are smoothed with `perfect-freehand`. On phones, notes show as a list under the photo.
-2. On submit the browser flattens each marked-up photo to PNG, asks `POST /api/uploads` for signed upload URLs, and uploads originals and PNGs **straight to Supabase Storage** (photos never pass through the Vercel function body limit).
-3. `POST /api/leads` validates with Zod, checks the honeypot and Cloudflare Turnstile, confirms each upload exists, inserts `leads` and `lead_photos` (strokes as vector JSON, notes as JSON), emails the team with 7-day signed photo links, and emails the customer a confirmation.
+1. The visitor uploads 1 to 5 photos and edits one at a time (`src/components/MarkupTool.tsx`). Four pens create numbered marks on the photo and matching comment rows below it at every viewport width. Undo, Redo, Clear, New note and delete note work with mouse, touch and stylus.
+2. Saving a photo uploads its original and marked PNG directly to private storage, then saves the vector strokes and notes to a short-lived private draft. In production, the server decodes each image, checks its actual format and decoded size, and saves a metadata-free copy to a server-owned path before attaching it to the draft. Supabase uploads over 6 MB use resumable chunks with progress and bounded retries. Later text edits save metadata without uploading the original again. Removing a saved photo also removes it from the draft, so it stays removed after reload and frees a slot. The next photo opens only after the server confirms the save. Browser storage keeps unsent edits for reload recovery where available. Save and removal requests carry mutation IDs, so a retry after a lost response returns the committed revision.
+3. The final form posts the selected draft photo IDs to `POST /api/leads`. The server checks draft ownership, validates Turnstile, and stores one lead and its selected photos in a database transaction. The draft ID is unique on leads, so concurrent submissions return that same lead. The database queues team email, customer email, and webhook delivery only for the first insert. Callback requests still use the same lead route.
+4. With `PREVIEW_GENERATION_ENABLED=true`, final submission also queues one private generation job per Concept Preview photo in the same transaction. A protected worker processes one job at a time. Generated files go only to the staff review inbox; delivery to the customer remains a team decision. A timeout becomes `uncertain` for manual review and is never silently retried.
 
 Callback requests use the same `/api/leads` route with `type: "callback"`, flagged `existing_job` when a job number is given.
 
 ## Production setup
 
-1. **Supabase:** create a project, run `supabase/migrations/0001_leads.sql` (tables, indexes, RLS on with no public policies, private `lead-uploads` bucket), then `0002_lead_hardening.sql` (`updated_at`, length limits, open-leads index). Copy the URL and service role key.
+1. **Supabase:** create a project and apply migrations `0001` through `0009` in order. They create the private lead and photo store, draft and generation queues, atomic lead insertion, delivery outbox, and shared rate limiter. Copy the URL and service role key.
 2. **Resend:** verify the sending domain, create an API key.
 3. **Turnstile:** create a widget for the domain, copy the site key and secret.
-4. **Vercel:** import the `site` folder, set every variable from `.env.example`, deploy. Set them before the build: the Content Security Policy reads `SUPABASE_URL` at build time to allow direct photo uploads, so redeploy after changing it. Point the domain (open item: solvern.com or solvernhome.com) and set `NEXT_PUBLIC_SITE_URL`.
-5. Open `https://<domain>/api/health`. It should report `"storage": "supabase"`, `"email": true` and `"turnstile": true`. It returns 503 if leads would be refused.
-6. Submit a real test from a phone and confirm the photo, annotated PNG, strokes, notes and fields are stored and the team email arrives (build plan Phase 4 acceptance).
+4. **Vercel:** import the `site` folder, set every variable from `.env.example`, deploy. Set them before the build: the Content Security Policy reads `SUPABASE_URL` at build time to allow direct photo uploads, including the direct Storage hostname for resumable uploads, so redeploy after changing it. Point the domain (open item: solvern.com or solvernhome.com) and set `NEXT_PUBLIC_SITE_URL`.
+5. Open `https://<domain>/api/health`. It should report `"ok": true`, `"storage": "supabase"`, and enabled email, Turnstile, lead platform, delivery worker, and rate limiting. A missing production integration returns 503.
+6. Submit a real test from a phone and confirm the photo, annotated PNG, strokes, notes and fields are stored. Run the delivery worker and verify the team email, customer email, and external webhook are marked delivered (build plan Phase 4 acceptance).
+
+### Lead delivery worker
+
+Migration `0008` adds three outbox jobs in the lead insert transaction. Set `OUTBOX_WORKER_SECRET` or `CRON_SECRET` and schedule `GET /api/lead-delivery/worker` with `Authorization: Bearer <secret>` every minute. Each invocation handles up to ten jobs. Failed deliveries retry with exponential delay and stop after five attempts; inspect `lead_sync_outbox` for `failed` rows or old `pending` rows and alert the lead owner. Resend receives a stable idempotency key and frozen email body for retries. The external platform receives a stable `eventId` and must deduplicate it. The worker must be active before production traffic because the lead request no longer sends emails or webhooks itself.
+
+### Optional preview generation and maintenance
+
+Leave `PREVIEW_GENERATION_ENABLED=false` until the Solvern Supabase project has migration `0006`, the private worker scheduler is configured, and the team review inbox is receiving mail. Set `OPENAI_API_KEY`, `PREVIEW_WORKER_SECRET` (or Vercel `CRON_SECRET`), and `LEAD_NOTIFY_TO` on the server only. Invoke `GET /api/preview-generation/worker` with `Authorization: Bearer <secret>` at least once per minute during operating hours; each invocation handles at most one photo, and database claims prevent concurrent jobs. Choose a scheduler and hosting plan that support this frequency and a 300-second function limit before enabling the flag. Do not rely on Vercel Hobby's daily cron for a five-photo request.
+
+Invoke `GET /api/preview-drafts/maintenance` with the same bearer secret daily. It removes expired, unreferenced draft uploads using the Storage API, preserves photos attached to submitted leads, and prunes hashed rate-limit counters older than 30 days. The route processes at most five drafts and ten batches of 1,000 counters per call. Monitor `preview_generation_jobs` for `failed` and `uncertain`, plus `preview.generation_failed`, `preview.review_notification_failed`, and `preview.maintenance_failed` logs. Reviewers should compare the result with the original, markup, and written notes before sending it. Browser-decoded HEIC/HEIF inputs are converted to JPEG before upload; any format the browser cannot decode stays in the manual staff workflow. There is no automatic customer delivery.
+
+### Lead-management platform
+
+Set `LEAD_PLATFORM_WEBHOOK_URL` and `LEAD_PLATFORM_WEBHOOK_SECRET` to send every stored lead as a versioned, HMAC-signed `lead.created` event. The connector is optional and never blocks a customer submission. The event contract and management-portal boundary are documented in `../docs/11-management-platform-architecture.md`.
 
 ## Code layout
 

@@ -27,7 +27,7 @@ export default defineConfig({
   ],
   webServer: {
     command: `npx next start -p ${PORT}`,
-    url: `http://localhost:${PORT}/api/health`,
+    url: `http://localhost:${PORT}/`,
     reuseExistingServer: !process.env.CI,
     timeout: 60_000,
     env: { ALLOW_LOCAL_LEAD_STORE: "true", NEXT_TELEMETRY_DISABLED: "1" },

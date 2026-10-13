@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { pageMetadata } from "@/lib/metadata";
-import { site } from "@/content/site";
+import { site, siteReady } from "@/content/site";
 import { SimplePage } from "@/components/SimplePage";
 import { ClosingBand, ReviewsSection } from "@/components/sections";
 
@@ -8,6 +8,7 @@ export const metadata: Metadata = pageMetadata({
   title: "Reviews | Solvern Home",
   description: "What metro Atlanta homeowners say about Solvern Home: one team for 23 trades, a Concept Preview before work begins, and updates at every stage.",
   path: "/reviews",
+  noindex: !siteReady.rating,
 });
 
 /**
@@ -23,7 +24,9 @@ export default function ReviewsPage() {
           Reviews from homeowners.
         </h1>
         <p className="lead">
-          {site.rating.value} from {site.rating.count} reviews on {site.rating.source}. Every review is from a real Solvern customer, shown as written.
+          {siteReady.rating
+            ? `${site.rating.value} from ${site.rating.count} reviews on ${site.rating.source}. Every review is from a real Solvern customer, shown as written.`
+            : "Verified homeowner reviews will appear here once the Solvern review profile is connected."}
         </p>
       </section>
       <ReviewsSection />

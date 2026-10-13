@@ -5,9 +5,10 @@
 import { log } from "./log";
 import type { CallbackLead, PreviewLead } from "@/lib/leads/schema";
 import { previewTarget } from "@/lib/content";
-import { DuplicateRequest, findLeadByRequestId, insertLead, signedViewUrl, uploadExists, type LeadRow, type PhotoRow } from "./backend";
+import { findLeadByRequestId, insertLead, signedViewUrl, supabase, uploadExists, type LeadRow, type PhotoRow } from "./backend";
 import { confirmCustomer, notifyTeam } from "./notify";
 import { HttpError } from "./http";
+import { leadCreatedEvent, notifyLeadPlatform } from "./lead-platform";
 
 const PREF_LABEL = { phone: "Phone call", text: "Text", email: "Email" } as const;
 const EXISTING_LABEL = { yes: "Yes", no: "No", not_sure: "Not sure" } as const;
@@ -113,7 +114,7 @@ export async function preparePreview(d: PreviewLead): Promise<Prepared> {
  * Stores the lead, then sends both emails. A failed email never fails the customer's request.
  * A retry of a form attempt that was already stored returns the same id and sends nothing again.
  */
-export async function createLead(data: CallbackLead | PreviewLead): Promise<string> {
+export async function createLead(data: CallbackLead | PreviewLead, draftId?: string): Promise<string> {
   if (data.requestId) {
     const existing = await findLeadByRequestId(data.requestId);
     if (existing) {
@@ -122,16 +123,12 @@ export async function createLead(data: CallbackLead | PreviewLead): Promise<stri
     }
   }
   const p = data.type === "callback" ? prepareCallback(data) : await preparePreview(data);
-  let leadId: string;
-  try {
-    leadId = await insertLead(p.lead, p.photos);
-  } catch (e) {
-    if (e instanceof DuplicateRequest && data.requestId) {
-      const existing = await findLeadByRequestId(data.requestId);
-      if (existing) return existing;
-    }
-    throw e;
-  }
+  if (draftId) p.lead.preview_draft_id = draftId;
+  const { id: leadId, inserted } = await insertLead(p.lead, p.photos);
+  if (!inserted) return leadId;
+  // In production, the database trigger committed the delivery jobs alongside
+  // the lead. The worker owns all external calls; request latency ends here.
+  if (supabase()) return leadId;
 
   const photoLinks = await Promise.all(
     p.photos.map(async (ph) => ({
@@ -144,12 +141,15 @@ export async function createLead(data: CallbackLead | PreviewLead): Promise<stri
     return p.photos.map((ph) => ({ original: ph.original_path, annotated: ph.annotated_path, notes: [] as string[] }));
   });
 
-  const results = await Promise.allSettled([
+  const notifications = await Promise.allSettled([
     notifyTeam({ leadId, type: p.lead.type, trade: p.tradeName, fields: p.fields, photos: photoLinks, replyTo: p.lead.email }),
     confirmCustomer(p.lead.type, p.lead.email, p.firstName),
   ]);
-  results.forEach((r, i) => {
+  notifications.forEach((r, i) => {
     if (r.status === "rejected") log.error("lead.notification_failed", { leadId, email: i === 0 ? "team" : "customer" }, r.reason);
   });
+
+  const integration = await Promise.allSettled([notifyLeadPlatform(leadCreatedEvent(leadId, p.lead, p.tradeName, p.photos.length))]);
+  if (integration[0].status === "rejected") log.error("lead.integration_failed", { leadId, integration: "lead-platform" }, integration[0].reason);
   return leadId;
 }

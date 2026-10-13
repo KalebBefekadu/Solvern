@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
-import { site } from "@/content/site";
+import { site, siteReady } from "@/content/site";
 import { Lockup } from "./Logo";
 import { ChevronDown, CloseIcon, MenuIcon, PhoneIcon } from "./Icons";
 
@@ -102,17 +102,21 @@ export function SiteHeader({ variant, links = [], primary, tradeGroups = [], lab
               Customer service
             </Link>
           )}
-          <a href={site.phone.href} className="site-header__phone" data-location="header">
-            {site.phone.display}
-          </a>
+          {siteReady.phone && (
+            <a href={site.phone.href} className="site-header__phone" data-location="header">
+              {site.phone.display}
+            </a>
+          )}
           {primary && (
             <Link href={primary.href} className="btn btn--ink btn--sm" data-track="cta_click" data-location="header">
               {primary.label}
             </Link>
           )}
-          <a href={site.phone.href} className="icon-btn" aria-label={`Call ${site.phone.display}`} data-location="header-mobile">
-            <PhoneIcon />
-          </a>
+          {siteReady.phone && (
+            <a href={site.phone.href} className="icon-btn" aria-label={`Call ${site.phone.display}`} data-location="header-mobile">
+              <PhoneIcon />
+            </a>
+          )}
           {variant !== "minimal" && (
             <button
               ref={menuBtnRef}

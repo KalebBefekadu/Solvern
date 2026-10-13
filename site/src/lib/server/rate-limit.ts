@@ -1,8 +1,9 @@
 /**
- * Fixed-window rate limiter kept in memory.
- * On serverless hosts each instance keeps its own window, so this is a best-effort brake on bursts
- * from one address. Turnstile remains the real spam control.
+ * Development uses an in-memory fixed window. Production uses a PostgreSQL counter
+ * shared by every server instance; only an HMAC of the client key reaches storage.
  */
+import { createHmac } from "node:crypto";
+import { BackendUnavailable, supabase } from "./backend";
 interface Window {
   count: number;
   resetAt: number;
@@ -21,6 +22,17 @@ export function rateLimit(key: string, limit: number, windowMs: number, now = Da
   w.count += 1;
   if (w.count > limit) return { ok: false, retryAfter: Math.ceil((w.resetAt - now) / 1000) };
   return { ok: true, retryAfter: 0 };
+}
+
+export async function rateLimitDistributed(key: string, limit: number, windowMs: number): Promise<{ ok: boolean; retryAfter: number }> {
+  if (process.env.NODE_ENV !== "production" || process.env.ALLOW_LOCAL_LEAD_STORE === "true") return rateLimit(key, limit, windowMs);
+  const secret = process.env.RATE_LIMIT_SECRET;
+  const sb = supabase();
+  if (!secret || secret.length < 32 || !sb) throw new BackendUnavailable("Distributed rate limiting is not configured");
+  const keyHash = createHmac("sha256", secret).update(key).digest("hex");
+  const { data, error } = await sb.rpc("consume_rate_limit", { p_key_hash: keyHash, p_limit: limit, p_window_seconds: Math.ceil(windowMs / 1000) });
+  if (error || !Array.isArray(data) || data.length !== 1) throw new BackendUnavailable("Distributed rate limiting is unavailable");
+  return { ok: data[0].allowed === true, retryAfter: Math.max(0, Number(data[0].retry_after) || 0) };
 }
 
 function prune(now: number) {

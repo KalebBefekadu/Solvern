@@ -1,13 +1,14 @@
 # 05. Features
 
 ## Concept Preview with photo markup (signature feature)
-Goal: a homeowner uploads a photo, draws on it to show what they want, adds a note per drawing, and submits. The team replies within 48 hours with a concept image and an estimate range. **Production of the concept image is manual for now** (team uses image tools, then reviews it). No automation or model API on the site.
+Goal: a homeowner uploads a photo, draws on it to show what they want, adds a note per drawing, and submits. The team replies within 48 hours with a concept image and an estimate range. Production remains team reviewed. An optional, disabled-by-default server worker can generate private draft images after submission; the team checks each result against the original and notes before customer delivery. Without the worker, the team produces the image manually.
 
 Markup tool behavior (owner's spec):
-- Upload 1 to 5 photos; draw on one at a time.
-- **Three pens only:** blue #2F63D6, orange #E8742C, green #1FA35B.
-- Each time a pen starts a new stroke group, a **note box** opens anchored to that drawing, bordered in the pen color and numbered (Note 1, Note 2). Switching pen color starts a new note.
-- Undo and Clear. Notes can be edited or deleted.
+- Upload 1 to 5 photos and finish one before moving to the next. A completed photo is saved to a private draft immediately; final contact submission creates one lead containing the selected photos.
+- Four pens: red #D92D32, blue #2F63D6, orange #E8742C, green #1FA35B.
+- Completing a new stroke group creates a numbered, pen-colored comment row **below the image** on every screen size. Only drawings and numbered markers appear on the image. Switching pen color starts a new note; New note starts another group with the same pen.
+- Undo, Redo and Clear. Notes can be edited or deleted. An unmarked photo can be saved explicitly as a reference.
+- Saved photo drafts can be restored after reload from the private server record. Unsent local edits are stored in the browser when available.
 - Works with touch (phone) and mouse. Freehand strokes, smoothed.
 - On submit, save: original photo, strokes as vector data (JSON), a flattened annotated image (PNG), the notes, and the form fields.
 - Diagnosis trades (HVAC, plumbing, electrical, smart home) use the same tool with copy about circling the problem.

@@ -9,6 +9,7 @@ const supabaseOrigin = (() => {
     return "";
   }
 })();
+const supabaseStorageOrigin = supabaseOrigin.endsWith(".supabase.co") ? supabaseOrigin.replace(/\.supabase\.co$/, ".storage.supabase.co") : supabaseOrigin;
 
 /**
  * Content Security Policy. Next.js inlines its bootstrap scripts, so script-src keeps 'unsafe-inline';
@@ -22,7 +23,7 @@ const csp = [
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
   "font-src 'self'",
-  `connect-src 'self' ${supabaseOrigin} https://challenges.cloudflare.com`.trim(),
+  `connect-src 'self' ${supabaseOrigin} ${supabaseStorageOrigin} https://challenges.cloudflare.com`.trim(),
   "frame-src https://challenges.cloudflare.com",
   "frame-ancestors 'none'",
   "base-uri 'self'",
@@ -48,9 +49,13 @@ const nextConfig: NextConfig = {
           { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), browsing-topics=()" },
         ],
       },
-      // Logo symbol and brand art: cached for a day, refreshed in the background after that.
+      // Logo symbol and generated brand art: cached for a day, refreshed in the background after that.
       {
         source: "/brand/(.*)",
+        headers: [{ key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" }],
+      },
+      {
+        source: "/illustrations/(.*)",
         headers: [{ key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" }],
       },
       {

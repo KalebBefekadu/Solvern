@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { pageMetadata } from "@/lib/metadata";
-import { site } from "@/content/site";
+import { site, siteReady } from "@/content/site";
 import { seo, tradeBySlug, tradePage, trades, tradeTheme } from "@/lib/content";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -57,8 +57,8 @@ export default async function TradePage({ params }: { params: Promise<{ trade: s
         links={[
           { label: "Services", href: "#services" },
           { label: "Our team", href: "#about" },
-          { label: "Reviews", href: "#reviews" },
-          { label: "Financing", href: "#financing" },
+          ...(siteReady.rating ? [{ label: "Reviews", href: "#reviews" }] : []),
+          ...(siteReady.financing ? [{ label: "Financing", href: "#financing" }] : []),
         ]}
         primary={primary}
       />
@@ -75,14 +75,16 @@ export default async function TradePage({ params }: { params: Promise<{ trade: s
               <Link href={anchor} className="btn btn--trade" data-track="cta_click" data-location="hero">
                 {page.heroPrimaryButton}
               </Link>
-              <a href={site.phone.href} className="btn btn--outline" data-location="hero">
-                Call {site.phone.display}
-              </a>
+              {siteReady.phone && (
+                <a href={site.phone.href} className="btn btn--outline" data-location="hero">
+                  Call {site.phone.display}
+                </a>
+              )}
             </div>
             <ProofRow proofLine={page.heroProofLine} />
           </div>
           <div className="hero__art">
-            <TradeIllustration tool={t.tool} />
+            <TradeIllustration slug={t.slug} tradeName={page.shortName} tool={t.tool} family={t.family} />
           </div>
         </section>
 

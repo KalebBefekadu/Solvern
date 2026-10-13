@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { pageMetadata } from "@/lib/metadata";
-import { site } from "@/content/site";
+import { publicBusinessName, site, siteReady } from "@/content/site";
 import { SimplePage } from "@/components/SimplePage";
 
 export const metadata: Metadata = pageMetadata({
   title: "Privacy policy | Solvern Home",
   description: "How Solvern Home collects, uses and protects the information and photos you send us through our website, forms and Concept Preview requests.",
   path: "/privacy",
+  noindex: !siteReady.legal,
 });
 
 // Template for the owner's attorney to review before launch. Bracketed values are open items.
@@ -16,14 +18,11 @@ export default function PrivacyPage() {
       <section className="wrap page-head">
         <span className="eyebrow">Legal</span>
         <h1 className="h1">Privacy policy</h1>
-        <p className="small">Last updated: [DATE]</p>
+        <p className="small">Last updated: October 2, 2026</p>
       </section>
       <section className="wrap page-end">
         <div className="prose">
-          <p>
-            This policy explains how {site.legalName}, doing business as Solvern Home (&quot;Solvern&quot;, &quot;we&quot;), handles information you share with us through this
-            website.
-          </p>
+          <p>This policy explains how {publicBusinessName} (&quot;Solvern&quot;, &quot;we&quot;) handles information you share with us through this website.</p>
           <h2>What we collect</h2>
           <ul>
             <li>Contact details you enter in a form: name, phone, email and zip code.</li>
@@ -47,17 +46,16 @@ export default function PrivacyPage() {
           <h2>Who we share it with</h2>
           <p>
             Service providers that help us run the website and our business, such as hosting, data storage, email and spam protection, under agreements that limit how they use it.
-            If you apply for financing, you share information directly with {site.financing.partner} under their own privacy policy.
+            If financing becomes available, you will share application information directly with the selected financing provider under their own privacy policy.
           </p>
           <h2>How long we keep it</h2>
-          <p>[Retention period set by the owner]</p>
+          <p>We keep information only as long as reasonably needed to respond to your request, provide services, meet legal obligations and resolve disputes.</p>
           <h2>Your choices</h2>
-          <p>
-            You can ask us to access, correct or delete your information by calling {site.phone.display} or emailing {site.email}.
-          </p>
+          <p>You can ask us to access, correct or delete your information through the customer service request form.</p>
           <h2>Contact</h2>
           <p>
-            {site.legalName}, doing business as Solvern Home. {site.phone.display}. {site.email}.
+            {publicBusinessName}. Use the <Link href="/customer-service#callback">customer service request form</Link>
+            {siteReady.email ? ` or email ${site.email}` : ""}.
           </p>
         </div>
       </section>

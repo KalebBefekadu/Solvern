@@ -1,11 +1,12 @@
 import { tradesByFamily } from "@/lib/content";
+import { siteReady } from "@/content/site";
 import { SiteHeader } from "./SiteHeader";
 
 const HUB_LINKS = [
   { label: "Projects", href: "/#projects" },
   { label: "How it works", href: "/#how" },
-  { label: "Reviews", href: "/reviews" },
-  { label: "Financing", href: "/financing" },
+  ...(siteReady.rating ? [{ label: "Reviews", href: "/reviews" }] : []),
+  ...(siteReady.financing ? [{ label: "Financing", href: "/financing" }] : []),
 ];
 
 /** Header for Solvern Home pages: the full trades menu (never shown on trade pages, owner rule). */

@@ -1,5 +1,13 @@
 # Decision log
 
+## 2026-10-02: Production trade-art system and launch content pass
+
+- The owner authorized replacing the trade-art placeholders with a complete set of customer-ready hero images.
+- Art direction: Precision Construction Objects. Every trade uses the same three-quarter camera, upper-left architectural light, warm-white ground, graphite and brushed-aluminum material base, restrained trade accent and one action cue.
+- The technical specification line is rendered as live page type, not baked into the raster, so it stays crisp and editable.
+- The existing reviewed copy for the remaining 20 trades is promoted into the launch content set. Bracketed business facts remain blocked until the owner supplies real values.
+- The lead-management integration starts as a versioned, signed outbound event. The management portal remains a separate authenticated application so its workflow can be designed without coupling it to the launch site.
+
 Add a dated line for every decision the owner makes during development.
 
 ## 2026-09-30: build pass 1 (Claude)
@@ -57,3 +65,9 @@ No approved design, copy or color was changed. Screenshots of 12 pages on deskto
 - 2026-10-01: Upgraded to Next.js 16.3.8 (Turbopack builds, React Compiler lint rules, native ESLint flat config). The forms no longer read refs during render, which the new rules flag. PostCSS override removed: Next 16 ships a version with no advisories.
 - 2026-10-01: Next 16 adds about 35 KB of framework script per page, which pushed the hub's mobile LCP to 2.5 s in Lighthouse (median of five). Each page's HTML is now 13 to 17 KB smaller instead: the logo wordmark is one cached SVG symbol rather than a copy in every header, footer and hydration payload, and the five rating stars are one SVG. Medians are back level with Next 15 (hub 2.05 s).
 - 2026-10-01: `site/AGENTS.md` holds the rules block that `next dev` writes for coding agents, so it never adds files on its own. It points to the root CLAUDE.md first.
+
+## 2026-10-04: photo annotation workflow
+- The owner requested comment inputs in rows below the photo on every screen size. The image keeps drawings and numbered markers only.
+- Red joins the existing pen colors. The customer saves one photo before moving to the next; all selected photos become one final request.
+- Photo drafts save privately with a short-lived browser session. The existing 48-hour team-produced Concept Preview promise remains in effect while automated generation is evaluated separately.
+- Removing a saved photo updates the server draft before the browser removes it, including when replacing one of five photos. Final submissions use a unique draft ID and transactional lead/photo insert to prevent duplicate or half-saved requests.

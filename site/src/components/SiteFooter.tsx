@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { hasPlaceholder, site } from "@/content/site";
+import { publicLegalLine, site, siteReady } from "@/content/site";
 import { navName, tradesByFamily } from "@/lib/content";
 import { Lockup } from "./Logo";
 
@@ -14,7 +14,7 @@ export function SiteFooter({ withTrades = false, compact = false }: { withTrades
           <Link href="/" aria-label="Solvern Home">
             <Lockup />
           </Link>
-          <span>{site.legalLine}</span>
+          <span>{publicLegalLine}</span>
         </div>
       </footer>
     );
@@ -32,16 +32,19 @@ export function SiteFooter({ withTrades = false, compact = false }: { withTrades
           <div className="site-footer__cols">
             <div>
               <span className="site-footer__h">Contact</span>
-              <a href={site.phone.href} data-location="footer">
-                {site.phone.display}
-              </a>
-              {hasPlaceholder(site.email) ? <span>{site.email}</span> : <a href={`mailto:${site.email}`}>{site.email}</a>}
+              {siteReady.phone && (
+                <a href={site.phone.href} data-location="footer">
+                  {site.phone.display}
+                </a>
+              )}
+              {siteReady.email && <a href={`mailto:${site.email}`}>{site.email}</a>}
+              {!siteReady.phone && !siteReady.email && <Link href="/customer-service#callback">Request a callback</Link>}
             </div>
             <div>
               <span className="site-footer__h">Company</span>
               <Link href="/about">About</Link>
-              <Link href="/reviews">Reviews</Link>
-              <Link href="/financing">Financing</Link>
+              {siteReady.rating && <Link href="/reviews">Reviews</Link>}
+              {siteReady.financing && <Link href="/financing">Financing</Link>}
             </div>
             <div>
               <span className="site-footer__h">Help</span>
@@ -69,7 +72,7 @@ export function SiteFooter({ withTrades = false, compact = false }: { withTrades
         )}
 
         <div className="site-footer__legal">
-          <span>{site.legalLine}</span>
+          <span>{publicLegalLine}</span>
           <nav aria-label="Legal">
             <Link href="/privacy">Privacy</Link>
             <Link href="/terms">Terms</Link>

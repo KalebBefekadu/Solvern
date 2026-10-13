@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { serializeMarkup, serializeNotes, simplifyPoints, type MarkupPhoto, type Pt } from "@/lib/markup";
+import { restoreMarkupPhoto, serializeMarkup, serializeNotes, simplifyPoints, type MarkupPhoto, type Pt } from "@/lib/markup";
 import { photoSchema } from "@/lib/leads/schema";
 import { MAX_POINTS_PER_STROKE } from "@/lib/leads/constants";
 
@@ -57,6 +57,29 @@ describe("serialized markup", () => {
     const s = serializeMarkup(photo);
     expect(s.strokes.map((x) => x.note)).toEqual([1, 2]);
     expect(serializeNotes(photo)[0]).toMatchObject({ n: 1, text: "Open this wall", anchor: { x: 10, y: 21 } });
+  });
+
+  it("restores a saved red drawing and its editable note", () => {
+    const red: MarkupPhoto = {
+      ...photo,
+      notes: [{ id: "red-note", n: 1, pen: "red", text: "Paint this trim red", anchor: { x: 40, y: 50 } }],
+      strokes: [
+        {
+          id: "red-stroke",
+          pen: "red",
+          noteId: "red-note",
+          points: [
+            [10, 20, 0.5],
+            [40, 50, 0.5],
+          ],
+        },
+      ],
+    };
+    const restored = restoreMarkupPhoto(red.id, red.file, red.url, { strokes: serializeMarkup(red), notes: serializeNotes(red) });
+    expect(restored.notes).toMatchObject([{ pen: "red", text: "Paint this trim red" }]);
+    expect(restored.strokes[0].noteId).toBe(restored.notes[0].id);
+    expect(serializeMarkup(restored)).toEqual(serializeMarkup(red));
+    expect(serializeNotes(restored)).toEqual(serializeNotes(red));
   });
 });
 

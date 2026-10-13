@@ -35,8 +35,12 @@ describe("trade pages", () => {
     }
   });
 
-  it("keeps the three designed trades approved", () => {
-    for (const slug of ["carpentry", "hvac", "masonry"]) expect(tradePage(slug)?.copyStatus).toBe("approved");
+  it("keeps every launch trade approved with a matching hero image", async () => {
+    const fs = await import("node:fs");
+    for (const trade of trades) {
+      expect(tradePage(trade.slug)?.copyStatus, trade.slug).toBe("approved");
+      expect(fs.existsSync(`public/illustrations/trades/${trade.slug}.jpg`), trade.slug).toBe(true);
+    }
   });
 
   it("returns nothing for unknown slugs", () => {

@@ -40,20 +40,31 @@ export interface UploadTarget {
   method: "PUT";
   /** "supabase": send multipart (cacheControl + file). "local": send the raw file body. */
   mode: "supabase" | "local";
+  token?: string;
+  tusEndpoint?: string;
+  bucket?: string;
 }
 
-export async function createUploadTargets(files: { kind: string; contentType: string }[]): Promise<{ batch: string; targets: UploadTarget[] }> {
+function tusEndpoint(): string {
+  const url = new URL(process.env.SUPABASE_URL!);
+  if (url.hostname.endsWith(".supabase.co") && !url.hostname.endsWith(".storage.supabase.co")) {
+    url.hostname = url.hostname.replace(/\.supabase\.co$/, ".storage.supabase.co");
+  }
+  return `${url.origin}/storage/v1/upload/resumable`;
+}
+
+export async function createUploadTargets(files: { kind: string; contentType: string; size: number }[], draftId?: string): Promise<{ batch: string; targets: UploadTarget[] }> {
   const batch = randomUUID();
   const day = new Date().toISOString().slice(0, 10);
   const sb = supabase();
   if (!sb && !devFallbackAllowed()) throw new BackendUnavailable("Storage is not configured");
   const targets = await Promise.all(
     files.map(async (f, i): Promise<UploadTarget> => {
-      const p = `leads/${day}/${batch}/${f.kind}-${i + 1}.${EXT[f.contentType]}`;
+      const p = draftId ? `previews/${draftId}/${batch}/${f.kind}-${i + 1}.${EXT[f.contentType]}` : `leads/${day}/${batch}/${f.kind}-${i + 1}.${EXT[f.contentType]}`;
       if (!sb) return { path: p, url: `/api/uploads/local?path=${encodeURIComponent(p)}`, method: "PUT", mode: "local" };
       const { data, error } = await sb.storage.from(BUCKET).createSignedUploadUrl(p);
       if (error || !data) throw new Error(`Could not create upload URL: ${error?.message}`);
-      return { path: p, url: data.signedUrl, method: "PUT", mode: "supabase" };
+      return { path: p, url: data.signedUrl, method: "PUT", mode: "supabase", token: data.token, tusEndpoint: tusEndpoint(), bucket: BUCKET };
     }),
   );
   return { batch, targets };
@@ -84,6 +95,35 @@ export async function uploadExists(p: string): Promise<boolean> {
   }
 }
 
+/** Reads a private upload only for a caller whose route has already checked draft ownership. */
+export async function readLocalUpload(p: string): Promise<Buffer> {
+  if (!devFallbackAllowed()) throw new BackendUnavailable("Local storage is not configured");
+  const root = path.join(DATA_DIR, "uploads");
+  const full = path.join(root, p);
+  if (!full.startsWith(root + path.sep)) throw new Error("Bad path");
+  return fs.readFile(full);
+}
+
+/** Read an uploaded object for validation before it can be referenced by a draft. */
+export async function readUploadedObject(p: string): Promise<Buffer> {
+  const sb = supabase();
+  if (!sb) return readLocalUpload(p);
+  const { data, error } = await sb.storage.from(BUCKET).download(p);
+  if (error || !data) throw new Error(`Could not read uploaded photo: ${error?.message}`);
+  return Buffer.from(await data.arrayBuffer());
+}
+
+/** Only the server writes normalized objects; upload targets never point to this path. */
+export async function writeValidatedObject(p: string, bytes: Buffer, contentType: string): Promise<void> {
+  const sb = supabase();
+  if (!sb) {
+    await writeLocalUpload(p, bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer);
+    return;
+  }
+  const { error } = await sb.storage.from(BUCKET).upload(p, bytes, { contentType, upsert: false, cacheControl: "3600" });
+  if (error) throw new Error(`Could not save validated photo: ${error.message}`);
+}
+
 /** Short-lived links for the team notification email (private bucket). */
 export async function signedViewUrl(p: string, seconds = 60 * 60 * 24 * 7): Promise<string | null> {
   const sb = supabase();
@@ -108,6 +148,7 @@ export interface LeadRow {
   utm: Record<string, string>;
   status: "new";
   request_id: string | null;
+  preview_draft_id?: string | null;
 }
 
 export interface PhotoRow {
@@ -133,35 +174,60 @@ export async function findLeadByRequestId(requestId: string): Promise<string | n
   }
 }
 
-export class DuplicateRequest extends Error {}
+const localDraftLocks = new Map<string, Promise<void>>();
 
-export async function insertLead(lead: LeadRow, photos: PhotoRow[]): Promise<string> {
+async function withLocalDraftLock<T>(id: string, run: () => Promise<T>): Promise<T> {
+  const previous = localDraftLocks.get(id) ?? Promise.resolve();
+  let release!: () => void;
+  const gate = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  const current = previous.then(() => gate);
+  localDraftLocks.set(id, current);
+  await previous;
+  try {
+    return await run();
+  } finally {
+    release();
+    if (localDraftLocks.get(id) === current) localDraftLocks.delete(id);
+  }
+}
+
+export async function insertLead(lead: LeadRow, photos: PhotoRow[]): Promise<{ id: string; inserted: boolean }> {
   const sb = supabase();
   if (sb) {
-    const { data, error } = await sb.from("leads").insert(lead).select("id").single();
-    // Unique request_id: a concurrent retry of the same form attempt got there first.
-    if (error?.code === "23505" && lead.request_id) throw new DuplicateRequest(lead.request_id);
-    if (error || !data) throw new Error(`Lead insert failed: ${error?.message}`);
-    if (photos.length) {
-      const { error: pErr } = await sb.from("lead_photos").insert(photos.map((p) => ({ ...p, lead_id: data.id })));
-      if (pErr) {
-        // No half-saved leads: remove the parent row so the customer's retry starts clean.
-        await sb.from("leads").delete().eq("id", data.id);
-        throw new Error(`Lead photo insert failed: ${pErr.message}`);
-      }
-    }
-    return data.id as string;
+    const queueGeneration =
+      process.env.PREVIEW_GENERATION_ENABLED === "true" &&
+      !!process.env.OPENAI_API_KEY &&
+      !!(process.env.PREVIEW_WORKER_SECRET || process.env.CRON_SECRET) &&
+      !!process.env.LEAD_NOTIFY_TO &&
+      !!lead.preview_draft_id &&
+      lead.type === "concept_preview";
+    const { data, error } = await sb.rpc("insert_lead_atomic", { p_lead: { ...lead, queue_generation: queueGeneration }, p_photos: photos }).single();
+    if (error || !data) throw new Error(`Atomic lead insert failed: ${error?.message}`);
+    const result = data as { lead_id: string; inserted: boolean };
+    return { id: result.lead_id, inserted: result.inserted };
   }
   if (!devFallbackAllowed()) throw new BackendUnavailable("Database is not configured");
-  const id = randomUUID();
-  await fs.mkdir(path.join(DATA_DIR, "leads"), { recursive: true });
-  await fs.writeFile(
-    path.join(DATA_DIR, "leads", `${new Date().toISOString().replace(/[:.]/g, "-")}-${id}.json`),
-    JSON.stringify({ id, created_at: new Date().toISOString(), ...lead, photos }, null, 2),
-  );
-  if (lead.request_id) {
-    await fs.mkdir(path.join(DATA_DIR, "requests"), { recursive: true });
-    await fs.writeFile(path.join(DATA_DIR, "requests", lead.request_id), id);
-  }
-  return id;
+  const write = async () => {
+    const leadsDir = path.join(DATA_DIR, "leads");
+    await fs.mkdir(leadsDir, { recursive: true });
+    if (lead.preview_draft_id) {
+      for (const file of await fs.readdir(leadsDir)) {
+        const existing = JSON.parse(await fs.readFile(path.join(leadsDir, file), "utf8")) as { id: string; preview_draft_id?: string };
+        if (existing.preview_draft_id === lead.preview_draft_id) return { id: existing.id, inserted: false };
+      }
+    }
+    const id = randomUUID();
+    await fs.writeFile(
+      path.join(leadsDir, `${new Date().toISOString().replace(/[:.]/g, "-")}-${id}.json`),
+      JSON.stringify({ id, created_at: new Date().toISOString(), ...lead, photos }, null, 2),
+    );
+    if (lead.request_id) {
+      await fs.mkdir(path.join(DATA_DIR, "requests"), { recursive: true });
+      await fs.writeFile(path.join(DATA_DIR, "requests", lead.request_id), id);
+    }
+    return { id, inserted: true };
+  };
+  return lead.preview_draft_id ? withLocalDraftLock(lead.preview_draft_id, write) : write();
 }

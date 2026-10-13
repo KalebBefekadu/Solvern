@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import {
   PENS,
   type MarkupPhoto,
@@ -27,13 +27,19 @@ const ACCEPT = "image/*";
 interface Props {
   photos: MarkupPhoto[];
   setPhotos: React.Dispatch<React.SetStateAction<MarkupPhoto[]>>;
+  savedIds: ReadonlySet<string>;
+  saving: boolean;
+  saveError: string | null;
+  onSavePhoto: (photo: MarkupPhoto) => Promise<void>;
+  onChanged: (id: string) => void;
+  onRemoved: (id: string) => Promise<void>;
   photoSubject: string;
   exampleNotes: string[];
   diagnosis: boolean;
   tradeSlug?: string;
 }
 
-export function MarkupTool({ photos, setPhotos, photoSubject, exampleNotes, diagnosis, tradeSlug }: Props) {
+export function MarkupTool({ photos, setPhotos, savedIds, saving, saveError, onSavePhoto, onChanged, onRemoved, photoSubject, exampleNotes, diagnosis, tradeSlug }: Props) {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [pen, setPen] = useState<PenId>("blue");
   /** Current stroke group (note). New strokes join it while the pen stays the same. */
@@ -42,7 +48,10 @@ export function MarkupTool({ photos, setPhotos, photoSubject, exampleNotes, diag
   const [dragging, setDragging] = useState(false);
   const [focusNote, setFocusNote] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const addingRef = useRef(false);
   const usedRef = useRef(false);
+  const historyRef = useRef(new Map<string, { past: Pick<MarkupPhoto, "strokes" | "notes">[]; future: Pick<MarkupPhoto, "strokes" | "notes">[] }>());
+  const [historyCounts, setHistoryCounts] = useState<Record<string, { past: number; future: number }>>({});
 
   const active = photos.find((p) => p.id === activeId) ?? photos[0] ?? null;
 
@@ -57,51 +66,91 @@ export function MarkupTool({ photos, setPhotos, photoSubject, exampleNotes, diag
     (fn: (p: MarkupPhoto) => MarkupPhoto) => {
       if (!active) return;
       setPhotos((all) => all.map((p) => (p.id === active.id ? fn(p) : p)));
+      onChanged(active.id);
     },
-    [active, setPhotos],
+    [active, setPhotos, onChanged],
   );
 
+  function historyFor(id: string) {
+    let history = historyRef.current.get(id);
+    if (!history) {
+      history = { past: [], future: [] };
+      historyRef.current.set(id, history);
+    }
+    return history;
+  }
+
+  function remember() {
+    if (!active) return;
+    const history = historyFor(active.id);
+    history.past.push({ strokes: active.strokes, notes: active.notes });
+    if (history.past.length > 50) history.past.shift();
+    history.future = [];
+    setHistoryCounts((counts) => ({ ...counts, [active.id]: { past: history.past.length, future: 0 } }));
+  }
+
   async function addFiles(list: FileList | File[]) {
-    setError(null);
-    const files = Array.from(list);
-    const room = MAX_PHOTOS - photos.length;
-    if (room <= 0) {
-      setError(`You can add up to ${MAX_PHOTOS} photos.`);
-      return;
-    }
-    const added: MarkupPhoto[] = [];
-    for (const file of files.slice(0, room)) {
-      if (file.type && !file.type.startsWith("image/")) {
-        setError("Please choose a photo file, such as a JPG or PNG.");
-        continue;
+    if (addingRef.current) return;
+    addingRef.current = true;
+    try {
+      setError(null);
+      const files = Array.from(list);
+      const room = MAX_PHOTOS - photos.length;
+      if (room <= 0) {
+        setError(`You can add up to ${MAX_PHOTOS} photos.`);
+        return;
       }
-      const url = URL.createObjectURL(file);
-      try {
-        const img = await loadImage(url);
-        const normalized = await normalizePhoto(file, img);
-        if (normalized.file === file) {
-          added.push({ id: uid(), file, url, width: normalized.width, height: normalized.height, strokes: [], notes: [] });
-        } else {
-          URL.revokeObjectURL(url);
-          const nurl = URL.createObjectURL(normalized.file);
-          added.push({ id: uid(), file: normalized.file, url: nurl, width: normalized.width, height: normalized.height, strokes: [], notes: [] });
+      const added: MarkupPhoto[] = [];
+      for (const file of files.slice(0, room)) {
+        if (file.type && !file.type.startsWith("image/")) {
+          setError("Please choose a photo file, such as a JPG or PNG.");
+          continue;
         }
-      } catch (e) {
-        URL.revokeObjectURL(url);
-        setError(e instanceof Error && e.message.startsWith("This photo is too large") ? e.message : "That photo format could not be opened here. Try a JPG or PNG.");
+        const url = URL.createObjectURL(file);
+        try {
+          const img = await loadImage(url);
+          const normalized = await normalizePhoto(file, img);
+          if (normalized.file === file) {
+            added.push({ id: uid(), file, url, width: normalized.width, height: normalized.height, strokes: [], notes: [] });
+          } else {
+            URL.revokeObjectURL(url);
+            const nurl = URL.createObjectURL(normalized.file);
+            added.push({ id: uid(), file: normalized.file, url: nurl, width: normalized.width, height: normalized.height, strokes: [], notes: [] });
+          }
+        } catch (e) {
+          URL.revokeObjectURL(url);
+          setError(e instanceof Error && e.message.startsWith("This photo is too large") ? e.message : "That photo format could not be opened here. Try a JPG or PNG.");
+        }
       }
-    }
-    if (files.length > room) setError(`You can add up to ${MAX_PHOTOS} photos. The first ${room} were added.`);
-    if (added.length) {
-      setPhotos((all) => [...all, ...added].slice(0, MAX_PHOTOS));
-      setActiveId(added[0].id);
-      setGroupId(null);
+      if (files.length > room) setError(`You can add up to ${MAX_PHOTOS} photos. The first ${room} were added.`);
+      if (added.length) {
+        setPhotos((all) => [...all, ...added].slice(0, MAX_PHOTOS));
+        if (!active || savedIds.has(active.id)) {
+          setActiveId(added[0].id);
+          setGroupId(null);
+        }
+      }
+    } finally {
+      addingRef.current = false;
     }
   }
 
-  function removePhoto(id: string) {
+  async function removePhoto(id: string) {
+    if (saving) return;
+    try {
+      await onRemoved(id);
+    } catch {
+      // The parent reports the server error; leave this photo in place for retry.
+      return;
+    }
     const p = photos.find((x) => x.id === id);
     if (p) URL.revokeObjectURL(p.url);
+    historyRef.current.delete(id);
+    setHistoryCounts((counts) => {
+      const next = { ...counts };
+      delete next[id];
+      return next;
+    });
     setPhotos((all) => all.filter((x) => x.id !== id));
     if (activeId === id) setActiveId(null);
     setGroupId(null);
@@ -109,19 +158,37 @@ export function MarkupTool({ photos, setPhotos, photoSubject, exampleNotes, diag
 
   // ----- Drawing -----
   const svgRef = useRef<SVGSVGElement>(null);
-  const drawing = useRef<{ strokeId: string; pointerId: number } | null>(null);
+  const drawing = useRef<{ strokeId: string; pointerId: number; noteId: string; newNote: boolean } | null>(null);
+  const pendingPoints = useRef<Pt[]>([]);
+  const frameRef = useRef<number | null>(null);
+
+  useEffect(
+    () => () => {
+      if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
+    },
+    [],
+  );
+
+  function flushPoints() {
+    const d = drawing.current;
+    const points = pendingPoints.current;
+    pendingPoints.current = [];
+    frameRef.current = null;
+    if (!d || !points.length) return;
+    updateActive((p) => ({ ...p, strokes: p.strokes.map((s) => (s.id === d.strokeId ? { ...s, points: [...s.points, ...points] } : s)) }));
+  }
 
   function toImagePoint(e: React.PointerEvent): Pt {
     const svg = svgRef.current!;
     const r = svg.getBoundingClientRect();
-    const x = ((e.clientX - r.left) / r.width) * active!.width;
-    const y = ((e.clientY - r.top) / r.height) * active!.height;
+    const x = Math.max(0, Math.min(active!.width, ((e.clientX - r.left) / r.width) * active!.width));
+    const y = Math.max(0, Math.min(active!.height, ((e.clientY - r.top) / r.height) * active!.height));
     const pressure = e.pointerType === "pen" ? e.pressure || 0.5 : 0.5;
     return [x, y, pressure];
   }
 
   function onPointerDown(e: React.PointerEvent<SVGSVGElement>) {
-    if (!active || (e.pointerType === "mouse" && e.button !== 0)) return;
+    if (!active || saving || (e.pointerType === "mouse" && e.button !== 0)) return;
     e.preventDefault();
     const currentGroup = active.notes.find((n) => n.id === groupId);
     const startNew = !currentGroup || currentGroup.pen !== pen;
@@ -131,10 +198,11 @@ export function MarkupTool({ photos, setPhotos, photoSubject, exampleNotes, diag
     }
     e.currentTarget.setPointerCapture?.(e.pointerId);
     const pt = toImagePoint(e);
+    remember();
     const strokeId = uid();
     let noteId = groupId;
     if (startNew) noteId = uid();
-    drawing.current = { strokeId, pointerId: e.pointerId };
+    drawing.current = { strokeId, pointerId: e.pointerId, noteId: noteId!, newNote: startNew };
     updateActive((p) => {
       const notes = startNew
         ? [...p.notes, { id: noteId!, n: (p.notes.reduce((m, n) => Math.max(m, n.n), 0) || 0) + 1, pen, text: "", anchor: { x: pt[0], y: pt[1] } } as Note]
@@ -156,16 +224,19 @@ export function MarkupTool({ photos, setPhotos, photoSubject, exampleNotes, diag
     const svg = svgRef.current!;
     const r = svg.getBoundingClientRect();
     const pts: Pt[] = events.map((ev) => [
-      ((ev.clientX - r.left) / r.width) * active.width,
-      ((ev.clientY - r.top) / r.height) * active.height,
+      Math.max(0, Math.min(active.width, ((ev.clientX - r.left) / r.width) * active.width)),
+      Math.max(0, Math.min(active.height, ((ev.clientY - r.top) / r.height) * active.height)),
       ev.pointerType === "pen" ? ev.pressure || 0.5 : 0.5,
     ]);
-    updateActive((p) => ({ ...p, strokes: p.strokes.map((s) => (s.id === d.strokeId ? { ...s, points: [...s.points, ...pts] } : s)) }));
+    pendingPoints.current.push(...pts);
+    if (frameRef.current === null) frameRef.current = requestAnimationFrame(flushPoints);
   }
 
   function onPointerUp(e: React.PointerEvent<SVGSVGElement>) {
     const d = drawing.current;
     if (!d || d.pointerId !== e.pointerId) return;
+    if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
+    flushPoints();
     drawing.current = null;
     // Re-anchor the note to the top-right of its first stroke, then focus it.
     updateActive((p) => {
@@ -176,52 +247,95 @@ export function MarkupTool({ photos, setPhotos, photoSubject, exampleNotes, diag
       const b = bbox(stroke.points);
       return { ...p, notes: p.notes.map((n) => (n.id === stroke.noteId ? { ...n, anchor: { x: b.maxX, y: b.minY } } : n)) };
     });
-    const stroke = active?.strokes.find((s) => s.id === d.strokeId);
-    if (stroke && active && active.strokes.filter((s) => s.noteId === stroke.noteId).length === 1) setFocusNote(stroke.noteId);
+    if (d.newNote) setFocusNote(d.noteId);
   }
 
   function choosePen(id: PenId) {
+    if (saving) return;
     setPen(id);
     // Switching pen color starts a new note on the next stroke.
     if (id !== pen) setGroupId(null);
   }
 
   function undo() {
-    if (!active || !active.strokes.length) return;
+    if (!active || saving) return;
+    const history = historyFor(active.id);
+    const previous = history.past.pop();
+    if (!previous) return;
     setError(null);
-    updateActive((p) => {
-      const last = p.strokes[p.strokes.length - 1];
-      const strokes = p.strokes.slice(0, -1);
-      const stillUsed = strokes.some((s) => s.noteId === last.noteId);
-      return { ...p, strokes, notes: stillUsed ? p.notes : p.notes.filter((n) => n.id !== last.noteId) };
-    });
+    history.future.push({ strokes: active.strokes, notes: active.notes });
+    setHistoryCounts((counts) => ({ ...counts, [active.id]: { past: history.past.length, future: history.future.length } }));
+    updateActive((p) => ({ ...p, ...previous }));
+    setGroupId(null);
+  }
+
+  function redo() {
+    if (!active || saving) return;
+    const history = historyFor(active.id);
+    const next = history.future.pop();
+    if (!next) return;
+    history.past.push({ strokes: active.strokes, notes: active.notes });
+    setHistoryCounts((counts) => ({ ...counts, [active.id]: { past: history.past.length, future: history.future.length } }));
+    updateActive((p) => ({ ...p, ...next }));
     setGroupId(null);
   }
 
   function clearAll() {
+    if (saving) return;
+    remember();
     updateActive((p) => ({ ...p, strokes: [], notes: [] }));
     setGroupId(null);
   }
 
   function deleteNote(id: string) {
+    if (saving) return;
+    remember();
     updateActive((p) => ({ ...p, notes: p.notes.filter((n) => n.id !== id), strokes: p.strokes.filter((s) => s.noteId !== id) }));
     if (groupId === id) setGroupId(null);
   }
 
   function editNote(id: string, text: string) {
+    if (saving) return;
     updateActive((p) => ({ ...p, notes: p.notes.map((n) => (n.id === id ? { ...n, text: text.slice(0, MAX_NOTE_LENGTH) } : n)) }));
   }
 
   const size = active ? strokeSize(active.width, active.height) : 6;
-  const paths = useMemo(
-    () => (active ? active.strokes.map((s) => ({ id: s.id, color: penById(s.pen).color, d: outlineToPath(strokeOutline(s.points, size)) })) : []),
-    [active, size],
-  );
 
   const subjectLabel = `Add a photo of your ${photoSubject}`;
+  const activeIndex = active ? photos.findIndex((p) => p.id === active.id) : -1;
+
+  async function saveAndContinue() {
+    if (!active || saving) return;
+    if (active.notes.some((n) => !n.text.trim())) {
+      const firstEmpty = active.notes.find((n) => !n.text.trim());
+      setError(`Describe note ${firstEmpty?.n} before continuing, or delete it.`);
+      document.getElementById(`note-${firstEmpty?.id}`)?.focus();
+      return;
+    }
+    setError(null);
+    try {
+      await onSavePhoto(active);
+      const next = photos[activeIndex + 1];
+      if (next) {
+        setActiveId(next.id);
+        setGroupId(null);
+        setFocusNote(null);
+      }
+    } catch {
+      // The parent shows the upload error and keeps this photo active for retry.
+    }
+  }
 
   return (
     <div className="markup">
+      {active && (
+        <div className="markup__progress" aria-live="polite">
+          <strong>
+            Photo {activeIndex + 1} of {photos.length}
+          </strong>
+          <span>{saving ? "Saving this photo…" : savedIds.has(active.id) ? "Saved" : "Not saved yet"}</span>
+        </div>
+      )}
       <div className="markup__bar" role="toolbar" aria-label="Drawing tools">
         <div className="markup__pens">
           <span className="markup__pens-label" id="pens-label">
@@ -234,6 +348,7 @@ export function MarkupTool({ photos, setPhotos, photoSubject, exampleNotes, diag
               className="pen"
               aria-label={p.label}
               aria-pressed={pen === p.id}
+              disabled={saving}
               style={{ ["--pen" as string]: p.color }}
               onClick={() => choosePen(p.id)}
             >
@@ -242,13 +357,16 @@ export function MarkupTool({ photos, setPhotos, photoSubject, exampleNotes, diag
           ))}
         </div>
         <div className="markup__actions">
-          <button type="button" className="chip-btn" onClick={() => setGroupId(null)} disabled={!active || !groupId} title="Start a new note with the same pen">
+          <button type="button" className="chip-btn" onClick={() => setGroupId(null)} disabled={saving || !active || !groupId} title="Start a new note with the same pen">
             <PlusIcon size={16} /> New note
           </button>
-          <button type="button" className="chip-btn" onClick={undo} disabled={!active?.strokes.length}>
+          <button type="button" className="chip-btn" onClick={undo} disabled={saving || !active || !historyCounts[active.id]?.past}>
             <UndoIcon /> Undo
           </button>
-          <button type="button" className="chip-btn" onClick={clearAll} disabled={!active?.strokes.length}>
+          <button type="button" className="chip-btn" onClick={redo} disabled={saving || !active || !historyCounts[active.id]?.future}>
+            Redo
+          </button>
+          <button type="button" className="chip-btn" onClick={clearAll} disabled={saving || !active?.strokes.length}>
             Clear
           </button>
         </div>
@@ -271,22 +389,21 @@ export function MarkupTool({ photos, setPhotos, photoSubject, exampleNotes, diag
               role="img"
               aria-label={`Drawing area. ${active.notes.length} ${active.notes.length === 1 ? "note" : "notes"} on this photo.`}
             >
-              {paths.map((p) => (
-                <path key={p.id} d={p.d} fill={p.color} />
+              {active.strokes.map((stroke) => (
+                <StrokePath key={stroke.id} stroke={stroke} size={size} />
               ))}
             </svg>
             {active.notes.map((n) => (
-              <NoteMarker key={`m-${n.id}`} note={n} photo={active} />
-            ))}
-            {active.notes.map((n) => (
-              <NoteBox
-                key={n.id}
+              <NoteMarker
+                key={`m-${n.id}`}
                 note={n}
                 photo={active}
-                autoFocus={focusNote === n.id}
-                onFocused={() => setFocusNote(null)}
-                onChange={(t) => editNote(n.id, t)}
-                onDelete={() => deleteNote(n.id)}
+                selected={groupId === n.id}
+                onSelect={() => {
+                  setGroupId(n.id);
+                  setPen(n.pen);
+                  document.getElementById(`note-${n.id}`)?.focus();
+                }}
               />
             ))}
           </div>
@@ -302,31 +419,47 @@ export function MarkupTool({ photos, setPhotos, photoSubject, exampleNotes, diag
         />
       )}
 
-      {/* Notes list: the accessible, small-screen view of every note on the current photo. */}
+      {/* The image stays visible while all text entry happens in rows below it. */}
       {active && active.notes.length > 0 && (
-        <ol className="notes-list notes-list--inline" aria-label="Your notes">
+        <ol className="notes-list" aria-label="Your notes">
           {active.notes.map((n) => (
-            <li key={n.id} style={{ ["--note" as string]: penById(n.pen).color }}>
-              <span className="note-marker note-marker--inline" aria-hidden="true">
-                {n.n}
-              </span>
-              <label className="visually-hidden" htmlFor={`list-${n.id}`}>
-                Note {n.n}
-              </label>
-              <textarea
-                id={`list-${n.id}`}
-                rows={2}
-                maxLength={MAX_NOTE_LENGTH}
-                value={n.text}
-                placeholder="What should change here?"
-                onChange={(e) => editNote(n.id, e.target.value)}
-              />
-              <button type="button" className="note-box__del" aria-label={`Delete note ${n.n} and its drawing`} onClick={() => deleteNote(n.id)}>
-                <TrashIcon />
-              </button>
-            </li>
+            <AnnotationRow
+              key={n.id}
+              note={n}
+              selected={groupId === n.id}
+              disabled={saving}
+              autoFocus={focusNote === n.id}
+              onFocused={() => setFocusNote(null)}
+              onSelect={() => {
+                setGroupId(n.id);
+                setPen(n.pen);
+              }}
+              onChange={(t) => editNote(n.id, t)}
+              onDelete={() => deleteNote(n.id)}
+            />
           ))}
         </ol>
+      )}
+
+      {active && (
+        <div className="markup__continue">
+          <button type="button" className="btn btn--trade btn--sm" disabled={saving} onClick={saveAndContinue}>
+            {saving
+              ? "Saving photo…"
+              : active.notes.length === 0
+                ? activeIndex < photos.length - 1
+                  ? "Save reference photo and continue"
+                  : "Save reference photo"
+                : activeIndex < photos.length - 1
+                  ? "Save photo and continue"
+                  : "Save photo"}
+          </button>
+          {saveError && (
+            <p className="field-error" role="alert">
+              {saveError}
+            </p>
+          )}
+        </div>
       )}
 
       <div className="thumbs" aria-label="Your photos">
@@ -337,6 +470,7 @@ export function MarkupTool({ photos, setPhotos, photoSubject, exampleNotes, diag
               className="thumb"
               aria-current={active?.id === p.id}
               aria-label={`Photo ${i + 1}${p.notes.length ? `, ${p.notes.length} notes` : ""}`}
+              disabled={saving || (i > activeIndex && !savedIds.has(active!.id))}
               onClick={() => {
                 setActiveId(p.id);
                 setGroupId(null);
@@ -346,22 +480,28 @@ export function MarkupTool({ photos, setPhotos, photoSubject, exampleNotes, diag
               <img src={p.url} alt="" />
               {p.notes.length > 0 && <span className="thumb__count">{p.notes.length}</span>}
             </button>
-            <button type="button" className="note-box__del thumb__remove" aria-label={`Remove photo ${i + 1}`} onClick={() => removePhoto(p.id)}>
+            {savedIds.has(p.id) && (
+              <span className="thumb__saved" aria-label={`Photo ${i + 1} saved`}>
+                ✓
+              </span>
+            )}
+            <button type="button" className="note-box__del thumb__remove" aria-label={`Remove photo ${i + 1}`} disabled={saving} onClick={() => removePhoto(p.id)}>
               <CloseIcon size={14} />
             </button>
           </span>
         ))}
         {photos.length > 0 && photos.length < MAX_PHOTOS && (
-          <button type="button" className="thumb-add" aria-label="Add another photo" onClick={() => fileRef.current?.click()}>
+          <button type="button" className="thumb-add" aria-label="Add another photo" disabled={saving} onClick={() => fileRef.current?.click()}>
             <PlusIcon />
           </button>
         )}
-        <span className="small">{photos.length === 0 ? `Add 1 to ${MAX_PHOTOS} photos.` : `${photos.length} of ${MAX_PHOTOS} photos. Draw on one at a time.`}</span>
+        <span className="small">{photos.length === 0 ? `Add 1 to ${MAX_PHOTOS} photos.` : `${savedIds.size} of ${photos.length} photos saved. Work on one at a time.`}</span>
       </div>
 
       <input
         ref={fileRef}
         type="file"
+        disabled={saving}
         accept={ACCEPT}
         multiple
         className="visually-hidden"
@@ -380,8 +520,8 @@ export function MarkupTool({ photos, setPhotos, photoSubject, exampleNotes, diag
       )}
       <p className="small">
         {diagnosis
-          ? "Pick a pen, circle where the problem is, and a note box opens for your comment. Each pen color starts a new note."
-          : "Pick a pen, circle what you want changed, and a note box opens for your comment. Each pen color starts a new note."}
+          ? "Pick a pen and circle where the problem is. Describe it in the matching row below the photo."
+          : "Pick a pen and circle what you want changed. Describe it in the matching row below the photo."}
       </p>
     </div>
   );
@@ -391,73 +531,76 @@ function pct(v: number, total: number) {
   return `${(v / total) * 100}%`;
 }
 
-function NoteMarker({ note, photo }: { note: Note; photo: MarkupPhoto }) {
+const StrokePath = memo(function StrokePath({ stroke, size }: { stroke: Stroke; size: number }) {
+  return <path d={outlineToPath(strokeOutline(stroke.points, size))} fill={penById(stroke.pen).color} />;
+});
+
+function NoteMarker({ note, photo, selected, onSelect }: { note: Note; photo: MarkupPhoto; selected: boolean; onSelect: () => void }) {
   return (
-    <span
+    <button
+      type="button"
       className="note-marker"
-      aria-hidden="true"
+      aria-label={`Edit note ${note.n}`}
+      aria-pressed={selected}
+      onPointerDown={(e) => e.stopPropagation()}
+      onClick={onSelect}
       style={{ left: pct(note.anchor.x, photo.width), top: pct(note.anchor.y, photo.height), ["--note" as string]: penById(note.pen).color }}
     >
       {note.n}
-    </span>
+    </button>
   );
 }
 
-function NoteBox({
+function AnnotationRow({
   note,
-  photo,
+  selected,
+  disabled,
   autoFocus,
   onFocused,
+  onSelect,
   onChange,
   onDelete,
 }: {
   note: Note;
-  photo: MarkupPhoto;
+  selected: boolean;
+  disabled: boolean;
   autoFocus: boolean;
   onFocused: () => void;
+  onSelect: () => void;
   onChange: (t: string) => void;
   onDelete: () => void;
 }) {
   const ref = useRef<HTMLTextAreaElement>(null);
   useEffect(() => {
-    if (autoFocus && ref.current && ref.current.offsetParent !== null) {
-      ref.current.focus({ preventScroll: true });
+    if (autoFocus && ref.current) {
+      ref.current.focus();
       onFocused();
     }
   }, [autoFocus, onFocused]);
   const p = penById(note.pen);
-  const x = (note.anchor.x / photo.width) * 100;
-  const y = (note.anchor.y / photo.height) * 100;
   return (
-    <div
-      className="note-box"
-      style={{
-        // Open to the right of the drawing, or to the left when the drawing is near the right edge.
-        left: x > 55 ? `clamp(8px, calc(${x}% - 236px), calc(100% - 228px))` : `clamp(8px, calc(${x}% + 16px), calc(100% - 228px))`,
-        top: `clamp(8px, calc(${y}% - 16px), calc(100% - 112px))`,
-        ["--note" as string]: p.color,
-        ["--note-text" as string]: p.text,
-      }}
-      onPointerDown={(e) => e.stopPropagation()}
-    >
-      <div className="note-box__head">
-        <label className="note-box__label" htmlFor={`box-${note.id}`}>
-          Note {note.n}
-        </label>
-        <button type="button" className="note-box__del" aria-label={`Delete note ${note.n} and its drawing`} onClick={onDelete}>
-          <TrashIcon size={14} />
-        </button>
-      </div>
+    <li data-selected={selected} style={{ ["--note" as string]: p.color }}>
+      <span className="note-marker note-marker--inline" aria-hidden="true">
+        {note.n}
+      </span>
+      <label className="visually-hidden" htmlFor={`note-${note.id}`}>
+        Note {note.n}
+      </label>
       <textarea
         ref={ref}
-        id={`box-${note.id}`}
+        id={`note-${note.id}`}
         rows={2}
         maxLength={MAX_NOTE_LENGTH}
         value={note.text}
+        disabled={disabled}
         placeholder="What should change here?"
         onChange={(e) => onChange(e.target.value)}
+        onFocus={onSelect}
       />
-    </div>
+      <button type="button" className="note-box__del" disabled={disabled} aria-label={`Delete note ${note.n} and its drawing`} onClick={onDelete}>
+        <TrashIcon size={14} />
+      </button>
+    </li>
   );
 }
 
@@ -503,9 +646,23 @@ function ExampleStage({
           />
           <path d="M430 320 L640 320 L640 380" fill="none" stroke="#E8742C" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
-        {notes[0] && <ExampleNote n={1} pen="blue" text={notes[0]} />}
-        {notes[1] && <ExampleNote n={2} pen="orange" text={notes[1]} />}
       </div>
+      {notes.length > 0 && (
+        <ol className="notes-list notes-list--example" aria-label="Example notes">
+          {notes.slice(0, 2).map((text, i) => (
+            <li key={i} style={{ ["--note" as string]: penById(i === 0 ? "blue" : "orange").color }}>
+              <span className="note-marker note-marker--inline" aria-hidden="true">
+                {i + 1}
+              </span>
+              <span>
+                <strong>Example note {i + 1}</strong>
+                <br />
+                {text}
+              </span>
+            </li>
+          ))}
+        </ol>
+      )}
       <div className="dropzone dropzone--row" data-dragging={dragging} {...dnd}>
         <span className="small">Drag photos here, or choose them from your phone or computer.</span>
         <button type="button" className="btn btn--trade btn--sm" onClick={onPick}>
@@ -513,16 +670,6 @@ function ExampleStage({
         </button>
       </div>
     </>
-  );
-}
-
-function ExampleNote({ n, pen, text }: { n: 1 | 2; pen: PenId; text: string }) {
-  const p = penById(pen);
-  return (
-    <div className={`note-box example-note example-note--${n}`} style={{ ["--note" as string]: p.color, ["--note-text" as string]: p.text }} aria-hidden="true">
-      <span className="note-box__label example-note__label">Note {n}</span>
-      {text}
-    </div>
   );
 }
 

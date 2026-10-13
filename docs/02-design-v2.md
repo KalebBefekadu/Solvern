@@ -19,7 +19,7 @@ Kept from v1: logo (mitered S), ink color, chalk blue for measurement lines and 
 Each trade page sets five CSS variables from `trades.json`: `--trade`, `--trade-on`, `--trade-tint`, `--trade-tint-strong`, `--trade-deep`. Everything else is shared. Carpentry, HVAC and masonry values are approved. The other 20 are computed and must be reviewed; slate-family trades (roofing, siding, windows and doors, garage doors, insulation) may read as gray and likely need new hues.
 
 ## Trade illustrations
-Status: **not final.** Every trade hero uses `assets/illustrations/placeholder-trade-illustration.svg` (560 x 440, dashed frame, hammer, "Add final illustration"). The long-term plan is one signature tool per trade (listed in `trades.json`), eventually as a lightweight interactive 3D model. Direction under consideration: industrial design product render (brushed aluminum, graphite, one trade-color accent, white studio background, three-quarter view). Drafts in `design/brainstorm-tools/` are exploration only.
+Status: **launch set complete.** Every trade hero uses a unique Precision Construction Objects render from `site/public/illustrations/trades/`: graphite and brushed aluminum, one restrained trade-color accent, a warm-white studio ground, consistent three-quarter perspective, upper-left architectural light, soft contact shadow and one subtle action cue. The specification line is live HTML below the image. Drafts in `design/brainstorm-tools/` remain exploration only.
 
 ## Imagery
 Real photos only for people: Solvern technicians in branded uniforms, working, next to homeowners. No stock photos of contractors. Until photos exist, show tinted placeholders with the shot description (see `content/trade-pages.json` > `teamPhotoShotList`).

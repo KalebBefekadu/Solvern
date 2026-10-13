@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { pageMetadata } from "@/lib/metadata";
 import Link from "next/link";
-import { site } from "@/content/site";
+import { site, siteReady } from "@/content/site";
 import { SimplePage } from "@/components/SimplePage";
 import { FaqSection } from "@/components/sections";
 
@@ -9,6 +9,7 @@ export const metadata: Metadata = pageMetadata({
   title: "Financing: pay over time | Solvern Home",
   description: "Monthly payment options for Solvern Home projects across metro Atlanta. Know your options before work begins, then see your project in a Concept Preview.",
   path: "/financing",
+  noindex: !siteReady.financing,
 });
 
 /**
@@ -17,6 +18,23 @@ export const metadata: Metadata = pageMetadata({
  * Never state rates, terms or approval claims until the partner provides approved wording.
  */
 export default function FinancingPage() {
+  if (!siteReady.financing) {
+    return (
+      <SimplePage>
+        <section className="wrap page-head page-head--alone" aria-labelledby="f-title">
+          <span className="eyebrow">Project planning</span>
+          <h1 className="h1" id="f-title">
+            Start with a clear scope and estimate.
+          </h1>
+          <p className="lead">Payment options are not published yet. Send your project first and our team will walk you through the available next steps.</p>
+          <Link href="/concept-preview" className="btn btn--ink" data-track="cta_click" data-location="financing-page">
+            Get my Concept Preview
+          </Link>
+        </section>
+      </SimplePage>
+    );
+  }
+
   return (
     <SimplePage>
       <section className="wrap page-head" aria-labelledby="f-title">

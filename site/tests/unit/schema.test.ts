@@ -43,6 +43,23 @@ describe("callback lead", () => {
     expect(r.firstName).toBe("Dana");
     expect(r.zip).toBe("30305");
   });
+
+  it("keeps only a page path and safe campaign identifiers", () => {
+    const r = callbackLeadSchema.parse({
+      ...callback,
+      sourceUrl: "https://solvern.example/customer-service?email=dana@example.com",
+      utm: {
+        utm_source: "search",
+        utm_campaign: "fall-2026",
+        utm_term: "dana@example.com",
+        phone: "4045550100",
+        landing_page: "/customer-service?email=dana@example.com",
+      },
+    });
+    expect(r.sourceUrl).toBe("");
+    expect(r.utm).toEqual({ utm_source: "search", utm_campaign: "fall-2026" });
+    expect(callbackLeadSchema.parse({ ...callback, sourceUrl: "/customer-service" }).sourceUrl).toBe("/customer-service");
+  });
 });
 
 describe("preview lead", () => {
